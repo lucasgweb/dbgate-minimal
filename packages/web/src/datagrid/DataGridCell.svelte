@@ -262,7 +262,7 @@
     height: 6px;
     right: 1px;
     bottom: 1px;
-    border-radius: 50%;
+    border-radius: 1px;
   }
 
   .alignRight {
