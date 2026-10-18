@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import {
     redis_clearLoadedData,
     redis_createNewModel,
@@ -147,7 +148,7 @@
 
 <SearchBoxWrapper noMargin {filter}>
   <SearchInput
-    placeholder="Redis pattern or key part"
+    placeholder={_tval('Redis pattern or key part')}
     bind:value={filter}
     isDebounced
     bind:this={domFilter}
@@ -161,9 +162,9 @@
     menu={createAddKeyMenu}
     narrow={false}
     data-testid="RedisKeysTree_addKeyDropdown"
-    title="Add new key"
+    title={_tval('Add new key')}
   />
-  <InlineButton on:click={reloadModel} title="Refresh key list">
+  <InlineButton on:click={reloadModel} title={_tval('Refresh key list')}>
     <FontIcon icon="icon refresh" />
   </InlineButton>
 </SearchBoxWrapper>
@@ -184,10 +185,10 @@
       </div>
     {:else}
       <div class="flex">
-        <InlineButton on:click={() => loadNextPage()} title="Scan more keys">
+        <InlineButton on:click={() => loadNextPage()} title={_tval('Scan more keys')}>
           <FontIcon icon="icon more" /> Scan more
         </InlineButton>
-        <InlineButton on:click={() => loadAll()} title="Scan all keys">
+        <InlineButton on:click={() => loadAll()} title={_tval('Scan all keys')}>
           <FontIcon icon="icon warn" /> Scan all
         </InlineButton>
       </div>

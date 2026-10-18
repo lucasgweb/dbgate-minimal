@@ -5,7 +5,7 @@
   import FormSubmit from '../forms/FormSubmit.svelte';
   import FormTextField from '../forms/FormTextField.svelte';
   import { cloudSigninTokenHolder, getCurrentConfig } from '../stores';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import { apiCall } from '../utility/api';
   import { writable } from 'svelte/store';
 
@@ -148,8 +148,8 @@
 
 <FormProviderCore {values}>
   <ModalBase {...$$restProps}>
-    <svelte:fragment slot="header">Save file</svelte:fragment>
-    <FormTextField label="File name" name="name" focused />
+    <svelte:fragment slot="header">{_tval('Save file')}</svelte:fragment>
+    <FormTextField label={_tval('File name')} name="name" focused />
     {#if $cloudSigninTokenHolder && !($values['saveToTeamFolder'] && enabledTeamFolders)}
       <FormCloudFolderSelect
         label={_t('cloud.chooseCloudFolder', { defaultMessage: 'Choose cloud folder' })}

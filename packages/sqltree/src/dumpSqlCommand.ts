@@ -86,7 +86,6 @@ export function dumpSqlUpdate(dmp: SqlDumper, cmd: Update) {
   if (cmd.where) {
     dmp.put('&n^where ');
     dumpSqlCondition(dmp, cmd.where);
-    dmp.put('&n');
   }
 }
 
@@ -103,7 +102,6 @@ export function dumpSqlDelete(dmp: SqlDumper, cmd: Delete) {
   if (cmd.where) {
     dmp.put('&n^where ');
     dumpSqlCondition(dmp, cmd.where);
-    dmp.put('&n');
   }
 }
 

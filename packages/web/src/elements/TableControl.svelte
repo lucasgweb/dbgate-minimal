@@ -256,7 +256,7 @@
                 filterBehaviour={evalFilterBehaviour}
                 filter={$filters[col.fieldName]}
                 setFilter={value => filters.update(f => ({ ...f, [col.fieldName]: value }))}
-                placeholder="Data filter"
+                placeholder={_tval('Data filter')}
               />
             {/if}
           </td>

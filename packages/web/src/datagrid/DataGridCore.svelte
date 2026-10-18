@@ -567,7 +567,10 @@
   let showFilterRow = false;
   $: showFooter = $minimalMode && !tabControlHiddenTab;
   $: showFilterBar = $minimalMode && !tabControlHiddenTab && !!display?.filterable && !isDynamicStructure;
-  $: filterRowVisible = display?.filterable && (!$minimalMode || showFilterRow || display?.filterCount > 0);
+  let filterBarHeight = 40;
+  // minimal mode: the filter bar on top is the only filter UI (the per-column filter row is shown only without it)
+  $: filterRowVisible =
+    display?.filterable && (!$minimalMode || (!showFilterBar && (showFilterRow || display?.filterCount > 0)));
 
   let isGridFocused = false;
   let selectionMenu = null;
@@ -2336,7 +2339,7 @@
 </script>
 
 {#if !display || (!isDynamicStructure && (!columns || columns.length == 0))}
-  {#if $databaseStatus?.name == 'pending' || $databaseStatus?.name == 'checkStructure' || $databaseStatus?.name == 'loadStructure'}
+  {#if !$databaseStatus?.name || $databaseStatus?.name == 'pending' || $databaseStatus?.name == 'checkStructure' || $databaseStatus?.name == 'loadStructure'}
     <LoadingInfo wrapper message={_t('datagrid.structure.waiting', { defaultMessage: 'Waiting for structure' })} />
   {:else}
     <ErrorInfo
@@ -2402,12 +2405,14 @@
   </div>
 {:else}
   {#if showFilterBar}
-    <DataGridFilterBar {display} {columns} />
+    <div class="filter-bar-host" bind:clientHeight={filterBarHeight}>
+      <DataGridFilterBar {display} {columns} />
+    </div>
   {/if}
   <div
     class="container"
     class:withFooter={showFooter}
-    class:withFilterBar={showFilterBar}
+    style:top={showFilterBar ? `${filterBarHeight}px` : null}
     class:data-grid-focused={isGridFocused}
     bind:clientWidth={containerWidth}
     bind:clientHeight={containerHeight}
@@ -2446,7 +2451,7 @@
         on:mouseup={handleGridMouseUp}
       >
         <thead>
-          <tr>
+          <tr style:height={$minimalMode ? `${rowHeight}px` : null}>
             <td
               class="header-cell"
               data-row="header"
@@ -2459,7 +2464,7 @@
                   on:click={() => collapsedLeftColumnStore.update(x => !x)}
                 />
               {/if}
-              {#if $minimalMode && display?.filterable && !(display.filterCount > 0)}
+              {#if $minimalMode && display?.filterable && !showFilterBar && !(display.filterCount > 0)}
                 <InlineButton
                   on:click={() => (showFilterRow = !showFilterRow)}
                   square
@@ -2473,6 +2478,9 @@
             {#each visibleRealColumns as col (col.uniqueName)}
               <td
                 class="header-cell"
+                class:columnSelected={selectedCells.some(
+                  ([row, column]) => row == 'header' && (column == col.colIndex || column == 'header')
+                )}
                 data-row="header"
                 data-col={col.colIndex}
                 style={`width:${col.width}px; min-width:${col.width}px; max-width:${col.width}px${col.stickyLeft != null ? `; position:sticky; left:${col.stickyLeft}px; z-index:5` : ''}`}
@@ -2639,7 +2647,7 @@
     </div>
 
     {#if !isDynamicStructure && isLoadedAll && grider?.rowCount == 0}
-      <div class="no-rows-info" style={`top:${(filterRowVisible ? 2 : 1) * rowHeight + 48}px`}>
+      <div class="no-rows-info" style={`top:${(filterRowVisible ? 2 : 1) * rowHeight}px`}>
         <div class="no-rows-icon">
           <FontIcon icon={display.filterCount > 0 ? 'mdi mdi-filter-remove-outline' : 'mdi mdi-table-off'} />
         </div>
@@ -2832,11 +2840,25 @@
   .container.withFooter {
     bottom: 30px;
   }
-  .container.withFilterBar {
-    top: 40px;
+  .filter-bar-host {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 7;
+  }
+  /* selected column: its header is highlighted too */
+  .header-cell.columnSelected {
+    background-color: var(--theme-formbutton-background);
+    color: var(--theme-formbutton-foreground);
+  }
+  .header-cell.columnSelected :global(.data-type),
+  .header-cell.columnSelected :global(.sort-toggle) {
+    color: color-mix(in srgb, var(--theme-formbutton-foreground) 75%, transparent);
   }
   :global(.minimal-mode) .header-cell[data-row='header'] {
-    border-bottom: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, currentColor 22%, transparent);
+    vertical-align: middle;
   }
   .grid-footer {
     position: absolute;
@@ -2961,10 +2983,12 @@
     position: absolute;
     left: 0;
     right: 0;
+    bottom: 20px;
     z-index: 6;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     pointer-events: none;
   }

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { safeJsonParse } from 'dbgate-tools';
   import _ from 'lodash';
   import SelectField from '../forms/SelectField.svelte';
@@ -23,7 +24,7 @@
 
   <div class="value-section">
     <div class="colnamewrap">
-      <div class="colname">Value</div>
+      <div class="colname">{_tval('Value')}</div>
       <SelectField
         isNative
         value={display}

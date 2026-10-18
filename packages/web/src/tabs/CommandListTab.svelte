@@ -21,7 +21,7 @@
 
 <div class="wrapper">
   <div class="flex">
-    <SearchInput placeholder="Search in commands (by category, name, shortcut or id)" bind:value={filter} />
+    <SearchInput placeholder={_tval('Search in commands (by category, name, shortcut or id)')} bind:value={filter} />
     <CloseSearchButton bind:filter showDisabled />
   </div>
 

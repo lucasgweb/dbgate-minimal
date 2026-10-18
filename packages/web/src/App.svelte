@@ -30,8 +30,6 @@
   import { initializeAppUpdates } from './utility/appUpdate';
   import { _t, getCurrentTranslations, saveSelectedLanguageToCache } from './translations';
   import { installCloudListeners } from './utility/cloudListeners';
-  import { showModal } from './modals/modalTools';
-  import UsageAnalyticsConsentModal from './modals/UsageAnalyticsConsentModal.svelte';
   import {
     getUsageAnalyticsConsent,
     flushUsageAnalytics,
@@ -124,13 +122,7 @@
 
   $: if (loadedPlugins && !usageAnalyticsStartupHandled) {
     usageAnalyticsStartupHandled = true;
-    const consent = getUsageAnalyticsConsent();
-    if (consent === null) {
-      showModal(UsageAnalyticsConsentModal, { onConsent: handleUsageAnalyticsConsent });
-    } else {
-      refreshPublicCloudFiles();
-      if (consent) trackUsage({ feature: 'application', action: 'start' });
-    }
+    if (getUsageAnalyticsConsent()) trackUsage({ feature: 'application', action: 'start' });
   }
 </script>
 

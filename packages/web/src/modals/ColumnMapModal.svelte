@@ -11,7 +11,7 @@
   import ModalBase from './ModalBase.svelte';
   import { closeCurrentModal } from './modalTools';
   import _ from 'lodash';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   export let header = _t('columnMapModal.configureColumns', { defaultMessage: 'Configure columns' });
   export let onConfirm;
@@ -158,7 +158,7 @@
           onConfirm(!value || value.length == 0 || !differentFromReset ? null : value);
         }}
       />
-      <FormStyledButton type="button" value="Close" on:click={closeCurrentModal} />
+      <FormStyledButton type="button" value={_tval('Close')} on:click={closeCurrentModal} />
       <FormStyledButton
         type="button"
         value={_t('columnMapModal.addColumn', { defaultMessage: 'Add column' })}

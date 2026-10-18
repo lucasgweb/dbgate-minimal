@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { createEventDispatcher } from 'svelte';
   import FontIcon from '../icons/FontIcon.svelte';
   import InlineButton from '../buttons/InlineButton.svelte';
@@ -18,7 +19,7 @@
   </div>
   <div class="mr-2">
     <InlineButton on:click={() => dispatch('close')}>
-      <FontIcon icon="icon close" /> Close
+      <FontIcon icon="icon close" /> {_tval('Close')}
     </InlineButton>
   </div>
 </div>

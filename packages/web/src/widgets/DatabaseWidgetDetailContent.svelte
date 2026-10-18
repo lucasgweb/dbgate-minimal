@@ -13,7 +13,7 @@
   import RestApiContentWidget from './RestApiContentWidget.svelte';
   import _ from 'lodash';
   import FocusedConnectionInfoWidget from './FocusedConnectionInfoWidget.svelte';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import FormStyledButton from '../buttons/FormStyledButton.svelte';
 
   export let domSqlObjectList = null;
@@ -84,7 +84,7 @@
   <WidgetsInnerContainer>
     <FocusedConnectionInfoWidget {conid} {database} connection={$connection} />
 
-    <ErrorInfo message="Database not selected" icon="img alert" />
+    <ErrorInfo message={_tval('Database not selected')} icon="img alert" />
   </WidgetsInnerContainer>
 </WidgetColumnBarItem>
 

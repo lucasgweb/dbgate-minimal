@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import _ from 'lodash';
   import ErrorInfo from '../elements/ErrorInfo.svelte';
 
@@ -28,7 +29,7 @@
     <img src={picture} />
   </div>
 {:else}
-  <ErrorInfo message="Error showing picture" alignTop />
+  <ErrorInfo message={_tval('Error showing picture')} alignTop />
 {/if}
 
 <style>

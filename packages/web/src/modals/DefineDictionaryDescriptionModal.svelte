@@ -21,7 +21,7 @@
   import { currentDatabase } from '../stores';
   import { filterAppsForDatabase } from '../utility/appTools';
   import { apiCall } from '../utility/api';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   export let conid;
   export let database;
@@ -93,7 +93,7 @@
 
     <FormTextField name="delimiter" label={_t('defineDictionaryDescriptionModal.delimiter', { defaultMessage: 'Delimiter' })} />
 
-    <!-- <FormCheckboxField name="useForAllDatabases" label="Use for all databases" /> -->
+    <!-- <FormCheckboxField name="useForAllDatabases" label={_tval('Use for all databases')} /> -->
 
     <svelte:fragment slot="footer">
       <FormSubmit

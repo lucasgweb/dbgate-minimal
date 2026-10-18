@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { createGridCache, createGridConfig, FreeTableGridDisplay } from 'dbgate-datalib';
   import { writable } from 'svelte/store';
 
@@ -41,7 +42,7 @@
       isLoading = false;
       // errorMessage = (err && err.response && err.response.data && err.response.data.error) || 'Loading failed';
       // TODO API
-      errorMessage = 'Loading failed';
+      errorMessage = _tval('Loading failed');
       console.error(err.response);
     }
   };
@@ -52,7 +53,7 @@
 </script>
 
 {#if isLoading}
-  <LoadingInfo wrapper message="Loading data" />
+  <LoadingInfo wrapper message={_tval('Loading data')} />
 {:else if errorMessage}
   <ErrorInfo message={errorMessage} />
 {:else if grider}

@@ -210,6 +210,8 @@ function buildMenu(disableAll = false) {
 ipcMain.on('update-commands', async (event, arg) => {
   const parsed = JSON.parse(arg);
   commands = parsed.commands;
+  // commands can arrive before the menu is built at startup; the menu is built from them later
+  if (!mainMenu) return;
   const isModalOpened = parsed.isModalOpened;
   const dbgatePage = parsed.dbgatePage;
   for (const key of Object.keys(commands)) {
@@ -274,15 +276,7 @@ ipcMain.on('app-started', async (event, arg) => {
   if (initialConfig['winIsMaximized']) {
     mainWindow.webContents.send('setIsMaximized', true);
   }
-  if (autoUpdater.isUpdaterActive()) {
-    mainWindow.webContents.send('setAppUpdaterActive');
-  }
-  if (!process.env.DEVMODE) {
-    if (settingsJson['app.autoUpdateMode'] != 'skip') {
-      autoUpdater.autoDownload = settingsJson['app.autoUpdateMode'] == 'download';
-      autoUpdater.checkForUpdates();
-    }
-  }
+  // this fork does not use the official DbGate update channel: no update checks, no update UI
 
   if (initialConfig['winZoomLevel'] != null) {
     mainWindow.webContents.zoomLevel = initialConfig['winZoomLevel'];

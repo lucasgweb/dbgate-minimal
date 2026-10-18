@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { minimalMode } from '../stores';
   import ShowFormButton from '../formview/ShowFormButton.svelte';
   import FontIcon from '../icons/FontIcon.svelte';
 
@@ -21,7 +22,8 @@
 >
   {rowIndex + 1}
 
-  {#if mouseIn && onShowForm}
+  <!-- minimal mode: no form button over the row number, it would block selecting the row -->
+  {#if mouseIn && onShowForm && !$minimalMode}
     <ShowFormButton on:click={onShowForm} />
   {/if}
   {#if extraIcon}

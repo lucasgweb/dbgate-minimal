@@ -11,6 +11,7 @@
 </script>
 
 <script lang="ts">
+  import { _tval } from '../translations';
   import { createFreeTableModel } from 'dbgate-datalib';
 
   import _ from 'lodash';
@@ -76,11 +77,11 @@
 </script>
 
 <SearchBoxWrapper {filter}>
-  <SearchInput placeholder="Search archive files" bind:value={filter} />
+  <SearchInput placeholder={_tval('Search archive files')} bind:value={filter} />
 
   <CloseSearchButton bind:filter />
   <DropDownButton icon="icon plus-thick" menu={createAddMenu} />
-  <InlineButton on:click={handleRefreshFiles} title="Refresh files of selected archive folder">
+  <InlineButton on:click={handleRefreshFiles} title={_tval('Refresh files of selected archive folder')}>
     <FontIcon icon="icon refresh" />
   </InlineButton>
 </SearchBoxWrapper>

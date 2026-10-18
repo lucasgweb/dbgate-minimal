@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import _ from 'lodash';
   import TextField from '../forms/TextField.svelte';
   import FormFieldTemplateLarge from '../forms/FormFieldTemplateLarge.svelte';
@@ -52,7 +53,7 @@
               }
             }}
             disabled={!onChangeItem}
-            placeholder="Leave empty for no expiration"
+            placeholder={_tval('Leave empty for no expiration')}
           />
         {/key}
       </FormFieldTemplateLarge>

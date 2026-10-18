@@ -596,7 +596,7 @@
   >
     {#each groupedTabs as tabGroup}
       <div class="db-wrapper">
-        {#if !$lockedDatabaseMode && !$minimalMode}
+        {#if !$lockedDatabaseMode}
           <div
             class="db-name"
             class:selected={$draggingDbGroup
@@ -716,8 +716,21 @@
         </div>
       </div>
     {/each}
+    {#if $minimalMode}
+      <!-- minimal mode: new tab button right after the last tab (like Beekeeper) -->
+      <div class="inline-add">
+        <div
+          class="inline-add-button"
+          on:click={() => showModal(NewObjectModal, { multiTabIndex })}
+          title={_t('tabs.newQuery', { defaultMessage: 'New query' })}
+          data-testid="TabsPanel_buttonNewObjectInline"
+        >
+          <FontIcon icon="icon add" />
+        </div>
+      </div>
+    {/if}
   </div>
-  <div class="icons-wrapper">
+  <div class="icons-wrapper" class:hidden={$minimalMode && !(allowSplitTab && isProApp())}>
     {#if allowSplitTab && isProApp()}
       <div
         class="icon-button"
@@ -731,6 +744,7 @@
 
     <div
       class="icon-button"
+      class:hidden={$minimalMode}
       on:click={() => showModal(NewObjectModal, { multiTabIndex })}
       title={_t('tabs.newQuery', { defaultMessage: 'New query' })}
       data-testid="TabsPanel_buttonNewObject"
@@ -765,6 +779,39 @@
   }
   .icon-button:hover {
     color: var(--theme-tabs-panel-active-foreground);
+  }
+  .hidden {
+    display: none;
+  }
+  /* minimal mode: new tab button inline after the last tab, stays visible when tabs scroll */
+  :global(.minimal-mode) .tabs {
+    right: 0;
+  }
+  .inline-add {
+    position: sticky;
+    right: 0;
+    flex-shrink: 0;
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    height: var(--dim-tabs-height);
+    padding: 0 8px 0 4px;
+    background-color: var(--theme-tabs-panel-background);
+  }
+  .inline-add-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 22px;
+    color: var(--theme-icon-blue);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  .inline-add-button:hover {
+    background-color: var(--theme-inlinebutton-circle-hover-background);
   }
   .tabs {
     height: var(--dim-tabs-panel-height);
@@ -818,6 +865,52 @@
     background-color: var(--theme-tabs-panel-active-background);
     color: var(--theme-tabs-panel-active-foreground);
     border-top: var(--theme-tabs-panel-active-border-db);
+  }
+  /* minimal mode: database name as a light header of its tab group, with an underline spanning the group */
+  :global(.minimal-mode) .db-name {
+    align-items: center;
+    height: var(--dim-tabs-db-row-height);
+    box-sizing: border-box;
+    padding: 0 12px;
+    margin-right: 2px;
+    border: none;
+    border-bottom: 2px solid var(--theme-tabs-panel-item-background);
+    background-color: transparent;
+    color: var(--theme-generic-font-grayed);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  :global(.minimal-mode) .db-name:hover {
+    color: var(--theme-generic-font);
+  }
+  :global(.minimal-mode) .db-name.selected {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid var(--theme-input-border-focus-color);
+    color: var(--theme-generic-font);
+  }
+  :global(.minimal-mode) .db-name-inner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  :global(.minimal-mode) .db-name-inner {
+    gap: 6px;
+  }
+  :global(.minimal-mode) .db-name-inner :global(.mdi) {
+    font-size: 14px;
+  }
+  :global(.minimal-mode) .db-name.selected .db-name-inner :global(.mdi) {
+    color: var(--theme-icon-blue);
+  }
+  :global(.minimal-mode) .db-name .tab-group-buttons {
+    display: none;
   }
   .file-tab-item {
     background-color: var(--theme-tabs-panel-item-background);

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import _ from 'lodash';
   import InlineButton from '../buttons/InlineButton.svelte';
   import SearchInput from '../elements/SearchInput.svelte';
@@ -50,7 +50,7 @@
 
 <SearchBoxWrapper {filter}>
   <SearchInput
-    placeholder="Search connection or database"
+    placeholder={_tval('Search connection or database')}
     bind:value={filter}
     bind:this={domFilter}
     onFocusFilteredList={() => {

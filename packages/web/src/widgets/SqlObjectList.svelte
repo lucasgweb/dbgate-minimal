@@ -56,7 +56,7 @@
   import FocusedConnectionInfoWidget from './FocusedConnectionInfoWidget.svelte';
   import SubProcedureParamList from '../appobj/SubProcedureParamList.svelte';
   import SubProcedureLineList from '../appobj/SubProcedureLineList.svelte';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   export let conid;
   export let database;
@@ -344,8 +344,9 @@
   >
     {#if (isLoadingStructure && $objects) || !$objects}
       <LoadingInfo
-        message={$status?.feedback?.analysingMessage ||
-          _t('sqlObject.loadingStructure', { defaultMessage: 'Loading database structure' })}
+        message={$status?.feedback?.analysingMessage
+          ? _tval($status.feedback.analysingMessage.replace(/^DBGM-\d+\s*/, ''))
+          : _t('sqlObject.loadingStructure', { defaultMessage: 'Loading database structure' })}
       />
     {:else}
       <AppObjectListHandler

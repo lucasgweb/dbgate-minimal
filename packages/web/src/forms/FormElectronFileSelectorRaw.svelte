@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import getElectron from '../utility/getElectron';
 
   import InlineButton from '../buttons/InlineButton.svelte';
@@ -40,5 +41,5 @@
 
 <div class="flex">
   <TextField {...$$restProps} value={$values[name] || defaultFileName} on:click={handleBrowse} readOnly {disabled} />
-  <InlineButton on:click={handleBrowse} {disabled} useBorder>Browse</InlineButton>
+  <InlineButton on:click={handleBrowse} {disabled} useBorder>{_tval('Browse')}</InlineButton>
 </div>

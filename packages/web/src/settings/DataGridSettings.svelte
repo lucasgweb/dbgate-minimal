@@ -2,7 +2,7 @@
   import FormCheckboxField from '../forms/FormCheckboxField.svelte';
   import FormSelectField from '../forms/FormSelectField.svelte';
   import FormTextField from '../forms/FormTextField.svelte';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import { isProApp } from '../utility/proTools';
 </script>
 
@@ -23,7 +23,7 @@
       data-testid="DataGridSettings_showHintColumns"
     />
   {/if}
-  <!-- <FormCheckboxField name="dataGrid.showHintColumns" label="Show foreign key hints" defaultValue={true} /> -->
+  <!-- <FormCheckboxField name="dataGrid.showHintColumns" label={_tval('Show foreign key hints')} defaultValue={true} /> -->
 
   <FormSelectField
     label={_t('settings.dataGrid.thousandsSeparator', { defaultMessage: 'Thousands separator for numbers' })}

@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
   import registerCommand from '../commands/registerCommand';
-  import { __t } from '../translations';
+  import { __t, _tval } from '../translations';
   import createActivator, { getActiveComponent } from '../utility/createActivator';
 
   const getCurrentEditor = () => getActiveComponent('NewRedisKeyTab');
@@ -267,7 +267,7 @@
                 ...item,
                 records: [...(item.records || []), {}],
               };
-            }}>Add field</ToolStripButton
+            }}>{_tval('Add field')}</ToolStripButton
           >
         {/if}
       </svelte:fragment>

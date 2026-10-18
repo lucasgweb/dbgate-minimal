@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import { getActiveComponent } from '../utility/createActivator';
   import registerCommand from '../commands/registerCommand';
-  import { _t, __t } from '../translations';
+  import { _t, __t, _tval } from '../translations';
   const getCurrentEditor = () => getActiveComponent('SqlObjectTab');
 
   registerCommand({
@@ -78,7 +78,7 @@
 
 <ToolStripContainer>
   {#await applyScriptTemplate(scriptTemplate ?? defaultScriptTemplate, $extensions, appObjectData, $dbinfo, $connection)}
-    <LoadingInfo message="Loading script..." />
+    <LoadingInfo message={_tval('Loading script...')} />
   {:then sql}
     <AceEditor
       value={sql || ''}

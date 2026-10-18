@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { getContext } from 'svelte';
   import LoadingInfo from '../elements/LoadingInfo.svelte';
   import Markdown from '../elements/Markdown.svelte';
@@ -22,7 +23,7 @@
 
 {#if $editorState.isLoading}
   <div>
-    <LoadingInfo message="Loading markdown page" />
+    <LoadingInfo message={_tval('Loading markdown page')} />
   </div>
 {:else}
   <div>

@@ -1,4 +1,5 @@
 <script>
+  import { _tval } from '../translations';
   import _ from 'lodash';
   import Link from '../elements/Link.svelte';
 
@@ -72,9 +73,9 @@
 {#if isExpanded}
   {#if checkedObjectsStore}
     <div class="ml-2">
-      <Link onClick={() => handleCheckAll(true)}>Check all</Link>
+      <Link onClick={() => handleCheckAll(true)}>{_tval('Check all')}</Link>
       |
-      <Link onClick={() => handleCheckAll(false)}>Uncheck all</Link>
+      <Link onClick={() => handleCheckAll(false)}>{_tval('Uncheck all')}</Link>
     </div>
   {/if}
 

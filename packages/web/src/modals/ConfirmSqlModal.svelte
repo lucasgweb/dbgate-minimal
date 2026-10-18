@@ -71,6 +71,13 @@
 
   // $: console.log('recreates', recreates);
 
+  // statement counts shown above the script, e.g. "2 × DELETE"
+  const STATEMENT_KINDS = ['DELETE', 'UPDATE', 'INSERT', 'CREATE', 'ALTER', 'DROP', 'TRUNCATE'];
+  $: statementSummary = STATEMENT_KINDS.map(kind => ({
+    kind,
+    count: (currentScript?.match(new RegExp('^\\s*' + kind + '\\b', 'gim')) || []).length,
+  })).filter(x => x.count > 0);
+
   $: currentScript = $values.deleteReferencesCascade
     ? [
         ...deleteCascadesScripts
@@ -84,6 +91,14 @@
 <FormProviderCore {values}>
   <ModalBase {...$$restProps}>
     <div slot="header">{_t('common.saveChanges', { defaultMessage: 'Save changes' })}</div>
+
+    {#if statementSummary.length > 0}
+      <div class="summary">
+        {#each statementSummary as item (item.kind)}
+          <span class={`statement statement-${item.kind.toLowerCase()}`}>{item.count} × {item.kind}</span>
+        {/each}
+      </div>
+    {/if}
 
     <div class="editor">
       <SqlEditor {engine} value={currentScript} readOnly />
@@ -172,24 +187,10 @@
       </div>
     {/if}
 
-    <div slot="footer">
-      <FormSubmit
-        value={_t('common.ok', { defaultMessage: 'OK' })}
-        disabled={isRecreated && !$values.allowRecreate}
-        on:click={e => {
-          closeCurrentModal();
-          onConfirm(currentScript, $values);
-        }}
-        data-testid="ConfirmSqlModal_okButton"
-      />
+    <div slot="footer" class="footer-buttons">
       <FormStyledButton
         type="button"
-        value={_t('common.close', { defaultMessage: 'Close' })}
-        on:click={closeCurrentModal}
-        data-testid="ConfirmSqlModal_closeButton"
-      />
-      <FormStyledButton
-        type="button"
+        outline
         value={_t('common.openScript', { defaultMessage: 'Open script' })}
         on:click={() => {
           newQuery({
@@ -200,15 +201,80 @@
         }}
         data-testid="ConfirmSqlModal_openScriptButton"
       />
+      <div class="footer-right">
+        <FormStyledButton
+          type="button"
+          outline
+          value={_t('common.cancel', { defaultMessage: 'Cancel' })}
+          on:click={closeCurrentModal}
+          data-testid="ConfirmSqlModal_closeButton"
+        />
+        <FormSubmit
+          value={_t('sqlModal.execute', { defaultMessage: 'Execute' })}
+          disabled={isRecreated && !$values.allowRecreate}
+          on:click={e => {
+            closeCurrentModal();
+            onConfirm(currentScript, $values);
+          }}
+          data-testid="ConfirmSqlModal_okButton"
+        />
+      </div>
     </div>
   </ModalBase>
 </FormProviderCore>
 
 <style>
+  .summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .statement {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--theme-new-object-button-background);
+    border: var(--theme-modal-border);
+  }
+
+  .statement-delete,
+  .statement-drop,
+  .statement-truncate {
+    color: var(--theme-generic-font-error);
+  }
+
+  .statement-update,
+  .statement-alter {
+    color: var(--theme-icon-gold);
+  }
+
+  .statement-insert,
+  .statement-create {
+    color: var(--theme-generic-font-success);
+  }
+
   .editor {
     position: relative;
     height: 30vh;
-    width: 40vw;
+    width: 100%;
+    box-sizing: border-box;
+    border: var(--theme-modal-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .footer-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 4px;
   }
 
   .form-margin {

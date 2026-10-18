@@ -1,10 +1,15 @@
+html.minimal-mode {
+  --dim-tabs-db-row-height: 28px;
+}
+
 :root {
   --dim-widget-icon-size: 50px;
   --dim-statusbar-height: 24px;
   --dim-left-panel-width: 300px;
   --dim-right-panel-width: 300px;
   --dim-tabs-height: 36px;
-  --dim-tabs-panel-height: calc( var(--dim-visible-tabs-databases) * 20px + var(--dim-tabs-height) );
+  --dim-tabs-db-row-height: 20px;
+  --dim-tabs-panel-height: calc( var(--dim-visible-tabs-databases) * var(--dim-tabs-db-row-height) + var(--dim-tabs-height) );
   --dim-splitter-thickness: 4px;
 
   --dim-visible-left-panel: 1; /* set from JS */

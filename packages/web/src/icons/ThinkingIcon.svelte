@@ -1,5 +1,9 @@
+<script lang="ts">
+  import { _tval } from '../translations';
+</script>
+
 <!-- Chatbot “thinking” indicator -->
-<div class="typing-indicator" aria-label="Chatbot is thinking">
+<div class="typing-indicator" aria-label={_tval('Chatbot is thinking')}>
   <span></span><span></span><span></span>
 </div>
 

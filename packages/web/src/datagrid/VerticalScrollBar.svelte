@@ -50,6 +50,6 @@
     position: absolute;
     right: 0px;
     width: 20px;
-    bottom: 16px;
+    bottom: 18px;
   }
 </style>

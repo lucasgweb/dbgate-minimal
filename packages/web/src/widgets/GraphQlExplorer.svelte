@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { tick } from 'svelte';
   import GraphQlExplorerNode from './GraphQlExplorerNode.svelte';
   import { apiCall } from '../utility/api';
@@ -756,7 +757,7 @@ ${typeRefSelection}
     {#if loadError}
       <div class="explorer-empty">{loadError}</div>
     {:else if loadingRoot}
-      <div class="explorer-empty">Loading schema...</div>
+      <div class="explorer-empty">{_tval('Loading schema...')}</div>
     {:else if rootFields.length > 0}
       {#each rootFields as field}
         <GraphQlExplorerNode
@@ -772,7 +773,7 @@ ${typeRefSelection}
         />
       {/each}
     {:else}
-      <div class="explorer-empty">No GraphQL operations available</div>
+      <div class="explorer-empty">{_tval('No GraphQL operations available')}</div>
     {/if}
   </div>
 </div>

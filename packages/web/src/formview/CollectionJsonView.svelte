@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import { getActiveComponent } from '../utility/createActivator';
   import registerCommand from '../commands/registerCommand';
-  import { __t } from '../translations';
+  import { __t, _tval } from '../translations';
   const getCurrentEditor = () => getActiveComponent('CollectionJsonView');
 
   registerCommand({
@@ -114,7 +114,7 @@
 </div>
 
 {#if isLoading}
-  <LoadingInfo wrapper message="Loading data" />
+  <LoadingInfo wrapper message={_tval('Loading data')} />
 {/if}
 
 <style>

@@ -126,8 +126,14 @@ export function __t(key: string, options: TranslateOptions): DefferedTranslation
   };
 }
 
+/** Translates a plain English text (e.g. a label defined by a plugin) using the "text.<text>" key, if it exists. */
+export function translatePlainText(text: string): string {
+  if (!text) return text;
+  return getTranslation(`text.${text}`, text, getSelectedLanguage());
+}
+
 export function _tval(x: any | DefferedTranslationResult): string {
-  if (typeof x === 'string') return x;
+  if (typeof x === 'string') return translatePlainText(x);
   if (typeof x?._transKey === 'string') {
     return _t(x._transKey, x._transOptions);
   }

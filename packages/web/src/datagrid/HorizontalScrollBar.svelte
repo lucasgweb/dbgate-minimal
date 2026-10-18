@@ -57,7 +57,7 @@
   .main {
     overflow-x: scroll;
     overflow-y: hidden;
-    height: 16px;
+    height: 18px;
     position: absolute;
     bottom: 0;
     right: 0;
@@ -65,6 +65,6 @@
   }
 
   .content {
-    height: 16px;
+    height: 18px;
   }
 </style>

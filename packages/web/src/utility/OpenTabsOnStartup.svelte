@@ -1,14 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { openFavorite } from '../appobj/FavoriteFileAppObject.svelte';
-  import runCommand from '../commands/runCommand';
   import ErrorMessageModal from '../modals/ErrorMessageModal.svelte';
   import { showModal } from '../modals/modalTools';
-  import { commandsCustomized, openedTabs } from '../stores';
+  import { openedTabs } from '../stores';
 
-  import { getConfig, getConnectionList, useFavorites } from './metadataLoaders';
-  import openNewTab from './openNewTab';
-  import { showSnackbarInfo } from './snackbar';
+  import { getConfig, useFavorites } from './metadataLoaders';
   import { trackFavorite } from './favoriteUsage';
   import { trackUsage } from './usageAnalytics';
 
@@ -59,24 +56,7 @@
       }
     }
 
-    if (
-      !$openedTabs.find(x => x.closedTime == null) &&
-      !(await getConnectionList()).length &&
-      $commandsCustomized['new.connection']?.enabled
-    ) {
-      openNewTab({
-        title: 'New Connection',
-        icon: 'img connection',
-        tabComponent: 'ConnectionTab',
-      });
-    }
-
     const config = await getConfig();
-    const appVersion = localStorage.getItem('appVersion');
-    if (appVersion && appVersion != config.version) {
-      runCommand('tabs.changelog');
-      showSnackbarInfo(`DbGate upgraded from version ${appVersion} to version ${config.version}`);
-    }
     localStorage.setItem('appVersion', config.version);
   }
 </script>

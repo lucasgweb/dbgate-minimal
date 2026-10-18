@@ -9,7 +9,7 @@
 
   import ModalBase from './ModalBase.svelte';
   import { closeCurrentModal, showModal } from './modalTools';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   export let onSave;
   export let json;
@@ -59,7 +59,7 @@
       />
       <FormStyledButton
         type="button"
-        value="Close"
+        value={_tval('Close')}
         on:click={closeCurrentModal}
         data-testid="EditJsonModal_closeButton"
       />

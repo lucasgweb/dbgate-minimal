@@ -190,8 +190,8 @@ body .flex > * > .outer.useBorder {
 }
 
 body *::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
+  height: 18px;
+  width: 18px;
 }
 body *::-webkit-scrollbar-track {
   background: var(--theme-scrollbar-background);
@@ -202,7 +202,7 @@ body *::-webkit-scrollbar-corner {
 
 body *::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  border: 2px solid transparent;
+  border: 3px solid transparent;
   background: var(--theme-scrollbar-thumb-background) padding-box;
 }
 

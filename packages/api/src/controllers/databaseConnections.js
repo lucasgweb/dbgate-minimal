@@ -3,6 +3,8 @@ const runners = require('./runners');
 const archive = require('./archive');
 const socket = require('../utility/socket');
 const { fork } = require('child_process');
+const AsyncLock = require('async-lock');
+const openLock = new AsyncLock();
 const {
   DatabaseAnalyser,
   computeDbDiffRows,
@@ -219,6 +221,12 @@ module.exports = {
   },
 
   async ensureOpened(conid, database) {
+    // concurrent requests (status, structure, ping...) must not start several processes for the same database;
+    // a duplicate that exits later would close the working connection ("Not connected")
+    return openLock.acquire(`${conid}/${database}`, () => this.ensureOpenedCore(conid, database));
+  },
+
+  async ensureOpenedCore(conid, database) {
     const existing = this.opened.find(x => x.conid == conid && x.database == database);
     if (existing) return existing;
     const connection = await connections.getCore({ conid });
@@ -281,13 +289,14 @@ module.exports = {
 
       this[funcName](conid, database, message);
     });
+    // close only when this process is still the registered one for the database
     subprocess.on('exit', () => {
-      if (newOpened.disconnected) return;
+      if (newOpened.disconnected || !this.opened.includes(newOpened)) return;
       this.close(conid, database, false);
     });
     subprocess.on('error', err => {
       logger.error(extractErrorLogData(err), 'DBGM-00114 Error in database connection subprocess');
-      if (newOpened.disconnected) return;
+      if (newOpened.disconnected || !this.opened.includes(newOpened)) return;
       this.close(conid, database, false);
     });
 
@@ -632,21 +641,29 @@ module.exports = {
     await testConnectionPermission(conid, req);
     const existing = this.opened.find(x => x.conid == conid && x.database == database);
     if (existing) {
+      // a client asking for the status is using the database: keep the connection alive
+      try {
+        existing.subprocess.send({ msgtype: 'ping' });
+      } catch (err) {}
       return {
         ...existing.status,
         analysedTime: existing.analysedTime,
       };
     }
     const lastClosed = this.closed[`${conid}/${database}`];
-    if (lastClosed) {
+    if (!lastClosed || lastClosed.closedWhileOk) {
+      // closed for inactivity (or not opened yet): reconnect in background instead of reporting "Not connected"
+      this.ensureOpened(conid, database).catch(err =>
+        logger.error(extractErrorLogData(err), 'DBGM-00316 Error reopening database connection')
+      );
       return {
-        ...lastClosed.status,
-        analysedTime: lastClosed.analysedTime,
+        name: 'pending',
+        analysedTime: lastClosed?.analysedTime,
       };
     }
     return {
-      name: 'error',
-      message: 'Not connected',
+      ...lastClosed.status,
+      analysedTime: lastClosed.analysedTime,
     };
   },
 
@@ -735,6 +752,8 @@ module.exports = {
           ...existing.status,
           name: 'error',
         },
+        // the connection was working when it was closed (e.g. idle timeout), so it can be reopened on demand
+        closedWhileOk: existing.status?.name == 'ok',
         structure: existing.structure,
       };
       socket.emitChanged(`database-status-changed`, { conid, database });

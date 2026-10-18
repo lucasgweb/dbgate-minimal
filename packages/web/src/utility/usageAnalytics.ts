@@ -103,7 +103,7 @@ export function getUsageAnalyticsConsent(): boolean | null {
   } catch {
     // Fall back to the in-memory choice when storage is unavailable.
   }
-  return memoryConsent;
+  return memoryConsent ?? false;
 }
 
 export function setUsageAnalyticsConsent(consent: boolean): void {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from './translations';
   import { onMount } from 'svelte';
   import { useConfig } from './utility/metadataLoaders';
   import ErrorInfo from './elements/ErrorInfo.svelte';
@@ -13,7 +14,7 @@
 </script>
 
 <SpecialPageLayout>
-  <div class="heading">Configuration error</div>
+  <div class="heading">{_tval('Configuration error')}</div>
   {#if $config?.checkedLicense?.status == 'error'}
     <ErrorInfo
       message={`Invalid license. Please contact sales@dbgate.io for more details. ${$config?.checkedLicense?.error || ''}`}
@@ -23,9 +24,9 @@
   {:else if error}
     <ErrorInfo message={error} />
   {:else}
-    <ErrorInfo message="No error found, try to open app again" />
+    <ErrorInfo message={_tval('No error found, try to open app again')} />
     <div class="m-2">
-      <Link onClick={() => internalRedirectTo('/')}>Back to app</Link>
+      <Link onClick={() => internalRedirectTo('/')}>{_tval('Back to app')}</Link>
     </div>
   {/if}
 </SpecialPageLayout>

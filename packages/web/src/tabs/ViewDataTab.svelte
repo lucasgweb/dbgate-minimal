@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import { getActiveComponent } from '../utility/createActivator';
   import registerCommand from '../commands/registerCommand';
-  import { __t } from '../translations';
+  import { __t, _tval } from '../translations';
 
   const getCurrentEditor = () => getActiveComponent('ViewDataTab');
 
@@ -235,7 +235,7 @@
               defaultActionId: 'openStructure',
             },
           });
-        }}>Structure</ToolStripButton
+        }}>{_tval('Structure')}</ToolStripButton
       >
 
       <ToolStripButton

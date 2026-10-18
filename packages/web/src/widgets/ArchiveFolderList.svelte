@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import _ from 'lodash';
 
   import AppObjectList from '../appobj/AppObjectList.svelte';
@@ -31,7 +32,7 @@
 </script>
 
 <SearchBoxWrapper {filter}>
-  <SearchInput placeholder="Search archive folders" bind:value={filter} />
+  <SearchInput placeholder={_tval('Search archive folders')} bind:value={filter} />
   <CloseSearchButton bind:filter />
 
   {#if isProApp()}
@@ -49,13 +50,13 @@
   {/if}
 
   <!-- {#if electron}
-    <InlineButton on:click={handleOpenElectronFile} title="Add file" data-testid="ArchiveFolderList_uploadZipFile">
+    <InlineButton on:click={handleOpenElectronFile} title={_tval('Add file')} data-testid="ArchiveFolderList_uploadZipFile">
       <FontIcon icon="icon plus-thick" />
     </InlineButton>
   {:else}
     <InlineButtonLabel
       on:click={() => {}}
-      title="Add file"
+      title={_tval('Add file')}
       data-testid="ArchiveFolderList_uploadZipFile"
       htmlFor="uploadZipFileButton"
     >
@@ -65,10 +66,10 @@
 
   <input type="file" id="uploadZipFileButton" hidden on:change={handleUploadedFile} /> -->
 
-  <InlineButton on:click={() => runCommand('new.archiveFolder')} title="Add new archive folder">
+  <InlineButton on:click={() => runCommand('new.archiveFolder')} title={_tval('Add new archive folder')}>
     <FontIcon icon="icon plus-thick" />
   </InlineButton>
-  <InlineButton on:click={handleRefreshFolders} title="Refresh archive folder list">
+  <InlineButton on:click={handleRefreshFolders} title={_tval('Refresh archive folder list')}>
     <FontIcon icon="icon refresh" />
   </InlineButton>
 </SearchBoxWrapper>

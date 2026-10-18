@@ -15,7 +15,7 @@
   import FormTextField from '../forms/FormTextField.svelte';
   import _ from 'lodash';
   import { apiCall } from '../utility/api';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   export let onConfirm;
   export let conid;
@@ -134,7 +134,7 @@
       })}</svelte:fragment
     >
 
-    <!-- <FormTextField name="search" label='Search' placeholder="Search" bind:value={search} /> -->
+    <!-- <FormTextField name="search" label='Search' placeholder={_tval('Search')} bind:value={search} /> -->
     <div class="largeFormMarker">
       <SearchInput placeholder={_t('common.search', { defaultMessage: 'Search' })} bind:value={search} isDebounced />
     </div>

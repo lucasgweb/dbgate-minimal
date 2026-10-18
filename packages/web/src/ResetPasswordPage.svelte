@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from './translations';
   import { writable } from 'svelte/store';
   import { onMount } from 'svelte';
   import FormPasswordField from './forms/FormPasswordField.svelte';
@@ -28,7 +29,7 @@
 
 <SpecialPageLayout>
   <FormProviderCore {values}>
-    <div class="heading">Set New Password</div>
+    <div class="heading">{_tval('Set New Password')}</div>
 
     {#if success}
       <div class="success-message">
@@ -45,7 +46,7 @@
       </div>
 
       <FormPasswordField
-        label="New Password"
+        label={_tval('New Password')}
         name="newPassword"
         autocomplete="new-password"
         saveOnInput
@@ -53,7 +54,7 @@
       />
 
       <FormPasswordField
-        label="Confirm Password"
+        label={_tval('Confirm Password')}
         name="confirmPassword"
         autocomplete="new-password"
         saveOnInput

@@ -6,6 +6,7 @@
   import {
     currentEditorFontSize,
     currentEditorTheme,
+    primaryColor,
     rightPanelWidget,
   } from '../stores';
   import { _t } from '../translations';
@@ -36,6 +37,14 @@ GROUP BY
 ORDER BY
   Artist.Name ASC
   `;
+
+  const DEFAULT_PRIMARY_COLOR = '#00a6f4';
+  const PRIMARY_COLOR_PRESETS = ['#00a6f4', '#2b7fff', '#615fff', '#ad46ff', '#f6339a', '#fb2c36', '#ff6900', '#f0b100', '#00c950', '#00bba7'];
+
+  function setPrimaryColor(value) {
+    const color = (value || '').trim();
+    if (/^#[0-9a-f]{6}$/i.test(color)) $primaryColor = color.toLowerCase();
+  }
 
   function handleSaveTheme() {
     saveThemeToLocalFile();
@@ -113,6 +122,45 @@ ORDER BY
     {/if}
   </div>
 
+  <div class="heading">{_t('settings.appearance.primaryColor', { defaultMessage: 'Primary color' })}</div>
+
+  <div class="primary-color" data-testid="ThemeSettings-primaryColor">
+    <input
+      type="color"
+      class="color-input"
+      value={$primaryColor || DEFAULT_PRIMARY_COLOR}
+      on:input={e => setPrimaryColor(e.target['value'])}
+      title={_t('settings.appearance.pickColor', { defaultMessage: 'Pick a color' })}
+    />
+    <input
+      type="text"
+      class="color-hex"
+      maxlength="7"
+      spellcheck="false"
+      value={$primaryColor || DEFAULT_PRIMARY_COLOR}
+      on:change={e => setPrimaryColor(e.target['value'])}
+    />
+    <div class="presets">
+      {#each PRIMARY_COLOR_PRESETS as preset (preset)}
+        <button
+          type="button"
+          class="preset"
+          class:selected={($primaryColor || DEFAULT_PRIMARY_COLOR) == preset}
+          style:background-color={preset}
+          title={preset}
+          on:click={() => setPrimaryColor(preset)}
+        />
+      {/each}
+    </div>
+    <FormStyledButton
+      skipWidth
+      outline
+      value={_t('settings.appearance.resetPrimaryColor', { defaultMessage: 'Restore default' })}
+      disabled={!$primaryColor}
+      on:click={() => ($primaryColor = null)}
+    />
+  </div>
+
   <div class="heading">{_t('settings.appearance.editorTheme', { defaultMessage: 'Editor theme' })}</div>
 
   <div class="flex">
@@ -180,6 +228,57 @@ ORDER BY
     margin: 5px;
     margin-left: var(--dim-large-form-margin);
     margin-top: var(--dim-large-form-margin);
+  }
+
+  .primary-color {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-left: var(--dim-large-form-margin);
+  }
+
+  .color-input {
+    width: 40px;
+    height: 40px;
+    padding: 3px;
+    border: var(--theme-input-border);
+    border-radius: 8px;
+    background: var(--theme-input-background);
+    cursor: pointer;
+  }
+  .color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 5px;
+  }
+
+  .color-hex {
+    width: 90px;
+    height: 40px;
+    box-sizing: border-box;
+    font-family: monospace;
+    text-transform: uppercase;
+  }
+
+  .presets {
+    display: flex;
+    gap: 6px;
+  }
+
+  .preset {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+  }
+  .preset.selected {
+    box-shadow: 0 0 0 2px var(--theme-generic-font);
   }
 
   .themes {

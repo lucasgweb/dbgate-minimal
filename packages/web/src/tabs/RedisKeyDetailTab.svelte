@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
   import registerCommand from '../commands/registerCommand';
-  import { __t } from '../translations';
+  import { __t, _tval } from '../translations';
   import createActivator, { getActiveComponent } from '../utility/createActivator';
 
   const getCurrentEditor = () => getActiveComponent('RedisKeyDetailTab');
@@ -441,7 +441,7 @@
 </script>
 
 {#await apiCall('database-connections/load-key-info', { conid, database, key, refreshToken })}
-  <LoadingInfo message="Loading key details" wrapper />
+  <LoadingInfo message={_tval('Loading key details')} wrapper />
 {:then keyInfo}
   {#if keyInfo?.key == key}
     {@const keyType = findSupportedRedisKeyType(keyInfo?.type) || null}
@@ -456,7 +456,7 @@
             {key}
           </div>
           <FormStyledButton
-            value="Rename Key"
+            value={_tval('Rename Key')}
             on:click={() => handleKeyRename(keyInfo)}
             data-testid="RedisKeyDetailTab_RenameKeyButton"
           />
@@ -679,17 +679,17 @@
                 },
               ]);
               showAddForm = true;
-            }}>Add field</ToolStripButton
+            }}>{_tval('Add field')}</ToolStripButton
           >
         {/if}
         <ToolStripButton icon="icon refresh" on:click={refresh}
           >{_t('common.refresh', { defaultMessage: 'Refresh' })}</ToolStripButton
         >
         {#if changeSetRedis?.changes?.length > 0}
-          <ToolStripButton icon="icon close" on:click={resetChanges}>Reset changes</ToolStripButton>
+          <ToolStripButton icon="icon close" on:click={resetChanges}>{_tval('Reset changes')}</ToolStripButton>
           <ToolStripDropDownButton
             icon="icon edit"
-            label="Changed keys"
+            label={_tval('Changed keys')}
             menu={() =>
               changeSetRedis.changes.map(item => ({
                 label: item.key,

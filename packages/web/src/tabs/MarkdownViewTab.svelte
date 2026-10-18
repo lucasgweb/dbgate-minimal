@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+  import { _tval } from '../translations';
   import { onMount } from 'svelte';
   import LoadingInfo from '../elements/LoadingInfo.svelte';
   import Markdown from '../elements/Markdown.svelte';
@@ -30,7 +31,7 @@
 </script>
 
 {#if isLoading}
-  <LoadingInfo message="Loading markdown page" />
+  <LoadingInfo message={_tval('Loading markdown page')} />
 {:else}
   <div>
     <Markdown source={text || ''} />

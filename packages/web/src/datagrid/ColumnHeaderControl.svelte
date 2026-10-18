@@ -200,6 +200,14 @@
     display: flex;
     flex-wrap: nowrap;
   }
+  :global(.minimal-mode) .header {
+    align-items: center;
+    height: 100%;
+  }
+  /* the column resize handle must keep the full header height to be grabbable */
+  :global(.minimal-mode) .header > .horizontal-split-handle {
+    align-self: stretch;
+  }
   .menu-button {
     display: flex;
   }
@@ -234,12 +242,27 @@
   :global(.minimal-mode) .label :global(.notNull) {
     font-weight: inherit;
   }
+  /* minimal mode: name and data type truncate separately; the type shrinks (and disappears) first */
+  :global(.minimal-mode) .label {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0;
+  }
+  :global(.minimal-mode) .label > :global(*) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :global(.minimal-mode) .label > :global(:first-child) {
+    flex: 0 1 auto;
+  }
   :global(.minimal-mode) .data-type {
+    flex: 0 1000 auto;
     font-size: 12px;
     font-weight: normal;
-    margin-left: 6px;
     color: var(--theme-generic-font-grayed);
-    vertical-align: baseline;
   }
   .order-index {
     font-size: 10pt;

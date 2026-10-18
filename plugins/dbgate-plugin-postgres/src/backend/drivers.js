@@ -398,6 +398,15 @@ const drivers = driverBases.map(driverBase => ({
       });
     } catch (error) {
       output.destroy();
+      // the dumper keeps the failing table and the database error in the diagnostic; show them instead of a generic text
+      const diagnostic = error?.diagnostic;
+      const cause = diagnostic?.cause ?? error?.cause;
+      const details = [diagnostic?.tableIdentity && `table ${diagnostic.tableIdentity}`, cause?.message]
+        .filter(Boolean)
+        .join(': ');
+      if (details && !String(error.message).includes(details)) {
+        error.message = `${error.message} (${details})`;
+      }
       throw error;
     } finally {
       await this.close(dbhan);
@@ -526,7 +535,8 @@ const drivers = driverBases.map(driverBase => ({
           };
     }
 
-    const client = new pg.Client(options);
+    // TCP keep-alive: idle connections are not dropped by the server or by firewalls/NAT on the way
+    const client = new pg.Client({ ...options, keepAlive: true, keepAliveInitialDelayMillis: 10000 });
     await client.connect();
 
     const dbhan = {

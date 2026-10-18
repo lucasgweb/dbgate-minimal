@@ -5,6 +5,7 @@ import {
   getCurrentConfig,
   getOpenedConnections,
   getOpenedTabs,
+  openedTabs,
 } from '../stores';
 import { apiCall, getVolatileConnections, strmid } from './api';
 import hasPermission from '../utility/hasPermission';
@@ -84,6 +85,8 @@ export function subscribeConnectionPingers() {
   pingAllOpenedDatabases();
   if (allDatabasesHandle) window.clearInterval(allDatabasesHandle);
   allDatabasesHandle = window.setInterval(() => pingAllOpenedDatabases(), 20 * 1000);
+  // tabs are restored asynchronously after a reload: ping their databases as soon as they are known
+  openedTabs.subscribe(_.debounce(() => pingAllOpenedDatabases(), 1000));
 }
 
 export function callServerPing() {

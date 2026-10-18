@@ -24,7 +24,7 @@
   import FontIcon from '../icons/FontIcon.svelte';
   import FormDropDownTextField from '../forms/FormDropDownTextField.svelte';
   import { getConnectionLabel } from 'dbgate-tools';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import FormFileInputField from '../forms/FormFileInputField.svelte';
   import FormClusterNodesField from '../forms/FormClusterNodesField.svelte';
 
@@ -305,7 +305,7 @@
 
 {#if driver?.showConnectionField('endpoint', $values, showConnectionFieldArgs)}
   <FormTextField
-    label="Endpoint"
+    label={_tval('Endpoint')}
     name="endpoint"
     disabled={isConnected || isFormReadOnly || disabledFields.includes('endpoint')}
     data-testid="ConnectionDriverFields_endpoint"
@@ -344,7 +344,7 @@
     {#if driver?.showConnectionField('port', $values, showConnectionFieldArgs)}
       <div class="col-3 mr-1">
         <FormTextField
-          label="Port"
+          label={_tval('Port')}
           name="port"
           disabled={isConnected || isFormReadOnly || disabledFields.includes('port')}
           templateProps={{ noMargin: true }}
@@ -477,7 +477,7 @@
 
 {#if driver?.showConnectionField('awsRegion', $values, showConnectionFieldArgs)}
   <FormDropDownTextField
-    label="AWS Region"
+    label={_tval('AWS Region')}
     name="awsRegion"
     data-testid="ConnectionDriverFields_awsRegion"
     menu={() => {

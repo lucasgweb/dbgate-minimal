@@ -62,7 +62,7 @@
       data-testid={arg.testId}
       defaultValue={arg.default}
       options={arg.options.map(opt =>
-        _.isString(opt) ? { label: opt, value: opt } : { label: opt.name, value: opt.value }
+        _.isString(opt) ? { label: _tval(opt), value: opt } : { label: _tval(opt.name), value: opt.value }
       )}
       disabled={isReadOnly || (arg.disabledFn ? arg.disabledFn($values) : arg.disabled)}
     />
@@ -73,7 +73,7 @@
       defaultValue={arg.default}
       menu={() => {
         return arg.options.map(opt => ({
-          text: _.isString(opt) ? opt : opt.name,
+          text: _tval(_.isString(opt) ? opt : opt.name),
           onClick: () => setFieldValue(name, _.isString(opt) ? opt : opt.value),
         }));
       }}

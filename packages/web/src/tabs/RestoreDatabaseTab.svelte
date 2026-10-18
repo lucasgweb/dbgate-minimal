@@ -11,6 +11,7 @@
 </script>
 
 <script lang="ts">
+  import { _tval } from '../translations';
   import { trackUsage } from '../utility/usageAnalytics';
   import FontIcon from '../icons/FontIcon.svelte';
   import getElectron from '../utility/getElectron';
@@ -317,7 +318,7 @@
               <label for={`__sqlFilesFolder_${tabid}`}>SQL Files folder</label>
               {#if sourceType == 'sqlFilesFolder'}
                 <SelectField
-                  label="File:"
+                  label={_tval('File:')}
                   value={selectedSqlFile}
                   options={$sqlFiles?.map(x => ({ value: x.file, label: x.file })) || []}
                   isNative
@@ -331,7 +332,7 @@
             {#if electron}
               <div>
                 <input type="radio" bind:group={sourceType} value="browse" id={`__browse_${tabid}`} />
-                <label for={`__browse_${tabid}`}>Browse</label>
+                <label for={`__browse_${tabid}`}>{_tval('Browse')}</label>
                 {#if inputFileName && sourceType == 'browse'}
                   <span>: {inputFileName}</span>
                 {/if}
@@ -339,18 +340,18 @@
             {:else}
               <div>
                 <input type="radio" bind:group={sourceType} value="upload" id={`__upload_${tabid}`} />
-                <label for={`__upload_${tabid}`}>Upload</label>
+                <label for={`__upload_${tabid}`}>{_tval('Upload')}</label>
               </div>
             {/if}
 
             {#if sourceType == 'upload' && !electron}
               <div class="m-3">
                 <FormStyledButtonLikeLabel htmlFor={`uploadRestoreFileButton_${tabid}`}
-                  >Upload file</FormStyledButtonLikeLabel
+                  >{_tval('Upload file')}</FormStyledButtonLikeLabel
                 >
                 <input type="file" id={`uploadRestoreFileButton_${tabid}`} hidden on:change={handleUploadFile} />
                 {#if isUploading}
-                  <LoadingInfo message="Uploading..." />
+                  <LoadingInfo message={_tval('Uploading...')} />
                 {:else if inputFileName}
                   <div
                     class="selected-file"
@@ -365,7 +366,7 @@
 
             {#if sourceType == 'browse' && electron}
               <div class="m-3">
-                <FormStyledButton on:click={handleBrowse} value="Browse" />
+                <FormStyledButton on:click={handleBrowse} value={_tval('Browse')} />
               </div>
             {/if}
           </div>
@@ -396,7 +397,7 @@
         </div>
         {#if restoreToolArg && isPremium}
           <div class="options">
-            <div class="option-label">Restore tool</div>
+            <div class="option-label">{_tval('Restore tool')}</div>
             <SelectField
               isNative
               value={restoreTool}
@@ -414,7 +415,7 @@
               data-testid="RestoreDatabaseTab_stopOnError"
               on:change={event => (stopOnError = event.target.checked)}
             />
-            <span>Stop on first error</span>
+            <span>{_tval('Stop on first error')}</span>
           </label>
         {/if}
         {#if diagnosticsEnabled && runnerId}
@@ -427,7 +428,7 @@
 
     <svelte:fragment slot="2">
       <WidgetColumnBar>
-        <WidgetColumnBarItem title="Messages" name="messages">
+        <WidgetColumnBarItem title={_tval('Messages')} name="messages">
           <SocketMessageView
             eventName={runnerId ? `runner-info-${runnerId}` : null}
             {executeNumber}
@@ -442,7 +443,7 @@
   <svelte:fragment slot="toolstrip">
     {#if busy}
       <ToolStripButton icon="icon stop" on:click={handleCancel} data-testid="RestoreDatabaseTab_stopButton"
-        >Stop</ToolStripButton
+        >{_tval('Stop')}</ToolStripButton
       >
     {:else}
       <ToolStripButton
@@ -450,7 +451,7 @@
         icon="icon run"
         disabled={isUploading}
         data-testid="RestoreDatabaseTab_executeButton"
-        >Run</ToolStripButton
+        >{_tval('Run')}</ToolStripButton
       >
     {/if}
     {#if isPremium && restoreTool != driver?.nodejsRestoreTool}
@@ -459,13 +460,13 @@
         on:click={handleGenerateCommand}
         disabled={isUploading}
         data-testid="RestoreDatabaseTab_generateCommand"
-        >Copy command line</ToolStripButton
+        >{_tval('Copy command line')}</ToolStripButton
       >
     {/if}
   </svelte:fragment>
 
   {#if busy}
-    <LoadingInfo wrapper message="Importing SQL dump" />
+    <LoadingInfo wrapper message={_tval('Importing SQL dump')} />
   {/if}
 </ToolStripContainer>
 

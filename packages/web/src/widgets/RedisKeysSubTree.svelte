@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import _ from 'lodash';
 
   import AppObjectCore from '../appobj/AppObjectCore.svelte';
@@ -46,7 +47,7 @@
 {#if model.childrenByKey[key]?.length > visibleCount}
   <AppObjectCore
     {indentLevel}
-    title="Show more..."
+    title={_tval('Show more...')}
     icon="icon dots-horizontal"
     expandIcon="icon invisible-box"
     on:click={() => {

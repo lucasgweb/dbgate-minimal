@@ -15,7 +15,7 @@
   import moveDrag from '../utility/moveDrag';
   import ColumnLine from './ColumnLine.svelte';
   import DomTableRef from './DomTableRef';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import { getNormalizedUserColorName } from '../utility/userColors';
 
   export let conid;
@@ -298,7 +298,7 @@
       {/if}
 
       {#if filterParentRows}
-        <FontIcon icon="icon parent-filter" title="Filter parent rows" />
+        <FontIcon icon="icon parent-filter" title={_tval('Filter parent rows')} />
       {/if}
     </div>
     {#if settings?.showTableCloseButton}
@@ -312,7 +312,7 @@
       filterBehaviour={stringFilterBehaviour}
       filter={settings?.getMutliColumnFilter(designerId)}
       setFilter={value => settings?.setMutliColumnFilter(designerId, value)}
-      placeholder="Data filter"
+      placeholder={_tval('Data filter')}
     />
   {/if}
 

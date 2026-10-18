@@ -11,6 +11,7 @@
 </script>
 
 <script lang="ts">
+  import { _tval } from '../translations';
   import FormStyledButton from '../buttons/FormStyledButton.svelte';
   import LoadingInfo from '../elements/LoadingInfo.svelte';
   import { getFormContext } from '../forms/FormProviderCore.svelte';
@@ -47,7 +48,7 @@
   };
 </script>
 
-<FormStyledButton type="button" value="Add file(s)" on:click={handleClick} />
+<FormStyledButton type="button" value={_tval('Add file(s)')} on:click={handleClick} />
 {#if isLoading}
-  <LoadingInfo message="Anaysing input files" />
+  <LoadingInfo message={_tval('Anaysing input files')} />
 {/if}

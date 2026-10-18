@@ -119,9 +119,18 @@ module.exports = {
         if (newOpened.disconnected) return;
         this[`handle_${msgtype}`](conid, message);
       });
-      subprocess.on('exit', () => {
+      subprocess.on('exit', code => {
         if (newOpened.disconnected) return;
+        const wasOk = newOpened.status?.name == 'ok';
         this.close(conid, false);
+        // crashed (e.g. the server dropped the connection): reconnect right away instead of waiting for the next ping
+        if (code && wasOk) {
+          logger.warn({ conid, code }, 'DBGM-00317 Server connection process crashed, reconnecting');
+          this.lastPinged[conid] = null;
+          this.ensureOpened(conid).catch(err =>
+            logger.error(extractErrorLogData(err), 'DBGM-00318 Error reconnecting server connection')
+          );
+        }
       });
       subprocess.on('error', err => {
         logger.error(extractErrorLogData(err), 'DBGM-00119 Error in server connection subprocess');

@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import { getActiveComponent } from '../utility/createActivator';
   import { registerFileCommands } from '../commands/stdCommands';
-  import { __t } from '../translations';
+  import { __t, _tval } from '../translations';
   const getCurrentEditor = () => getActiveComponent('DiagramTab');
 
   registerFileCommands({
@@ -145,7 +145,7 @@
     <svelte:fragment slot="2">
       <WidgetColumnBar storageName="diagramSettingsWidget">
         <WidgetColumnBarItem
-          title="Settings"
+          title={_tval('Settings')}
           name="diagramSettings"
           onClose={() => {
             styleStore.update(x => ({ ...x, settingsVisible: false }));
@@ -175,7 +175,7 @@
         icon="icon settings"
         on:click={() => {
           styleStore.update(x => ({ ...x, settingsVisible: !x.settingsVisible }));
-        }}>Settings</ToolStripButton
+        }}>{_tval('Settings')}</ToolStripButton
       >
     {/if}
   </svelte:fragment>

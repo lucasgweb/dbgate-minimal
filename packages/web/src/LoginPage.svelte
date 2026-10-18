@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from './translations';
   import { onMount } from 'svelte';
   import { internalRedirectTo } from './clientAuth';
   import FormPasswordField from './forms/FormPasswordField.svelte';
@@ -138,16 +139,16 @@
   <div class="login-link">
     {#if $config?.isAdminLoginForm}
       {#if isAdminPage}
-        <Link internalRedirect="/login.html" data-testid="LoginPage_linkRegularUser">Log In as Regular User</Link>
+        <Link internalRedirect="/login.html" data-testid="LoginPage_linkRegularUser">{_tval('Log In as Regular User')}</Link>
       {:else}
-        <Link internalRedirect="/admin-login.html" data-testid="LoginPage_linkAdmin">Log In as Administrator</Link>
+        <Link internalRedirect="/admin-login.html" data-testid="LoginPage_linkAdmin">{_tval('Log In as Administrator')}</Link>
       {/if}
     {/if}
   </div>
   <FormProviderCore {values}>
     {#if !isAdminPage && availableProviders?.length >= 2}
       <FormSelectField
-        label="Authentization method"
+        label={_tval('Authentization method')}
         name="amoid"
         isNative
         options={availableProviders.map(mtd => ({ value: mtd.amoid, label: mtd.name }))}
@@ -156,7 +157,7 @@
 
     {#if !isAdminPage && availableConnections && workflowType == 'database'}
       <FormSelectField
-        label="Database server"
+        label={_tval('Database server')}
         name="databaseServer"
         isNative
         options={availableConnections.map(conn => ({ value: conn.conid, label: conn.label }))}
@@ -166,7 +167,7 @@
     {#if selectedConnection}
       {#if selectedConnection.passwordMode == 'askUser'}
         <FormTextField
-          label="Username"
+          label={_tval('Username')}
           name="login"
           autocomplete="username"
           saveOnInput
@@ -175,7 +176,7 @@
       {/if}
       {#if selectedConnection.passwordMode == 'askUser' || selectedConnection.passwordMode == 'askPassword'}
         <FormPasswordField
-          label="Password"
+          label={_tval('Password')}
           name="password"
           autocomplete="current-password"
           saveOnInput
@@ -185,7 +186,7 @@
     {:else}
       {#if !isAdminPage && workflowType == 'credentials'}
         <FormTextField
-          label="Username"
+          label={_tval('Username')}
           name="login"
           autocomplete="username"
           saveOnInput
@@ -194,7 +195,7 @@
       {/if}
       {#if workflowType == 'credentials'}
         <FormPasswordField
-          label="Password"
+          label={_tval('Password')}
           name="password"
           autocomplete="current-password"
           saveOnInput
@@ -211,7 +212,7 @@
     {/if}
 
     {#if isAdminPage && $config && !$config.isAdminLoginForm}
-      <ErrorInfo message="Admin login is not configured. Please set ADMIN_PASSWORD environment variable" />
+      <ErrorInfo message={_tval('Admin login is not configured. Please set ADMIN_PASSWORD environment variable')} />
     {/if}
 
     {#if isTesting}
@@ -230,7 +231,7 @@
     <div class="submit">
       {#if selectedConnection?.useRedirectDbLogin}
         <FormSubmit
-          value="Open database login page"
+          value={_tval('Open database login page')}
           data-testid="LoginPage_submitLogin"
           on:click={async e => {
             const state = `dbg-dblogin:${strmid}:${selectedConnection?.conid}:${$values.amoid}`;
@@ -242,7 +243,7 @@
         />
       {:else if selectedConnection}
         <FormSubmit
-          value="Log In"
+          value={_tval('Log In')}
           data-testid="LoginPage_submitLogin"
           on:click={async e => {
             if (selectedConnection.passwordMode == 'askUser' || selectedConnection.passwordMode == 'askPassword') {

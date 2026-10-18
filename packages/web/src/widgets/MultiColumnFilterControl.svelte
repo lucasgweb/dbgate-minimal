@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import { evalFilterBehaviour } from 'dbgate-tools';
   import DataFilterControl from '../datagrid/DataFilterControl.svelte';
   import InlineButton from '../buttons/InlineButton.svelte';
@@ -43,7 +43,7 @@
           [column]: value,
         });
       }}
-      placeholder="Filter"
+      placeholder={_tval('Filter')}
     />
 
     {#if index == 0}

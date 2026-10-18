@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { safeJsonParse } from 'dbgate-tools';
   import _ from 'lodash';
   import SelectField from '../forms/SelectField.svelte';
@@ -25,7 +26,7 @@
 </script>
 
 <div class="container">
-  <FormFieldTemplateLarge label="Score" type="text" noMargin>
+  <FormFieldTemplateLarge label={_tval('Score')} type="text" noMargin>
     <TextField
       value={score}
       on:input={e => handleScoreChange(e.target.value)}
@@ -36,7 +37,7 @@
 
   <div class="value-section">
     <div class="colnamewrap">
-      <div class="colname">Member</div>
+      <div class="colname">{_tval('Member')}</div>
       <SelectField
         isNative
         value={display}

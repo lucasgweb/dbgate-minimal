@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { createEventDispatcher } from 'svelte';
   import FontIcon from '../icons/FontIcon.svelte';
   import InlineButton from '../buttons/InlineButton.svelte';
@@ -303,7 +304,7 @@
     {#if showPicker}
       <div class="icon-picker">
         <div class="icon-picker-header">
-          <span>Choose an icon</span>
+          <span>{_tval('Choose an icon')}</span>
           <InlineButton on:click={togglePicker}>
             <FontIcon icon="icon close" />
           </InlineButton>

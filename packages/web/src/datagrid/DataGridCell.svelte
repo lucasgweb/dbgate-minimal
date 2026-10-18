@@ -257,6 +257,26 @@
     cursor: crosshair;
   }
 
+  /* minimal mode: deleted rows are struck through and keep their tint also when selected */
+  :global(.minimal-mode) td.isDeleted {
+    background-image: none !important;
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, var(--tw-color-red-400) 80%, transparent);
+    color: var(--theme-generic-font-grayed);
+  }
+  :global(.minimal-mode) td.isSelected.isDeleted,
+  :global(.minimal-mode .data-grid-focused) td.isSelected.isDeleted {
+    background: color-mix(in srgb, var(--tw-color-red-500) 24%, transparent);
+  }
+  :global(.minimal-mode) td.isSelected.isInserted,
+  :global(.minimal-mode .data-grid-focused) td.isSelected.isInserted {
+    background: color-mix(in srgb, var(--tw-color-green-500) 24%, transparent);
+  }
+  :global(.minimal-mode) td.isSelected.isModifiedCell,
+  :global(.minimal-mode .data-grid-focused) td.isSelected.isModifiedCell {
+    background: color-mix(in srgb, var(--tw-color-amber-400) 28%, transparent);
+  }
+
   :global(.minimal-mode) .autoFillMarker {
     width: 6px;
     height: 6px;

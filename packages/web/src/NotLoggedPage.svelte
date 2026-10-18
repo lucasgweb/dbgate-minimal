@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from './translations';
   import { onMount } from 'svelte';
   import FormStyledButton from './buttons/FormStyledButton.svelte';
   import { doLogout, redirectToAdminLogin, redirectToLogin } from './clientAuth';
@@ -30,8 +31,8 @@
     {/if}
 
     <div class="button">
-      <FormStyledButton value="Log In" on:click={handleLogin} data-testid="NotLoggedPage_loginButton" />
-      <FormStyledButton value="Log Out" on:click={doLogout} data-testid="NotLoggedPage_logoutButton" />
+      <FormStyledButton value={_tval('Log In')} on:click={handleLogin} data-testid="NotLoggedPage_loginButton" />
+      <FormStyledButton value={_tval('Log Out')} on:click={doLogout} data-testid="NotLoggedPage_logoutButton" />
     </div>
   </div>
 </SpecialPageLayout>

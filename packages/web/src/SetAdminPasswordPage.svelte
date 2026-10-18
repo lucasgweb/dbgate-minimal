@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from './translations';
   import { writable } from 'svelte/store';
   import FormCheckboxField from './forms/FormCheckboxField.svelte';
   import FormPasswordField from './forms/FormPasswordField.svelte';
@@ -18,14 +19,14 @@
 
 <SpecialPageLayout>
   <FormProviderCore {values}>
-    <div class="heading">Set admin password</div>
+    <div class="heading">{_tval('Set admin password')}</div>
 
     <div class="text">
       Please set password for DbGate administrator account. If you lose this paassword, you can change it later in
       DbGate internal database, in table config.
     </div>
 
-    <FormCheckboxField label="Don't use admin password" name="denyUseAdminPassword" />
+    <FormCheckboxField label={_tval('Don\'t use admin password')} name="denyUseAdminPassword" />
 
     {#if $values?.denyUseAdminPassword}
       <div class="text">
@@ -34,10 +35,10 @@
       </div>
     {:else}
       {#if $config?.adminPasswordState == 'set'}
-        <FormPasswordField label="Current password" name="oldPassword" autocomplete="current-password" saveOnInput />
+        <FormPasswordField label={_tval('Current password')} name="oldPassword" autocomplete="current-password" saveOnInput />
       {/if}
-      <FormPasswordField label="New password" name="newPassword" autocomplete="current-password" saveOnInput />
-      <FormPasswordField label="Repeat password" name="repeatPassword" autocomplete="current-password" saveOnInput />
+      <FormPasswordField label={_tval('New password')} name="newPassword" autocomplete="current-password" saveOnInput />
+      <FormPasswordField label={_tval('Repeat password')} name="repeatPassword" autocomplete="current-password" saveOnInput />
     {/if}
 
     {#if error}

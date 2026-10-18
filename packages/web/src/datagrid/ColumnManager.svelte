@@ -17,7 +17,7 @@
   import SelectField from '../forms/SelectField.svelte';
   import ColumnEditorModal from '../tableeditor/ColumnEditorModal.svelte';
   import { tick } from 'svelte';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
   import FontIcon from '../icons/FontIcon.svelte';
 
   export let managerSize;
@@ -202,11 +202,11 @@
             });
           },
         });
-      }}>Add</InlineButton
+      }}>{_tval('Add')}</InlineButton
     >
   {/if}
   {#if allowChangeChangeSetStructure && !isDynamicStructure}
-    <InlineButton on:click={handleAddColumn}>Add</InlineButton>
+    <InlineButton on:click={handleAddColumn}>{_tval('Add')}</InlineButton>
   {/if}
   <InlineButton on:click={() => display.hideAllColumns()}><FontIcon icon="icon hide" /></InlineButton>
   <InlineButton on:click={() => display.showAllColumns()}><FontIcon icon="icon show" /></InlineButton>

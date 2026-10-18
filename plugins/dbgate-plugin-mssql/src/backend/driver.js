@@ -63,6 +63,20 @@ SELECT
   END AS versionText
 `;
 
+// msnodesqlv8 is an optional native module; builds without it (no C++ toolchain) fall back to tedious
+let nativeDriverAvailable = null;
+function isNativeDriverAvailable() {
+  if (nativeDriverAvailable == null) {
+    try {
+      require('msnodesqlv8');
+      nativeDriverAvailable = true;
+    } catch (err) {
+      nativeDriverAvailable = false;
+    }
+  }
+  return nativeDriverAvailable;
+}
+
 const windowsAuthTypes = [
   {
     title: 'Windows',
@@ -394,7 +408,9 @@ const driver = {
 
   getAuthTypes() {
     const res = [];
-    if (platformInfo?.isWindows) res.push(...windowsAuthTypes);
+    if (platformInfo?.isWindows) {
+      res.push(...(isNativeDriverAvailable() ? windowsAuthTypes : windowsAuthTypes.filter(x => x.name == 'tedious')));
+    }
 
     if (authProxy.isAuthProxySupported()) {
       res.push(
@@ -426,7 +442,9 @@ const driver = {
   async connect(conn) {
     const { authType } = conn;
     const connectionType =
-      platformInfo?.isWindows && (authType == 'sspi' || authType == 'sql') ? 'msnodesqlv8' : 'tedious';
+      platformInfo?.isWindows && (authType == 'sspi' || authType == 'sql') && isNativeDriverAvailable()
+        ? 'msnodesqlv8'
+        : 'tedious';
     const client = connectionType == 'msnodesqlv8' ? await nativeConnect(conn) : await tediousConnect(conn);
 
     const dbhan = {

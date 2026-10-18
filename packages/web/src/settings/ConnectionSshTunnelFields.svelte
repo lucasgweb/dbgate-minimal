@@ -12,7 +12,7 @@
   import { usePlatformInfo } from '../utility/metadataLoaders';
   import FontIcon from '../icons/FontIcon.svelte';
   import { extensions, openedConnections, openedSingleDatabaseConnections } from '../stores';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   export let isFormReadOnly;
 
@@ -41,7 +41,7 @@
 <div class="row">
   <div class="col-9 mr-1">
     <FormTextField
-      label="Host"
+      label={_tval('Host')}
       name="sshHost"
       disabled={isConnected || !useSshTunnel || isFormReadOnly}
       templateProps={{ noMargin: true }}
@@ -50,7 +50,7 @@
   </div>
   <div class="col-3">
     <FormTextField
-      label="Port"
+      label={_tval('Port')}
       name="sshPort"
       disabled={isConnected || !useSshTunnel || isFormReadOnly}
       templateProps={{ noMargin: true }}
@@ -60,7 +60,7 @@
   </div>
 </div>
 <FormTextField
-  label="Bastion host (Jump host)"
+  label={_tval('Bastion host (Jump host)')}
   name="sshBastionHost"
   disabled={isConnected || !useSshTunnel || isFormReadOnly}
 />
@@ -84,7 +84,7 @@
 
 {#if ($values.sshMode || 'userPassword') != 'userPassword'}
   <FormTextField
-    label="Login"
+    label={_tval('Login')}
     name="sshLogin"
     disabled={isConnected || !useSshTunnel || isFormReadOnly}
     data-testid="ConnectionSshTunnelFields_sshLogin"
@@ -95,7 +95,7 @@
   <div class="row">
     <div class="col-6 mr-1">
       <FormTextField
-        label="Login"
+        label={_tval('Login')}
         name="sshLogin"
         disabled={isConnected || !useSshTunnel || isFormReadOnly}
         templateProps={{ noMargin: true }}

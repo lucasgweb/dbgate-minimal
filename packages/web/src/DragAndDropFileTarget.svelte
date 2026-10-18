@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from './translations';
   import _ from 'lodash';
   import FontIcon from './icons/FontIcon.svelte';
 
@@ -19,7 +20,7 @@
     <div class="icon">
       <FontIcon icon="icon cloud-upload" />
     </div>
-    <div class="title">Drop the files to upload to DbGate</div>
+    <div class="title">{_tval('Drop the files to upload to DbGate')}</div>
     <div class="info">Supported file types: {fileTypeNames.join(', ')}</div>
     <div
       class="class-button"
@@ -28,7 +29,7 @@
       }}
     >
       <FontIcon icon="icon close" padRight />
-      Close
+      {_tval('Close')}
     </div>
   </div>
 </div>

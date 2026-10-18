@@ -159,6 +159,30 @@ export const selectedWidget = writableWithStorage(
 );
 export const lockedDatabaseMode = writableWithStorage<boolean>(false, 'lockedDatabaseMode');
 export const minimalMode = writableWithStorage<boolean>(true, 'minimalMode');
+
+// user-chosen primary color (hex); replaces the sky accent scale used by the themes
+export const primaryColor = writableWithStorage<string>(null, 'primaryColor');
+const PRIMARY_COLOR_SHADES = {
+  50: 'white 92%',
+  100: 'white 82%',
+  200: 'white 65%',
+  300: 'white 45%',
+  400: 'white 25%',
+  500: null,
+  600: 'black 18%',
+  700: 'black 35%',
+  800: 'black 50%',
+  900: 'black 65%',
+  950: 'black 78%',
+};
+primaryColor.subscribe(color => {
+  const style = document.documentElement.style;
+  for (const [shade, mix] of Object.entries(PRIMARY_COLOR_SHADES)) {
+    const name = `--tw-color-sky-${shade}`;
+    if (!color) style.removeProperty(name);
+    else style.setProperty(name, mix ? `color-mix(in oklch, ${color}, ${mix})` : color);
+  }
+});
 export const visibleWidgetSideBar = writableWithStorage(true, 'visibleWidgetSideBar');
 export const visibleSelectedWidget = derived(
   [selectedWidget, visibleWidgetSideBar],
@@ -323,11 +347,7 @@ subscribeCssVariable(visibleSelectedWidget, x => (x ? 1 : 0), '--dim-visible-lef
 subscribeCssVariable(leftPanelWidth, x => `${x}px`, '--dim-left-panel-width');
 subscribeCssVariable(rightPanelWidth, x => `${x}px`, '--dim-right-panel-width');
 subscribeCssVariable(visibleTitleBar, x => (x ? 1 : 0), '--dim-visible-titlebar');
-subscribeCssVariable(
-  derived([lockedDatabaseMode, minimalMode], ([locked, minimal]) => locked || minimal),
-  x => (x ? 0 : 1),
-  '--dim-visible-tabs-databases'
-);
+subscribeCssVariable(lockedDatabaseMode, x => (x ? 0 : 1), '--dim-visible-tabs-databases');
 minimalMode.subscribe(value => document.documentElement.classList.toggle('minimal-mode', !!value));
 subscribeCssVariable(alignDataGridNumbersToRight, x => (x ? 'right' : 'left'), '--data-grid-numbers-align');
 subscribeCssVariable(rightPanelWidget, x => (x ? 1 : 0), '--dim-visible-right-panel');

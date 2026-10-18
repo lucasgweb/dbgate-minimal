@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import { createGridCache, createGridConfig, FreeTableGridDisplay } from 'dbgate-datalib';
   import { writable } from 'svelte/store';
 
@@ -19,7 +20,7 @@
 </script>
 
 {#if !model}
-  <LoadingInfo wrapper message="Loading data" />
+  <LoadingInfo wrapper message={_tval('Loading data')} />
 {:else if errorMessage}
   <ErrorInfo message={errorMessage} />
 {:else if grider}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import _ from 'lodash';
   import ErrorInfo from '../elements/ErrorInfo.svelte';
   import JSONTree from '../jsontree/JSONTree.svelte';
@@ -28,7 +29,7 @@
 </script>
 
 {#if error}
-  <ErrorInfo message="Error parsing JSON" alignTop />
+  <ErrorInfo message={_tval('Error parsing JSON')} alignTop />
 {:else}
   <div class="outer">
     <div class="inner">

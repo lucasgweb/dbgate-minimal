@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from '../translations';
   import FormStyledButton from '../buttons/FormStyledButton.svelte';
 
   export let selectedColumns;
@@ -13,7 +14,7 @@
 
 <div>
   <FormStyledButton value="All" on:click={() => (selectedColumns = allColumns)} {disabled} />
-  <FormStyledButton value="None" on:click={() => (selectedColumns = [])} {disabled} />
+  <FormStyledButton value={_tval('None')} on:click={() => (selectedColumns = [])} {disabled} />
 </div>
 <div class="list">
   {#each allColumns as column}

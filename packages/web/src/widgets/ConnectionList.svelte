@@ -47,7 +47,7 @@
     getOpenDetailOnArrowsSettings,
   } from '../settings/settingsTools';
   import DropDownButton from '../buttons/DropDownButton.svelte';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   const connections = useConnectionList();
   const serverStatus = useServerStatus();
@@ -374,10 +374,10 @@
   </AppObjectListHandler>
   {#if $connections && $connections.length == 0 && $openedConnections.length == 0 && $commandsCustomized['new.connection']?.enabled && !$openedTabs.find(x => !x.closedTime && x.tabComponent == 'ConnectionTab' && !x.props?.conid)}
     <LargeButton icon="icon new-connection" on:click={() => runCommand('new.connection')} fillHorizontal
-      >Add new connection</LargeButton
+      >{_tval('Add new connection')}</LargeButton
     >
     <!-- <ToolbarButton icon="icon new-connection" on:click={() => runCommand('new.connection')}>
-      Add new connection
+      {_tval('Add new connection')}
     </ToolbarButton> -->
   {/if}
 </WidgetsInnerContainer>

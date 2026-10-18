@@ -17,7 +17,7 @@
   import TextField from '../forms/TextField.svelte';
   import SelectField from '../forms/SelectField.svelte';
   import _ from 'lodash';
-  import { _t } from '../translations';
+  import { _t, _tval } from '../translations';
 
   export let constraintInfo;
   export let setTableInfo;
@@ -199,7 +199,7 @@
           </div>
           <div class="col-2 button">
             <FormStyledButton
-              value="Delete"
+              value={_tval('Delete')}
               disabled={isReadOnly}
               on:click={e => {
                 const x = [...columns];

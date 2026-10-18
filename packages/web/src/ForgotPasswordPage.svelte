@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _tval } from './translations';
   import { writable } from 'svelte/store';
   import FormTextField from './forms/FormTextField.svelte';
   import FormSubmit from './forms/FormSubmit.svelte';
@@ -17,7 +18,7 @@
 
 <SpecialPageLayout>
   <FormProviderCore {values}>
-    <div class="heading">Reset Password</div>
+    <div class="heading">{_tval('Reset Password')}</div>
 
     {#if success}
       <div class="success-message">
@@ -35,7 +36,7 @@
       </div>
 
       <FormTextField
-        label="Email"
+        label={_tval('Email')}
         name="email"
         type="email"
         autocomplete="email"

@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import { getActiveComponent } from '../utility/createActivator';
   import registerCommand from '../commands/registerCommand';
-  import { __t } from '../translations';
+  import { __t, _tval } from '../translations';
   export const matchingProps = ['conid', 'database', 'pureName', 'sql'];
 
   const getCurrentEditor = () => getActiveComponent('QueryDataTab');
@@ -107,7 +107,7 @@
 
 <ToolStripContainer>
   {#if loading}
-    <LoadingInfo message="Loading data..." />
+    <LoadingInfo message={_tval('Loading data...')} />
   {:else if jslid}
     {#if fixedChartDefinition}
       <JslChart {jslid} fixedDefinition={fixedChartDefinition} />
@@ -117,7 +117,7 @@
   {/if}
   <svelte:fragment slot="toolstrip">
     {#if fixedChartDefinition}
-      <ToolStripButton on:click={handleRefresh} icon="icon refresh">Refresh</ToolStripButton>
+      <ToolStripButton on:click={handleRefresh} icon="icon refresh">{_tval('Refresh')}</ToolStripButton>
     {:else}
       <ToolStripCommandButton command="dataGrid.refresh" />
     {/if}
