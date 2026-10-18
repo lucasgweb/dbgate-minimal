@@ -160,6 +160,16 @@ export const selectedWidget = writableWithStorage(
 export const lockedDatabaseMode = writableWithStorage<boolean>(false, 'lockedDatabaseMode');
 export const minimalMode = writableWithStorage<boolean>(true, 'minimalMode');
 
+// SQL syntax colors of the default dark editor theme, e.g. { keyword: '#569cd6', ... }; null = theme defaults
+export const sqlSyntaxColors = writableWithStorage<{ [token: string]: string }>(null, 'sqlSyntaxColors');
+const SQL_SYNTAX_TOKENS = ['keyword', 'type', 'function', 'string', 'number', 'comment'];
+sqlSyntaxColors.subscribe(colors => {
+  for (const token of SQL_SYNTAX_TOKENS) {
+    if (colors?.[token]) document.documentElement.style.setProperty(`--sql-${token}`, colors[token]);
+    else document.documentElement.style.removeProperty(`--sql-${token}`);
+  }
+});
+
 // user-chosen primary color (hex); replaces the sky accent scale used by the themes
 export const primaryColor = writableWithStorage<string>(null, 'primaryColor');
 const PRIMARY_COLOR_SHADES = {

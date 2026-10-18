@@ -1,6 +1,7 @@
 import * as ace from 'ace-builds/src-noconflict/ace';
 
-// Black editor theme matching the dark UI theme; the primary color (sky) is used for keywords, cursor and selection
+// Black editor theme matching the dark UI theme; the primary color (sky) is used for cursor and selection.
+// Syntax colors come from --sql-* variables (selectable in theme settings), defaults are VS Code colors
 const cssText = `
 .ace-dbgate-dark {
   background-color: var(--theme-content-background, #090909);
@@ -56,29 +57,29 @@ const cssText = `
 }
 .ace-dbgate-dark .ace_keyword,
 .ace-dbgate-dark .ace_meta {
-  color: #ff79c6;
+  color: var(--sql-keyword, #569cd6);
 }
 .ace-dbgate-dark .ace_storage,
 .ace-dbgate-dark .ace_storage.ace_type,
 .ace-dbgate-dark .ace_support.ace_type {
-  color: #8be9fd;
+  color: var(--sql-type, #4ec9b0);
 }
 .ace-dbgate-dark .ace_support.ace_function,
 .ace-dbgate-dark .ace_entity.ace_name.ace_function {
-  color: #ffb86c;
+  color: var(--sql-function, #dcdcaa);
 }
 .ace-dbgate-dark .ace_string,
 .ace-dbgate-dark .ace_string.ace_regexp {
-  color: #f1fa8c;
+  color: var(--sql-string, #ce9178);
 }
 .ace-dbgate-dark .ace_constant.ace_numeric,
 .ace-dbgate-dark .ace_constant.ace_language,
 .ace-dbgate-dark .ace_constant.ace_character,
 .ace-dbgate-dark .ace_constant.ace_other {
-  color: #bd93f9;
+  color: var(--sql-number, #b5cea8);
 }
 .ace-dbgate-dark .ace_comment {
-  color: #7f8aa8;
+  color: var(--sql-comment, #6a9955);
   font-style: italic;
 }
 .ace-dbgate-dark .ace_keyword.ace_operator,
@@ -91,7 +92,7 @@ const cssText = `
   color: #f8f8f2;
 }
 .ace-dbgate-dark .ace_variable.ace_parameter {
-  color: #f9a8d4;
+  color: var(--sql-number, #9cdcfe);
 }
 .ace-dbgate-dark .ace_invalid {
   color: #fff;
