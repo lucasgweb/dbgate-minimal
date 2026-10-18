@@ -242,7 +242,7 @@
   $: rowCountInfo = getRowCountInfo(allRowCount, display, allRowCountError);
 
   const settingsValue = useSettings();
-  $: gridColoringMode = $settingsValue?.['dataGrid.coloringMode'];
+  $: gridColoringMode = $settingsValue?.['dataGrid.coloringMode'] || '2-primary';
 
   function getRowCountInfo(allRowCount, _display?, _allRowCountError?) {
     if (rowCountNotAvailable) {

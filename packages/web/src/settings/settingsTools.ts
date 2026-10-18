@@ -50,7 +50,7 @@ export function getDatabaseClickActionSetting(): 'switch' | 'none' {
 
 export function getOpenDetailOnArrowsSettings(): boolean {
   return (
-    getBoolSettingsValue('behaviour.useTabPreviewMode', true) &&
+    getBoolSettingsValue('behaviour.useTabPreviewMode', false) &&
     getBoolSettingsValue('behaviour.openDetailOnArrows', true)
   );
 }

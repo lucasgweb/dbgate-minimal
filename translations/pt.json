@@ -1592,5 +1592,16 @@
   "widgets.installedExtensions": "Extensões instaladas",
   "widgets.openedTabs": "Abas abertas",
   "widgets.premiumPromo": "Promoção Premium",
-  "widgets.queryHistoryAndClosedTabs": "Histórico de consultas e abas fechadas"
+  "widgets.queryHistoryAndClosedTabs": "Histórico de consultas e abas fechadas",
+  "command.application.toggleMinimalMode": "Alternar modo minimalista",
+  "dataGrid.toggleFilterRow": "Mostrar/ocultar filtros",
+  "datagrid.footer.loadedAt": "carregado às {time}",
+  "datagrid.footer.selected": "selecionado",
+  "query.moreOptions": "Mais opções",
+  "query.parameterStyle": "Estilo de parâmetros da consulta",
+  "tableData.moreOptions": "Mais opções",
+  "tableData.saveChanges": "Salvar {count} alterações",
+  "columnHeader.toggleSort": "Ordenar",
+  "datagrid.noRowsFiltered": "Nenhuma linha corresponde ao filtro",
+  "datagrid.loadingData": "Carregando dados"
 }

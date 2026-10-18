@@ -3,6 +3,7 @@ import {
   currentDatabase,
   emptyConnectionGroupNames,
   extensions,
+  minimalMode,
   getAppUpdaterActive,
   getCloudSigninTokenHolder,
   getExtensions,
@@ -1070,6 +1071,14 @@ registerCommand({
   name: __t('command.application.maximize', { defaultMessage: 'Maximize' }),
   testEnabled: () => getElectron() != null,
   onClick: () => getElectron().send('window-action', 'maximize'),
+});
+
+registerCommand({
+  id: 'app.toggleMinimalMode',
+  category: __t('command.application', { defaultMessage: 'Application' }),
+  name: __t('command.application.toggleMinimalMode', { defaultMessage: 'Toggle minimal mode' }),
+  keyText: 'CtrlOrCommand+Shift+M',
+  onClick: () => minimalMode.update(x => !x),
 });
 
 registerCommand({

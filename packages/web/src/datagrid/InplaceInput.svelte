@@ -126,4 +126,23 @@
   input.showEditorButton {
     margin-right: 16px;
   }
+
+  /* minimal mode: the editor fills the whole cell and looks like the selected cell */
+  :global(.minimal-mode) input {
+    flex: 1;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 8px;
+    font: inherit;
+    color: var(--theme-datagrid-foreground);
+    background: var(--theme-datagrid-focused-cell-background);
+    box-shadow: inset 0 0 0 1px var(--theme-datagrid-selected-point-marker);
+  }
+  :global(.minimal-mode) input::selection {
+    background: color-mix(in srgb, var(--theme-datagrid-selected-point-marker) 35%, transparent);
+    color: inherit;
+  }
 </style>

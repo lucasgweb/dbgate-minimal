@@ -41,7 +41,7 @@
   export let conid;
   export let database;
   export let driver;
-  export let gridColoringMode = '36';
+  export let gridColoringMode = '2-primary';
   export let overlayDefinition = null;
 
   export let dataEditorTypesBehaviourOverride = null;
@@ -138,6 +138,7 @@
       style={`width:${trailingHorizontalScrollPadding}px; min-width:${trailingHorizontalScrollPadding}px; max-width:${trailingHorizontalScrollPadding}px`}
     ></td>
   {/if}
+  <td class="filler-cell"></td>
 </tr>
 
 <style>
@@ -162,6 +163,11 @@
   tr.coloring-mode-2-secondary.row-color-2,
   tr.coloring-mode-2-secondary.row-color-4 {
     background-color: var(--theme-datagrid-cell-background-alt2);
+  }
+
+  .filler-cell {
+    padding: 0;
+    border: none;
   }
 
   .horizontal-scroll-padding-cell {

@@ -80,12 +80,15 @@
 <style>
   .select {
     --border: var(--theme-input-border);
-    --borderRadius: 4px;
+    --borderRadius: 6px;
     --placeholderColor: var(--theme-input-placeholder);
     --background: var(--theme-input-background);
     --borderHoverColor: var(--theme-input-border-hover-color);
     --borderFocusColor: var(--theme-input-border-focus-color);
     --listBackground: var(--theme-input-background);
+    --listBorderRadius: 8px;
+    --listShadow: var(--theme-modal-shadow);
+    --itemBorderRadius: 6px;
     --itemActiveBackground: var(--theme-input-item-active-background);
     --itemIsActiveBG: var(--theme-input-item-active-background);
     --itemHoverBG: var(--theme-input-multi-clear-hover);

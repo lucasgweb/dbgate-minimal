@@ -334,7 +334,7 @@
   import newQuery from '../query/newQuery';
   import appObjectTypes from '../appobj';
 
-  import { currentDatabase, activeTabId, lockedDatabaseMode, draggingDbGroup, draggingDbGroupTarget, draggingTab, draggingTabTarget, tabGroupShowServerName } from '../stores';
+  import { currentDatabase, activeTabId, lockedDatabaseMode, minimalMode, draggingDbGroup, draggingDbGroupTarget, draggingTab, draggingTabTarget, tabGroupShowServerName } from '../stores';
   import tabs from '../tabs';
   import { switchCurrentDatabase } from '../utility/common';
   import contextMenu from '../utility/contextMenu';
@@ -591,13 +591,12 @@
   <div
     class="tabs"
     class:can-split={allowSplitTab && isProApp()}
-    class:tabs-upgrade-button={!isProApp()}
     on:wheel={handleTabsWheel}
     bind:this={domTabs}
   >
     {#each groupedTabs as tabGroup}
       <div class="db-wrapper">
-        {#if !$lockedDatabaseMode}
+        {#if !$lockedDatabaseMode && !$minimalMode}
           <div
             class="db-name"
             class:selected={$draggingDbGroup
@@ -730,21 +729,6 @@
       </div>
     {/if}
 
-    {#if !isProApp()}
-      <div
-        class="upgrade-button"
-        on:click={() => {
-          openWebLink(
-            `https://www.dbgate.io/purchase/${isElectronAvailable() ? 'premium' : 'team-premium'}/?utm_campaign=premiumUpgradeButton`
-          );
-        }}
-        title="Upgrade to Premium"
-        data-testid="TabsPanel_buttonUpgrade"
-      >
-        <FontIcon icon="icon premium" /> Upgrade
-      </div>
-    {/if}
-
     <div
       class="icon-button"
       on:click={() => showModal(NewObjectModal, { multiTabIndex })}
@@ -779,21 +763,6 @@
     color: var(--theme-tabs-panel-foreground);
     cursor: pointer;
   }
-  .upgrade-button {
-    background: linear-gradient(135deg, #1686c8, #8a25b1);
-    border: 1px solid color-mix(in rgb, #1686c8 50%, #8a25b1 50%);
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
-    font-size: 10pt;
-    padding: 5px;
-    margin-top: 3px;
-    margin-right: 3px;
-    font-size: 8pt;
-  }
-  .upgrade-button:hover {
-    background: linear-gradient(135deg, #0f5a85, #5c1870);
-  }
   .icon-button:hover {
     color: var(--theme-tabs-panel-active-foreground);
   }
@@ -808,9 +777,6 @@
     bottom: 0;
   }
 
-  .tabs-upgrade-button {
-    right: 110px;
-  }
   .tabs.can-split {
     right: 60px;
   }
@@ -856,29 +822,40 @@
   .file-tab-item {
     background-color: var(--theme-tabs-panel-item-background);
     border-bottom: var(--theme-tabs-panel-border);
-    border-right: var(--theme-tabs-panel-border);
-    padding-left: 15px;
-    padding-right: 15px;
-    flex-shrink: 1;
-    flex-grow: 1;
-    min-width: 10px;
+    border-radius: 0;
+    margin: 0 2px 0 0;
+    padding-left: 12px;
+    padding-right: 8px;
+    flex: 0 1 180px;
+    min-width: 60px;
     display: flex;
     align-items: center;
     cursor: pointer;
     user-select: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .file-tab-item:hover:not(.selected) {
+    color: var(--theme-tabs-panel-active-foreground);
+  }
+  .file-tab-item:not(:hover):not(.selected) :global(.tabCloseButton:not(.unsaved)) {
+    visibility: hidden;
   }
   .file-tab-item.selected {
     background-color: var(--theme-tabs-panel-active-background);
     color: var(--theme-tabs-panel-active-foreground);
     border-top: var(--theme-tabs-panel-active-border);
+    border-bottom-color: transparent;
+    font-weight: 600;
   }
   .file-tab-item.preview {
     font-style: italic;
   }
   .file-name {
-    margin-left: 5px;
+    margin-left: 6px;
     white-space: nowrap;
     flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .tab-group-buttons {
     margin-left: 5px;

@@ -190,6 +190,10 @@
     position: relative;
     overflow: hidden;
   }
+  :global(.minimal-mode) td {
+    padding: 2px 8px;
+    text-overflow: ellipsis;
+  }
   td.isStickyLeft {
     background: var(--theme-datagrid-headercell-background);
   }
@@ -228,6 +232,8 @@
     border-bottom: var(--theme-datagrid-focused-cell-border-horizontal);
     border-left: var(--theme-datagrid-focused-cell-border-vertical);
     border-right: var(--theme-datagrid-focused-cell-border-vertical);
+    /* drawn as inset shadow: with border-collapse, top/left borders get overridden by neighbour cells */
+    box-shadow: var(--theme-datagrid-focused-cell-outline, none);
   }
   td.isDeleted {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAEElEQVQImWNgIAX8x4KJBAD+agT8INXz9wAAAABJRU5ErkJggg==') !important;
@@ -251,8 +257,16 @@
     cursor: crosshair;
   }
 
+  :global(.minimal-mode) .autoFillMarker {
+    width: 6px;
+    height: 6px;
+    right: 1px;
+    bottom: 1px;
+    border-radius: 50%;
+  }
+
   .alignRight {
-    color: var(--theme-icon-green);
+    color: var(--theme-datagrid-cell-foreground-value-green);
     text-align: var(--data-grid-numbers-align);
   }
 

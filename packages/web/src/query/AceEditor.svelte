@@ -8,6 +8,7 @@
     'cobalt',
     'crimson_editor',
     'dawn',
+    'dbgate_dark',
     'dracula',
     'dreamweaver',
     'eclipse',
@@ -123,6 +124,7 @@
   import 'ace-builds/src-noconflict/theme-tomorrow_night';
   import 'ace-builds/src-noconflict/theme-twilight';
   import 'ace-builds/src-noconflict/keybinding-vim';
+  import './aceThemeDbgateDark';
 
   import {
     currentDropDownMenu,
@@ -132,7 +134,7 @@
     currentEditorKeybindigMode,
     getCurrentSettings,
   } from '../stores';
-  import { currentThemeDefinition } from '../plugins/themes';
+  import { currentThemeDefinition, currentThemeType } from '../plugins/themes';
   import _ from 'lodash';
   import { handleCommandKeyDown } from '../commands/CommandListener.svelte';
   import resizeObserver from '../utility/resizeObserver';
@@ -184,7 +186,26 @@
 
   let queryParserWorker;
 
-  let defaultFontSize;
+  const DEFAULT_FONT_SIZE = 14;
+  const MIN_FONT_SIZE = 8;
+  const MAX_FONT_SIZE = 36;
+  let defaultFontSize = DEFAULT_FONT_SIZE;
+
+  function changeEditorFontSize(delta) {
+    if (delta == 0) {
+      $currentEditorFontSize = null;
+      return;
+    }
+    const current = parseInt($currentEditorFontSize) || defaultFontSize;
+    $currentEditorFontSize = String(Math.min(MAX_FONT_SIZE, Math.max(MIN_FONT_SIZE, current + delta)));
+  }
+
+  function handleEditorWheel(e: WheelEvent) {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    e.stopPropagation();
+    changeEditorFontSize(e.deltaY < 0 ? 1 : -1);
+  }
 
   const stdOptions = {
     showPrintMargin: false,
@@ -193,7 +214,7 @@
   $: theme =
     $currentEditorTheme ||
     $currentThemeDefinition?.editorTheme ||
-    ($currentThemeDefinition?.themeType == 'dark' ? 'merbivore' : 'github');
+    ($currentThemeType == 'dark' ? 'dbgate_dark' : 'github');
   $: keyBindingMode = $currentEditorKeybindigMode || null;
   $: watchEditorFontSize($currentEditorFontSize);
 
@@ -247,7 +268,7 @@
 
   function watchEditorFontSize(value) {
     if (editor) {
-      editor.setFontSize(value ? parseInt(value) : defaultFontSize);
+      editor.setFontSize(parseInt(value) || defaultFontSize);
     }
   }
 
@@ -282,7 +303,9 @@
       editor.setOptions({
         ...stdOptions,
         ...newOption,
-        fontFamily: fontFamily || 'Menlo, Monaco, Ubuntu Mono, Consolas, source-code-pro, monospace',
+        fontFamily:
+          fontFamily ||
+          "'Cascadia Code', 'JetBrains Mono', Consolas, Menlo, Monaco, 'Ubuntu Mono', source-code-pro, monospace",
         // fontFamily: 'tahoma,Menlo',
         // fontSize: '10pt',
       });
@@ -385,6 +408,11 @@
   };
 
   const handleKeyDown = (data, hash, keyString, keyCode, event) => {
+    if (event && (event.ctrlKey || event.metaKey) && !event.altKey && ['=', '+', '-', '0'].includes(event.key)) {
+      changeEditorFontSize(event.key == '0' ? 0 : event.key == '-' ? -1 : 1);
+      event.preventDefault();
+      return { command: 'null' };
+    }
     if (event) handleCommandKeyDown(event);
     if (onKeyDown && event) onKeyDown(event);
   };
@@ -610,10 +638,12 @@
       contentBackup = content;
       changedQueryParts();
     });
-    defaultFontSize = editor.getFontSize();
-    if ($currentEditorFontSize) {
-      editor.setFontSize(parseInt($currentEditorFontSize) || 12);
-    }
+    editor.setFontSize(parseInt($currentEditorFontSize) || defaultFontSize);
+    editor.container.style.lineHeight = '1.6';
+    editor.renderer.setPadding(12);
+    editor.renderer.setScrollMargin(8, 8, 0, 0);
+    editor.renderer.updateFontSize();
+    editor.container.addEventListener('wheel', handleEditorWheel, { passive: false, capture: true });
 
     editor.on('changeSelection', () => {
       changedCurrentQueryPart();

@@ -192,7 +192,7 @@
       icon={'icon table'}
       iconAfter="icon arrow-link"
       on:click={() => {
-        if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', true)) {
+        if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', false)) {
           lastUsedDefaultActions.update(actions => ({
             ...actions,
             [objectTypeField]: 'openTable',
@@ -220,7 +220,7 @@
       icon="img sql-file"
       iconAfter="icon arrow-link"
       on:click={() => {
-        if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', true)) {
+        if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', false)) {
           lastUsedDefaultActions.update(actions => ({
             ...actions,
             [objectTypeField]: 'showSql',

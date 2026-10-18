@@ -66,8 +66,9 @@
   input {
     flex: 1;
     min-width: 10px;
-    min-height: 22px;
+    min-height: 24px;
     width: 10px;
+    padding: 0 4px;
     border: none;
     outline: none;
     background-color: var(--theme-searchbox-background);

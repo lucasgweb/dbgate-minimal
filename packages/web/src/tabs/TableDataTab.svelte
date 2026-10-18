@@ -109,7 +109,7 @@
   import ErrorMessageModal from '../modals/ErrorMessageModal.svelte';
   import { getTableInfo, useConnectionInfo, useDatabaseInfo } from '../utility/metadataLoaders';
   import { scriptToSql } from 'dbgate-sqltree';
-  import { extensions, lastUsedDefaultActions } from '../stores';
+  import { currentDropDownMenu, extensions, lastUsedDefaultActions, minimalMode } from '../stores';
   import ConfirmSqlModal from '../modals/ConfirmSqlModal.svelte';
   import createActivator from '../utility/createActivator';
   import { registerMenu } from '../utility/contextMenu';
@@ -309,6 +309,79 @@
 
   const quickExportHandlerRef = createQuickExportHandlerRef();
 
+  $: changedCount = changeSetChangedCount($changeSetStore?.value);
+
+  let hasRowSelection = false;
+  function handlePublishedCellsChanged(cells) {
+    hasRowSelection = cells.some(x => x.isSelectedFullRow) || _.uniq(cells.map(x => x.row)).length > 1;
+  }
+
+  function openStructure() {
+    if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', false)) {
+      lastUsedDefaultActions.update(actions => ({
+        ...actions,
+        tables: 'openStructure',
+      }));
+    }
+
+    openNewTab({
+      title: pureName,
+      icon: 'img table-structure',
+      tabComponent: 'TableStructureTab',
+      tabPreviewMode: true,
+      props: {
+        schemaName,
+        pureName,
+        conid,
+        database,
+        objectTypeField: 'tables',
+        defaultActionId: 'openStructure',
+      },
+    });
+  }
+
+  function openSql() {
+    if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', false)) {
+      lastUsedDefaultActions.update(actions => ({
+        ...actions,
+        tables: 'showSql',
+      }));
+    }
+
+    openNewTab({
+      title: pureName,
+      icon: 'img sql-file',
+      tabComponent: 'SqlObjectTab',
+      tabPreviewMode: true,
+      props: {
+        schemaName,
+        pureName,
+        conid,
+        database,
+        objectTypeField: 'tables',
+        defaultActionId: 'showSql',
+      },
+    });
+  }
+
+  function handleMoreOptions(e) {
+    const rect = e.detail.target.getBoundingClientRect();
+    currentDropDownMenu.set({
+      left: rect.left,
+      top: rect.bottom,
+      items: [
+        { command: 'dataGrid.switchToForm', hideDisabled: true },
+        { command: 'dataGrid.switchToTable', hideDisabled: true },
+        { command: 'dataGrid.fetchAll', hideDisabled: true },
+        { command: 'dataGrid.toggleCellDataView', hideDisabled: true },
+        {
+          text: _t('tableData.viewColumns', { defaultMessage: 'View columns' }),
+          onClick: () => collapsedLeftColumnStore.update(x => !x),
+        },
+      ],
+    });
+  }
+
   function createAutoRefreshMenu() {
     return [
       { divider: true },
@@ -327,6 +400,7 @@
 <ToolStripContainer>
   <TableDataGrid
     {...$$props}
+    onPublishedCellsChanged={handlePublishedCellsChanged}
     config={$config}
     setConfig={config.update}
     cache={$cache}
@@ -338,60 +412,85 @@
   />
 
   <svelte:fragment slot="toolstrip">
+    {#if $minimalMode}
+      <ToolStripCommandSplitButton
+        buttonLabel={autoRefreshStarted
+          ? _t('tableData.refreshEvery', {
+              defaultMessage: 'Refresh (every {autoRefreshInterval}s)',
+              values: { autoRefreshInterval },
+            })
+          : null}
+        commands={['dataGrid.refresh', ...createAutoRefreshMenu()]}
+        hideDisabled
+        data-testid="TableDataTab_refreshGrid"
+      />
+      <ToolStripCommandSplitButton
+        buttonLabel={autoRefreshStarted
+          ? _t('tableData.refreshEvery', {
+              defaultMessage: 'Refresh (every {autoRefreshInterval}s)',
+              values: { autoRefreshInterval },
+            })
+          : null}
+        commands={['dataForm.refresh', ...createAutoRefreshMenu()]}
+        hideDisabled
+        data-testid="TableDataTab_refreshForm"
+      />
+
+      <ToolStripCommandButton command="dataForm.goToFirst" hideDisabled data-testid="TableDataTab_goToFirst" />
+      <ToolStripCommandButton command="dataForm.goToPrevious" hideDisabled data-testid="TableDataTab_goToPrevious" />
+      <ToolStripCommandButton command="dataForm.goToNext" hideDisabled data-testid="TableDataTab_goToNext" />
+      <ToolStripCommandButton command="dataForm.goToLast" hideDisabled data-testid="TableDataTab_goToLast" />
+
+      <ToolStripCommandButton command="dataGrid.insertNewRow" hideDisabled data-testid="TableDataTab_insertNewRow" />
+      {#if hasRowSelection}
+        <ToolStripCommandButton
+          command="dataGrid.deleteSelectedRows"
+          hideDisabled
+          data-testid="TableDataTab_deleteSelectedRows"
+        />
+      {/if}
+      <ToolStripCommandButton
+        command="dataGrid.revertAllChanges"
+        hideDisabled
+        data-testid="TableDataTab_revertAllChanges"
+      />
+      {#if changedCount > 0}
+        <div class="save-button">
+          <ToolStripCommandButton
+            command="tableData.save"
+            buttonLabel={_t('tableData.saveChanges', {
+              defaultMessage: 'Save {count} changes',
+              values: { count: changedCount },
+            })}
+            data-testid="TableDataTab_save"
+          />
+        </div>
+      {/if}
+
+      <div class="toolstrip-spacer" />
+
+      <ToolStripButton icon="icon structure" on:click={openStructure}
+        >{_t('datagrid.structure', { defaultMessage: 'Structure' })}</ToolStripButton
+      >
+      <ToolStripButton icon="img sql-file" on:click={openSql}>SQL</ToolStripButton>
+      <ToolStripExportButton {quickExportHandlerRef} />
+      <ToolStripButton
+        icon="icon dots-vertical"
+        title={_t('tableData.moreOptions', { defaultMessage: 'More options' })}
+        on:click={handleMoreOptions}
+        data-testid="TableDataTab_moreOptions"
+      />
+    {:else}
     <ToolStripButton
       icon="icon structure"
       iconAfter="icon arrow-link"
-      on:click={() => {
-        if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', true)) {
-          lastUsedDefaultActions.update(actions => ({
-            ...actions,
-            tables: 'openStructure',
-          }));
-        }
-
-        openNewTab({
-          title: pureName,
-          icon: 'img table-structure',
-          tabComponent: 'TableStructureTab',
-          tabPreviewMode: true,
-          props: {
-            schemaName,
-            pureName,
-            conid,
-            database,
-            objectTypeField: 'tables',
-            defaultActionId: 'openStructure',
-          },
-        });
-      }}>{_t('datagrid.structure', { defaultMessage: 'Structure' })}</ToolStripButton
+      on:click={openStructure}>{_t('datagrid.structure', { defaultMessage: 'Structure' })}</ToolStripButton
     >
 
     <ToolStripButton
       icon="img sql-file"
       iconAfter="icon arrow-link"
-      on:click={() => {
-        if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', true)) {
-          lastUsedDefaultActions.update(actions => ({
-            ...actions,
-            tables: 'showSql',
-          }));
-        }
-
-        openNewTab({
-          title: pureName,
-          icon: 'img sql-file',
-          tabComponent: 'SqlObjectTab',
-          tabPreviewMode: true,
-          props: {
-            schemaName,
-            pureName,
-            conid,
-            database,
-            objectTypeField: 'tables',
-            defaultActionId: 'showSql',
-          },
-        });
-      }}>SQL</ToolStripButton
+      on:click={openSql}>SQL</ToolStripButton
     >
 
     <ToolStripCommandSplitButton
@@ -457,5 +556,26 @@
       hideDisabled
       data-testid="TableDataTab_toggleCellDataView"
     />
+    {/if}
   </svelte:fragment>
 </ToolStripContainer>
+
+<style>
+  .toolstrip-spacer {
+    flex: 1;
+  }
+
+  .save-button :global(.inner) {
+    background: var(--theme-formbutton-background) !important;
+    border: var(--theme-formbutton-border) !important;
+    color: var(--theme-formbutton-foreground);
+  }
+
+  .save-button :global(.inner:hover) {
+    background: var(--theme-formbutton-background-hover) !important;
+  }
+
+  .save-button :global(.icon) {
+    color: var(--theme-formbutton-foreground);
+  }
+</style>

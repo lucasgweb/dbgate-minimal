@@ -24,7 +24,7 @@ export default async function openNewTab(newTab, initialData: any = undefined, o
 
   let existing = null;
 
-  if (!getBoolSettingsValue('behaviour.useTabPreviewMode', true) && newTab.tabPreviewMode) {
+  if (!getBoolSettingsValue('behaviour.useTabPreviewMode', false) && newTab.tabPreviewMode) {
     newTab = {
       ...newTab,
       tabPreviewMode: false,

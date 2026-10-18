@@ -57,7 +57,7 @@
   }
 
   .content.isComponentActive {
-    max-height: calc(100% - 32px);
+    max-height: calc(100% - 44px);
   }
 
   .toolstrip {
@@ -67,13 +67,26 @@
     background: var(--theme-toolstrip-background);
     border-top: var(--theme-toolstrip-border);
     border-bottom: var(--theme-toolstrip-border);
-    padding: 2px 6px;
-    gap: 2px;
-    min-height: 32px;
+    padding: 4px 8px;
+    gap: 4px;
+    min-height: 44px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
   .scrollContent {
     overflow-y: auto;
+  }
+
+  .toolstrip :global(select) {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 10px;
+    min-width: 140px;
+    font-size: 13px;
+    font-weight: 500;
+    border: var(--theme-toolstrip-button-border);
+    border-radius: 6px;
+    background-color: var(--theme-toolstrip-button-background);
+    color: var(--theme-toolstrip-button-foreground);
   }
 </style>

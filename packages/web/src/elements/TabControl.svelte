@@ -149,6 +149,7 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+    transition: background-color 0.15s ease;
   }
 
   .tabs:not(.inlineTabs) .tab-item {

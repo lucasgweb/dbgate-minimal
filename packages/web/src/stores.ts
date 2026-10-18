@@ -158,6 +158,7 @@ export const selectedWidget = writableWithStorage(
   isAdminPage() ? 'selectedAdminWidget' : 'selectedWidget'
 );
 export const lockedDatabaseMode = writableWithStorage<boolean>(false, 'lockedDatabaseMode');
+export const minimalMode = writableWithStorage<boolean>(true, 'minimalMode');
 export const visibleWidgetSideBar = writableWithStorage(true, 'visibleWidgetSideBar');
 export const visibleSelectedWidget = derived(
   [selectedWidget, visibleWidgetSideBar],
@@ -232,7 +233,7 @@ export const loadingPluginStore = writable({
 export const activeRedisKeysStore = writableWithStorage({}, 'activeRedisKeysStore');
 export const appliedCurrentSchema = writable<string>(null);
 export const loadingSchemaLists = writable({}); // dict [`${conid}::${database}`]: true
-export const lastUsedDefaultActions = writableWithStorage({}, 'lastUsedDefaultActions');
+export const lastUsedDefaultActions = writableWithStorage({}, 'lastUsedDefaultActions_v2');
 
 export const selectedDatabaseObjectAppObject = writable(null);
 export const focusedConnectionOrDatabase = writable<{ conid: string; database?: string; connection: any }>(null);
@@ -322,7 +323,12 @@ subscribeCssVariable(visibleSelectedWidget, x => (x ? 1 : 0), '--dim-visible-lef
 subscribeCssVariable(leftPanelWidth, x => `${x}px`, '--dim-left-panel-width');
 subscribeCssVariable(rightPanelWidth, x => `${x}px`, '--dim-right-panel-width');
 subscribeCssVariable(visibleTitleBar, x => (x ? 1 : 0), '--dim-visible-titlebar');
-subscribeCssVariable(lockedDatabaseMode, x => (x ? 0 : 1), '--dim-visible-tabs-databases');
+subscribeCssVariable(
+  derived([lockedDatabaseMode, minimalMode], ([locked, minimal]) => locked || minimal),
+  x => (x ? 0 : 1),
+  '--dim-visible-tabs-databases'
+);
+minimalMode.subscribe(value => document.documentElement.classList.toggle('minimal-mode', !!value));
 subscribeCssVariable(alignDataGridNumbersToRight, x => (x ? 'right' : 'left'), '--data-grid-numbers-align');
 subscribeCssVariable(rightPanelWidget, x => (x ? 1 : 0), '--dim-visible-right-panel');
 

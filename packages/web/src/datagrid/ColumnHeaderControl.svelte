@@ -13,6 +13,9 @@
   import DefineDictionaryDescriptionModal from '../modals/DefineDictionaryDescriptionModal.svelte';
   import { sleep } from '../utility/common';
   import { isProApp } from '../utility/proTools';
+  import { minimalMode } from '../stores';
+  import { _t } from '../translations';
+  import contextMenu from '../utility/contextMenu';
 
   export let column;
   export let conid = undefined;
@@ -29,6 +32,30 @@
   export let seachInColumns = '';
   export let onReload = undefined;
   export let driver = null;
+
+  // in minimal mode the column menu is opened by right click instead of the dropdown button
+  function headerContextMenu(node, enabled) {
+    let handle = enabled ? contextMenu(node, getMenu) : null;
+    return {
+      update(value) {
+        if (value && !handle) handle = contextMenu(node, getMenu);
+        if (!value && handle) {
+          handle.destroy();
+          handle = null;
+        }
+      },
+      destroy() {
+        handle?.destroy();
+      },
+    };
+  }
+
+  function handleSortToggle() {
+    if (!order) setSort('ASC');
+    else if (order == 'ASC') setSort('DESC');
+    else clearSort?.();
+  }
+
 
   const openReferencedTable = () => {
     openDatabaseObjectDetail('TableDataTab', null, {
@@ -108,22 +135,40 @@
   }
 </script>
 
-<div class="header">
+<div class="header" use:headerContextMenu={$minimalMode}>
   <div class="label">
     {#if grouping}
       <span class="grouping">
         {grouping == 'COUNT DISTINCT' ? 'distinct' : grouping.toLowerCase()}
       </span>
     {/if}
-    <ColumnLabel {...column} filter={seachInColumns} />
+    <ColumnLabel
+      {...column}
+      filter={seachInColumns}
+      iconOverride={$minimalMode && column.isPrimaryKey ? 'mdi mdi-key-variant color-icon-blue' : undefined}
+    />
 
-    {#if _.isString(column.displayedDataType || column.dataType) && !order}
+    {#if _.isString(column.displayedDataType || column.dataType)}
       <span class="data-type" title={column.dataType}>
         {(column.displayedDataType || column.dataType).toLowerCase()}
       </span>
     {/if}
   </div>
-  {#if order == 'ASC'}
+  {#if $minimalMode && setSort}
+    <span
+      class="sort-toggle buttonLike"
+      class:active={!!order}
+      title={_t('columnHeader.toggleSort', { defaultMessage: 'Sort' })}
+      on:click|stopPropagation={handleSortToggle}
+      data-testid={`ColumnHeaderControl_sort_${column?.uniqueName}`}
+    >
+      <FontIcon icon={order == 'DESC' ? 'mdi mdi-menu-down' : 'mdi mdi-menu-up'} />
+      {#if order && orderIndex > 0}
+        <span class="sort-index">{orderIndex + 1}</span>
+      {/if}
+    </span>
+  {/if}
+  {#if order == 'ASC' && !$minimalMode}
     <span class="icon">
       <FontIcon icon="img sort-asc" />
       {#if orderIndex >= 0}
@@ -131,7 +176,7 @@
       {/if}
     </span>
   {/if}
-  {#if order == 'DESC'}
+  {#if order == 'DESC' && !$minimalMode}
     <span class="icon">
       <FontIcon icon="img sort-desc" />
       {#if orderIndex >= 0}
@@ -139,12 +184,14 @@
       {/if}
     </span>
   {/if}
-  <DropDownButton
-    menu={getMenu}
-    narrow
-    data-testid={`ColumnHeaderControl_dropdown_${column?.uniqueName}`}
-    circleHover
-  />
+  <span class="menu-button">
+    <DropDownButton
+      menu={getMenu}
+      narrow
+      data-testid={`ColumnHeaderControl_dropdown_${column?.uniqueName}`}
+      circleHover
+    />
+  </span>
   <div class="horizontal-split-handle resizeHandleControl" use:splitterDrag={'clientX'} on:resizeSplitter />
 </div>
 
@@ -152,6 +199,47 @@
   .header {
     display: flex;
     flex-wrap: nowrap;
+  }
+  .menu-button {
+    display: flex;
+  }
+  .sort-toggle {
+    display: flex;
+    align-items: center;
+    align-self: center;
+    padding: 0 2px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #5f5f5f;
+    transition: color 0.15s ease;
+  }
+  .sort-toggle:hover {
+    color: var(--theme-generic-font);
+  }
+  .sort-toggle.active {
+    color: var(--theme-generic-font-hover);
+  }
+  .sort-index {
+    font-size: 10px;
+    margin-left: -2px;
+  }
+  :global(.minimal-mode) .menu-button {
+    display: none;
+  }
+  :global(.minimal-mode) .label {
+    font-weight: 600;
+    padding-left: 8px;
+  }
+  :global(.minimal-mode) .label :global(.notNull) {
+    font-weight: inherit;
+  }
+  :global(.minimal-mode) .data-type {
+    font-size: 12px;
+    font-weight: normal;
+    margin-left: 6px;
+    color: var(--theme-generic-font-grayed);
+    vertical-align: baseline;
   }
   .order-index {
     font-size: 10pt;

@@ -1,12 +1,12 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans,
-    sans-serif;
+  font-family: Inter, 'Segoe UI Variable Text', -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, Ubuntu,
+    Droid Sans, sans-serif;
   font-size: 14px;
   /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 	  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
 	  sans-serif; 
 	  */
-  -webkit-font-smoothing: auto;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
 }
@@ -144,7 +144,7 @@ body {
   padding: 10px 10px;
   font-size: 14px;
   box-sizing: border-box;
-  border-radius: 4px;
+  border-radius: 6px;
   border: var(--theme-input-border);
   background: var(--theme-input-background);
 }
@@ -153,7 +153,7 @@ body {
   padding: 5px 2px;
   font-size: 14px;
   box-sizing: border-box;
-  border-radius: 4px;
+  border-radius: 6px;
   border: var(--theme-input-border);
   background: var(--theme-input-background);
 }
@@ -169,29 +169,43 @@ body {
   padding: 10px 10px;
   font-size: 14px;
   box-sizing: border-box;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+/* input with an attached bordered button (password eye, dropdown, driver settings) renders as one group */
+.flex:has(> .outer.useBorder, > * > .outer.useBorder) > input,
+.flex:has(> .outer.useBorder, > * > .outer.useBorder) > select,
+.flex:has(> .outer.useBorder, > * > .outer.useBorder) > textarea {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+body .flex > .outer.useBorder,
+body .flex > * > .outer.useBorder {
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  min-width: 36px;
+  box-sizing: border-box;
 }
 
 body *::-webkit-scrollbar {
-  height: 0.8em;
-  width: 0.8em;
+  height: 10px;
+  width: 10px;
 }
 body *::-webkit-scrollbar-track {
-  border-radius: 1px;
   background: var(--theme-scrollbar-background);
 }
 body *::-webkit-scrollbar-corner {
-  border-radius: 1px;
   background: var(--theme-scrollbar-corner-background);
 }
 
 body *::-webkit-scrollbar-thumb {
-  border-radius: 1px;
-  background: var(--theme-scrollbar-thumb-background);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--theme-scrollbar-thumb-background) padding-box;
 }
 
 body *::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-scrollbar-thumb-background-hover);
+  background: var(--theme-scrollbar-thumb-background-hover) padding-box;
 }
 
 input {
@@ -213,12 +227,64 @@ input[disabled] {
 select {
   padding: 10px 12px;
     border: var(--theme-input-border);
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: var(--theme-input-background);
     color: var(--theme-input-foreground);
     font-size: 13px;
     transition: all 0.15s ease;
     font-family: inherit;
+}
+
+select:not([multiple]) {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  padding-right: 30px !important;
+  cursor: pointer;
+}
+
+@supports (appearance: base-select) {
+  select:not([multiple]),
+  ::picker(select) {
+    appearance: base-select;
+  }
+  select:not([multiple]) {
+    display: inline-flex;
+    align-items: center;
+  }
+  select:not([multiple])::picker-icon {
+    display: none;
+  }
+  ::picker(select) {
+    margin-top: 4px;
+    padding: 4px;
+    max-height: 320px;
+    min-width: anchor-size(width);
+    scrollbar-width: thin;
+    scrollbar-color: var(--theme-scrollbar-thumb-background) transparent;
+    border: var(--theme-input-border);
+    border-radius: 8px;
+    background: var(--theme-input-background);
+    color: var(--theme-input-foreground);
+    box-shadow: var(--theme-modal-shadow);
+  }
+  select option {
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  select option:hover,
+  select option:focus-visible {
+    background: var(--theme-sidebar-background-hover);
+    outline: none;
+  }
+  select option:checked {
+    font-weight: 600;
+  }
 }
 
 select:hover {

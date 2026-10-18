@@ -60,11 +60,13 @@
 <style>
   .wrapper {
     width: 400px;
-    border: var(--theme-card-border);
-    background-color: var(--theme-card-background);
+    border: var(--theme-modal-border);
+    border-radius: 10px;
+    background-color: var(--theme-modal-background);
+    box-shadow: var(--theme-modal-shadow);
     margin: 10px;
     position: relative;
-    padding: 3px;
+    padding: 6px 8px;
   }
 
   .message {
@@ -73,8 +75,10 @@
 
   .close {
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 8px;
+    top: 8px;
+    padding: 0 4px;
+    border-radius: 6px;
     cursor: pointer;
   }
 

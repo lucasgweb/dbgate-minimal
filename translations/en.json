@@ -1596,5 +1596,16 @@
   "widgets.installedExtensions": "Installed extensions",
   "widgets.openedTabs": "Opened tabs",
   "widgets.premiumPromo": "Premium promo",
-  "widgets.queryHistoryAndClosedTabs": "Query history & Closed tabs"
+  "widgets.queryHistoryAndClosedTabs": "Query history & Closed tabs",
+  "command.application.toggleMinimalMode": "Toggle minimal mode",
+  "dataGrid.toggleFilterRow": "Show/hide filters",
+  "datagrid.footer.loadedAt": "loaded at {time}",
+  "datagrid.footer.selected": "selected",
+  "query.moreOptions": "More options",
+  "query.parameterStyle": "Query parameter style",
+  "tableData.moreOptions": "More options",
+  "tableData.saveChanges": "Save {count} changes",
+  "columnHeader.toggleSort": "Sort",
+  "datagrid.noRowsFiltered": "No rows match the filter",
+  "datagrid.loadingData": "Loading data"
 }

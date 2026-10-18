@@ -6,7 +6,6 @@
   import PluginsWidget from './PluginsWidget.svelte';
   import HistoryWidget from './HistoryWidget.svelte';
   import AdminMenuWidget from './AdminMenuWidget.svelte';
-  import AdminPremiumPromoWidget from './AdminPremiumPromoWidget.svelte';
   import PublicCloudWidget from './PublicCloudWidget.svelte';
   import PrivateCloudWidget from './PrivateCloudWidget.svelte';
   import hasPermission from '../utility/hasPermission';
@@ -34,9 +33,6 @@
 {/if}
 {#if $visibleSelectedWidget == 'admin' && hasPermission('widgets/admin')}
   <AdminMenuWidget />
-{/if}
-{#if $visibleSelectedWidget == 'premium'}
-  <AdminPremiumPromoWidget />
 {/if}
 {#if $visibleSelectedWidget == 'cloud-public' && hasPermission('widgets/cloud-public')}
   <PublicCloudWidget />

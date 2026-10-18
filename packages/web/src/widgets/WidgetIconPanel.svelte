@@ -8,8 +8,6 @@
     visibleHamburgerMenuWidget,
     getCurrentConfig,
     cloudSigninTokenHolder,
-    seenPremiumPromoWidget,
-    promoWidgetPreview,
   } from '../stores';
   import mainMenuDefinition from '../../../../app/src/mainMenuDefinition';
   import hasPermission from '../utility/hasPermission';
@@ -20,14 +18,12 @@
   import { showModal } from '../modals/modalTools';
   import NewObjectModal from '../modals/NewObjectModal.svelte';
   import openNewTab from '../utility/openNewTab';
-  import { useConfig, usePromoWidget } from '../utility/metadataLoaders';
+  import { useConfig } from '../utility/metadataLoaders';
   import { _t, getCurrentTranslations } from '../translations';
 
   let domSettings;
   let domCloudAccount;
   let domMainMenu;
-
-  const promoWidget = usePromoWidget({});
 
   const widgets = [
     getCurrentConfig().storageDatabase && {
@@ -80,12 +76,6 @@
       title: _t('widgets.dbgateCloud', { defaultMessage: 'DbGate Cloud' }),
       icon: 'icon cloud-public',
     },
-    {
-      icon: 'icon premium',
-      name: 'premium',
-      title: _t('widgets.premiumPromo', { defaultMessage: 'Premium promo' }),
-      isPremiumPromo: true,
-    },
     // {
     //   icon: 'icon settings',
     //   name: 'settings',
@@ -102,10 +92,6 @@
     } else {
       $selectedWidget = name;
       $visibleWidgetSideBar = true;
-
-      if (name == 'premium') {
-        $seenPremiumPromoWidget = $promoWidget?.identifier || '';
-      }
     }
   }
   //const handleChangeWidget= e => (selectedWidget.set(item.name))
@@ -148,7 +134,6 @@
     }
   }
 
-  $: promoWidgetData = $promoWidgetPreview || $promoWidget;
   $: config = useConfig();
 </script>
 
@@ -160,7 +145,6 @@
   {/if}
   {#each widgets
     .filter(x => x && hasPermission(`widgets/${x.name}`))
-    .filter(x => !x.isPremiumPromo || (($config?.trialDaysLeft != null || !isProApp()) && promoWidgetData?.state == 'data'))
     // .filter(x => !x.isPremiumOnly || isProApp())
     .filter(x => x.name != 'cloud-private' || $cloudSigninTokenHolder) as item}
     <div
@@ -170,12 +154,6 @@
       on:click={() => handleChangeWidget(item.name)}
     >
       <FontIcon icon={item.icon} title={item.title} />
-      {#if item.isPremiumPromo}
-        <div class="premium-promo">Premium</div>
-        {#if promoWidgetData?.identifier != $seenPremiumPromoWidget}
-          <div class="premium-promo-not-seen">•</div>
-        {/if}
-      {/if}
     </div>
   {/each}
 
@@ -225,8 +203,10 @@
 
 <style>
   .wrapper {
-    font-size: 20pt;
-    height: 50px;
+    font-size: 17pt;
+    height: 40px;
+    margin: 3px 7px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -237,40 +217,26 @@
   }
   .wrapper:hover {
     color: var(--theme-widget-icon-foreground-hover);
+    background: color-mix(in srgb, var(--theme-widget-icon-background-active) 50%, transparent);
   }
   .wrapper.selected {
     color: var(--theme-widget-icon-foreground-active);
     background: var(--theme-widget-icon-background-active);
+  }
+  .wrapper.selected::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 10px;
+    bottom: 10px;
     border-left: var(--theme-widget-icon-border-active);
+    border-left-width: 3px;
+    border-radius: 0 3px 3px 0;
   }
   .main {
     display: flex;
     flex: 1;
     flex-direction: column;
-  }
-
-  .premium-promo {
-    position: absolute;
-    text-transform: uppercase;
-    font-size: 6pt;
-    color: var(--theme-widget-panel-foreground);
-    padding: 1px 3px;
-    border-radius: 3px;
-    bottom: 0;
-  }
-  .wrapper:hover .premium-promo {
-    color: var(--theme-widget-icon-foreground-hover);
-  }
-  .wrapper.selected .premium-promo {
-    color: var(--theme-widget-icon-foreground-active);
-  }
-
-  .premium-promo-not-seen {
-    position: absolute;
-    font-size: 16pt;
-    color: var(--theme-icon-yellow);
-    top: -5px;
-    right: 5px;
   }
 
   :global(.widget-icon-panel-rounded) {

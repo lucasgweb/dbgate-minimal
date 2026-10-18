@@ -37,17 +37,19 @@
 
 <style>
   .new-object-button {
-  height: 114px;
-  padding: 10px 8px;
+  min-height: 120px;
+  padding: 16px 12px 14px;
 
   background-color: var(--theme-new-object-button-background);
   border: var(--theme-inlinebutton-bordered-border);
-  border-radius: 6px;
+  border-radius: 10px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
 }
 
 .new-object-button.enabled {
@@ -55,26 +57,32 @@
 }
 
 .new-object-button.enabled:hover {
-  background-color: var(--theme-new-object-button-background-hover);
+  border-color: var(--theme-input-border-focus-color);
+  transform: translateY(-1px);
 }
 
 .icon {
-  font-size: 2.5em;
-  margin: 6px 0 6px;
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 10px;
   color: var(--theme-generic-font);
 }
 
 .title {
-  font-size: 0.8rem;
+  font-size: 13px;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .description {
-  font-size: 0.7rem;
+  font-size: 11.5px;
   color: var(--theme-generic-font-grayed);
-  line-height: 1.2;
-  margin-top: 2px;
+  line-height: 1.35;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .new-object-button.disabled {

@@ -89,6 +89,9 @@
     overflow: auto;
     background-color: rgb(0, 0, 0); /* Fallback color */
     background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    /* centers every dialog; margin: auto on the window keeps tall dialogs scrollable from the top */
+    display: flex;
   }
 
   .window {
@@ -101,9 +104,9 @@
   }
 
   .window:not(.fullScreen):not(.simple):not(.simplefix) {
-    border-radius: 5px;
+    border-radius: 12px;
+    box-shadow: var(--theme-modal-shadow);
     margin: auto;
-    margin-top: 15vh;
     max-height: 70vh;
     width: 50%;
   }
@@ -121,15 +124,17 @@
   }
 
   .window.simple {
+    border-radius: 12px;
+    box-shadow: var(--theme-modal-shadow);
     margin: auto;
-    margin-top: 25vh;
     width: 30%;
   }
 
   .window.simplefix {
+    border-radius: 12px;
+    box-shadow: var(--theme-modal-shadow);
     margin: auto;
     max-width: 750px;
-    margin-top: 10vh;
   }
 
   .close {
@@ -144,8 +149,9 @@
 
   .header {
     font-size: 12pt;
-    padding: 5px;
-    padding-left: 15px;
+    font-weight: 600;
+    padding: 10px;
+    padding-left: 18px;
     display: flex;
     justify-content: space-between;
     background-color: var(--theme-modal-header-background);

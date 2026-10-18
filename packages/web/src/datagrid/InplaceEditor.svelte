@@ -44,4 +44,15 @@
   td.editor {
     position: relative;
   }
+  :global(.minimal-mode) td.editor {
+    padding: 0;
+  }
+  :global(.minimal-mode) .inplaceeditor-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+  }
 </style>

@@ -100,7 +100,7 @@
         icon="icon structure"
         iconAfter="icon arrow-link"
         on:click={() => {
-          if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', true)) {
+          if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', false)) {
             lastUsedDefaultActions.update(actions => ({
               ...actions,
               [objectTypeField]: 'openStructure',
@@ -127,7 +127,7 @@
         icon="icon table"
         iconAfter="icon arrow-link"
         on:click={() => {
-          if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', true)) {
+          if (tabPreviewMode && getBoolSettingsValue('defaultAction.useLastUsedAction', false)) {
             lastUsedDefaultActions.update(actions => ({
               ...actions,
               [objectTypeField]: 'openTable',

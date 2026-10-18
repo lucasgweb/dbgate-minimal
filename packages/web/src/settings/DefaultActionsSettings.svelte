@@ -55,39 +55,39 @@
     <FormCheckboxField
     name="defaultAction.useLastUsedAction"
     label={_t('settings.defaultActions.useLastUsedAction', { defaultMessage: 'Use last used action' })}
-    defaultValue={true}
+    defaultValue={false}
     data-testid="DefaultActionsSettings_useLastUsedAction"
     />
 
     <FormDefaultActionField
     label={_t('settings.defaultActions.tableClick', { defaultMessage: 'Table click' })}
     objectTypeField="tables"
-    disabled={values['defaultAction.useLastUsedAction'] !== false}
+    disabled={values['defaultAction.useLastUsedAction'] === true}
     />
     <FormDefaultActionField
     label={_t('settings.defaultActions.viewClick', { defaultMessage: 'View click' })}
     objectTypeField="views"
-    disabled={values['defaultAction.useLastUsedAction'] !== false}
+    disabled={values['defaultAction.useLastUsedAction'] === true}
     />
     <FormDefaultActionField
     label={_t('settings.defaultActions.materializedViewClick', { defaultMessage: 'Materialized view click' })}
     objectTypeField="matviews"
-    disabled={values['defaultAction.useLastUsedAction'] !== false}
+    disabled={values['defaultAction.useLastUsedAction'] === true}
     />
     <FormDefaultActionField
     label={_t('settings.defaultActions.procedureClick', { defaultMessage: 'Procedure click' })}
     objectTypeField="procedures"
-    disabled={values['defaultAction.useLastUsedAction'] !== false}
+    disabled={values['defaultAction.useLastUsedAction'] === true}
     />
     <FormDefaultActionField
     label={_t('settings.defaultActions.functionClick', { defaultMessage: 'Function click' })}
     objectTypeField="functions"
-    disabled={values['defaultAction.useLastUsedAction'] !== false}
+    disabled={values['defaultAction.useLastUsedAction'] === true}
     />
     <FormDefaultActionField
     label={_t('settings.defaultActions.collectionClick', { defaultMessage: 'NoSQL collection click' })}
     objectTypeField="collections"
-    disabled={values['defaultAction.useLastUsedAction'] !== false}
+    disabled={values['defaultAction.useLastUsedAction'] === true}
     />
 </FormValues>
 </div>

@@ -861,7 +861,7 @@
       { forceNewTab }
     );
 
-    if (tabPreviewMode && defaultActionId && getBoolSettingsValue('defaultAction.useLastUsedAction', true)) {
+    if (tabPreviewMode && defaultActionId && getBoolSettingsValue('defaultAction.useLastUsedAction', false)) {
       lastUsedDefaultActions.update(actions => ({
         ...actions,
         [objectTypeField]: defaultActionId,

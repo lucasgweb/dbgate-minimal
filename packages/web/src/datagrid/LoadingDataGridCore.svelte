@@ -25,6 +25,7 @@
   // export let griderFactory;
 
   let loadedRows = [];
+  let replaceRowsOnLoad = false;
   let isLoading = false;
   let isLoadedAll = false;
   let loadedTime = new Date().getTime();
@@ -68,9 +69,10 @@
 
     loadedTimeRef.set(loadStart);
 
+    const replacing = replaceRowsOnLoad;
     const nextRows = await loadDataPage(
       $$props,
-      loadedRows.length,
+      replacing ? 0 : loadedRows.length,
       getIntSettingsValue('dataGrid.pageSize', 100, 5, 50000)
     );
     if (loadedTimeRef.get() !== loadStart) {
@@ -79,13 +81,16 @@
     }
 
     isLoading = false;
+    replaceRowsOnLoad = false;
 
     if (nextRows.errorMessage) {
       errorMessage = nextRows.errorMessage;
+      if (replacing) loadedRows = [];
     } else {
       if (allRowCount == null && !isRawMode) handleLoadRowCount();
 
-      loadedRows = [...loadedRows, ...(preprocessLoadedRow ? nextRows.map(preprocessLoadedRow) : nextRows)];
+      const newRows = preprocessLoadedRow ? nextRows.map(preprocessLoadedRow) : nextRows;
+      loadedRows = replacing ? newRows : [...loadedRows, ...newRows];
       isLoadedAll = nextRows.length === 0;
       //   const loadedInfo = {
       //     loadedRows: [...loadedRows, ...nextRows],
@@ -280,13 +285,18 @@
     isLoading = false;
     isFetchingAll = false;
     fetchAllLoadedCount = 0;
-    loadedRows = [];
     isLoadedAll = false;
     loadedTime = new Date().getTime();
     errorMessage = null;
     loadNextDataRef.set(false);
     loadedTimeRef.set(null);
     // loadNextDataToken = 0;
+    if (loadedRows.length > 0) {
+      replaceRowsOnLoad = true;
+      handleLoadNextData();
+    } else {
+      loadedRows = [];
+    }
   }
 
   $: if (display?.cache?.refreshTime > loadedTime) {

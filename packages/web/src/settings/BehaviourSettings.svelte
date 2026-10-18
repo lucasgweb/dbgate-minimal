@@ -21,7 +21,7 @@
         defaultMessage: 'Open detail on keyboard navigation',
       })}
       defaultValue={true}
-      disabled={values['behaviour.useTabPreviewMode'] === false}
+      disabled={values['behaviour.useTabPreviewMode'] !== true}
     />
 
     <FormCheckboxField
@@ -44,7 +44,7 @@
     <FormCheckboxField
       name="behaviour.useTabPreviewMode"
       label={_t('settings.behaviour.useTabPreviewMode', { defaultMessage: 'Use tab preview mode' })}
-      defaultValue={true}
+      defaultValue={false}
       data-testid="BehaviourSettings_useTabPreviewMode"
     />
 

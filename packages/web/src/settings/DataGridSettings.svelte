@@ -71,7 +71,7 @@
     label={_t('settings.dataGrid.coloringMode', { defaultMessage: 'Row coloring mode' })}
     name="dataGrid.coloringMode"
     isNative
-    defaultValue="36"
+    defaultValue="2-primary"
     options={[
       {
         value: '36',

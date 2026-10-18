@@ -48,8 +48,17 @@
     justify-content: space-around;
   }
   .box {
-    background-color: var(--theme-card-background);
-    padding: 10px;
-    border: var(--theme-card-border);
+    background-color: var(--theme-modal-background);
+    padding: 4px 16px 4px 6px;
+    border: var(--theme-modal-border);
+    border-radius: 10px;
+    box-shadow: var(--theme-modal-shadow);
+    font-size: 13px;
+  }
+
+  .box .spinner {
+    font-size: 18px;
+    margin: 8px;
+    color: var(--theme-icon-blue);
   }
 </style>

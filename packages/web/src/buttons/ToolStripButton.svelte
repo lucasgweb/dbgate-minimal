@@ -61,8 +61,8 @@
     white-space: nowrap;
     align-self: center;
     background: var(--theme-toolstrip-button-background);
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
     border: var(--theme-toolstrip-button-border);
     cursor: pointer;
     transition: all 0.15s ease;
@@ -74,5 +74,10 @@
   .inner.disabled {
     border: var(--theme-toolstrip-button-border-disabled);
     cursor: not-allowed;
+  }
+  :global(.minimal-mode) .inner:not(:hover),
+  :global(.minimal-mode) .inner.disabled {
+    background: transparent;
+    border-color: transparent;
   }
 </style>

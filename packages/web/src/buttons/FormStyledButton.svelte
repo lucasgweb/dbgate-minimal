@@ -39,11 +39,13 @@
 <style>
   input {
     border: var(--theme-formbutton-border);
-    padding: 5px;
+    padding: 7px 14px;
     margin: 2px;
     color: var(--theme-formbutton-foreground);
-    border-radius: 3px;
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
 
   .setBackgroundColor {
@@ -51,7 +53,7 @@
   }
 
   input:not(.skipWidth) {
-    width: 100px;
+    min-width: 100px;
   }
 
   input.setBackgroundColor:hover:not(.disabled):not(.outline) {

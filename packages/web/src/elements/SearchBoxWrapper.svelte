@@ -21,8 +21,13 @@
   }
 
   div.useMargin {
-    border-radius: 4px;
-    margin: 3px 5px;
+    border-radius: 6px;
+    margin: 6px 8px;
+    padding: 2px 4px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  div.useMargin:focus-within {
+    box-shadow: var(--theme-input-focus-ring);
   }
   div.hasFilter {
     background-color: var(--theme-searchbox-background-filtered);

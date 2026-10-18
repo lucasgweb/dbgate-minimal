@@ -161,10 +161,13 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    background-color: var(--theme-toolstrip-button-background);
+    background-color: var(--theme-modal-background);
+    border: var(--theme-modal-border);
+    border-radius: 8px;
+    padding: 4px;
     overflow-y: auto;
     overflow-x: hidden;
-    box-shadow: var(--theme-input-inplace-select-shadow);
+    box-shadow: var(--theme-modal-shadow);
   }
 
   .value {

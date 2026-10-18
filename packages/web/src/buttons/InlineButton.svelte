@@ -59,6 +59,7 @@
   .outer.useBorder {
     background: var(--theme-inlinebutton-bordered-background);
     border: var(--theme-inlinebutton-bordered-border);
+    border-radius: 6px;
   }
 
   .narrow {

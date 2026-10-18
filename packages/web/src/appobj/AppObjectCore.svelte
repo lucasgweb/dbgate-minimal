@@ -207,6 +207,8 @@
 <style>
   .main {
     padding: 5px;
+    margin: 0 4px;
+    border-radius: 6px;
     cursor: pointer;
     white-space: nowrap;
     font-weight: normal;

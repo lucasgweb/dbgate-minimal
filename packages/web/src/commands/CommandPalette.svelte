@@ -281,7 +281,8 @@
     width: 600px;
     background: var(--theme-modal-background);
     border: var(--theme-modal-border);
-    border-radius: 6px;
+    border-radius: 12px;
+    overflow: hidden;
     box-shadow: var(--theme-modal-shadow);
     overflow: hidden;
   }
@@ -333,7 +334,8 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    border-radius: 0;
+    border-radius: 6px;
+    margin: 0 6px;
     color: var(--theme-generic-font);
     transition: background-color 150ms ease-in-out;
   }

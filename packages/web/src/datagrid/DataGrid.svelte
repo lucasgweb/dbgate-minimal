@@ -87,6 +87,7 @@
   import { _t } from '../translations';
   import { isProApp } from '../utility/proTools';
   import CellDataWidget from '../widgets/CellDataWidget.svelte';
+  import { minimalMode } from '../stores';
   import { useSettings } from '../utility/metadataLoaders';
 
   export let config;
@@ -129,6 +130,14 @@
   let cellViewWidth;
   const collapsedLeftColumnStore =
     getContext('collapsedLeftColumnStore') || writable(getLocalStorage('dataGrid_collapsedLeftColumn', false));
+
+  let lastMinimalMode = null;
+  $: handleMinimalModeChange($minimalMode);
+  function handleMinimalModeChange(value) {
+    if (value) collapsedLeftColumnStore.set(true);
+    else if (lastMinimalMode) collapsedLeftColumnStore.set(false);
+    lastMinimalMode = value;
+  }
   const settings = useSettings();
   const usageTabId = getContext('tabid');
 

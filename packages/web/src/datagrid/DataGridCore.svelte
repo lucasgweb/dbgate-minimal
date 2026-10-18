@@ -446,7 +446,7 @@
   import DataFilterControl from './DataFilterControl.svelte';
   import createReducer from '../utility/createReducer';
   import keycodes from '../utility/keycodes';
-  import { copyRowsFormat, currentArchive } from '../stores';
+  import { copyRowsFormat, currentArchive, minimalMode } from '../stores';
   import {
     copyRowsFormatDefs,
     copyRowsToClipboard,
@@ -563,6 +563,9 @@
   let autofillDragStartCell = nullCell;
   let autofillSelectedCells = emptyCellArray;
   const domFilterControlsRef = createRef({});
+  let showFilterRow = false;
+  $: showFooter = $minimalMode && !tabControlHiddenTab;
+  $: filterRowVisible = display?.filterable && (!$minimalMode || showFilterRow || display?.filterCount > 0);
 
   let isGridFocused = false;
   let selectionMenu = null;
@@ -642,7 +645,7 @@
 
   const settingsValue = useSettings();
 
-  $: gridColoringMode = $settingsValue?.['dataGrid.coloringMode'];
+  $: gridColoringMode = $settingsValue?.['dataGrid.coloringMode'] || '2-primary';
 
   let previousFilters = '';
   let previousMultiColumnFilter = undefined;
@@ -735,6 +738,17 @@
   export function refresh() {
     if (onCustomGridRefresh) onCustomGridRefresh();
     else display.reload();
+  }
+
+  function freezeColumnWidths() {
+    if (!columnSizes || !columns) return;
+    for (let modelIndex = 0; modelIndex < columns.length; modelIndex++) {
+      const uniqueName = columns[modelIndex].uniqueName;
+      if (display.config?.columnWidths?.[uniqueName]) continue;
+      if (display.hiddenColumnIndexes?.includes(modelIndex)) continue;
+      const width = columnSizes.getSizeByModelIndex(modelIndex);
+      if (width > 0) display.resizeColumn(uniqueName, width, 0);
+    }
   }
 
   export function canRefresh() {
@@ -1347,7 +1361,7 @@
 
   $: columnSizes = countColumnSizes(grider, columns, containerWidth, display);
 
-  $: headerColWidth = 40;
+  $: headerColWidth = $minimalMode ? 48 : 40;
 
   $: gridScrollAreaHeight = containerHeight - 2 * rowHeight;
   $: gridScrollAreaWidth = containerWidth - columnSizes.frozenSize - headerColWidth - 32;
@@ -2193,8 +2207,14 @@
 
   function focusFilterEditor(columnRealIndex) {
     let modelIndex = columnSizes.realToModel(columnRealIndex);
-    const domFilter = domFilterControlsRef.get()[columns[modelIndex].uniqueName];
-    if (domFilter) domFilter.focus();
+    const uniqueName = columns[modelIndex].uniqueName;
+    if (!filterRowVisible) {
+      showFilterRow = true;
+      tick().then(() => domFilterControlsRef.get()[uniqueName]?.focus());
+    } else {
+      const domFilter = domFilterControlsRef.get()[uniqueName];
+      if (domFilter) domFilter.focus();
+    }
     return ['filter', columnRealIndex];
   }
 
@@ -2381,6 +2401,7 @@
 {:else}
   <div
     class="container"
+    class:withFooter={showFooter}
     class:data-grid-focused={isGridFocused}
     bind:clientWidth={containerWidth}
     bind:clientHeight={containerHeight}
@@ -2432,6 +2453,16 @@
                   on:click={() => collapsedLeftColumnStore.update(x => !x)}
                 />
               {/if}
+              {#if $minimalMode && display?.filterable && !(display.filterCount > 0)}
+                <InlineButton
+                  on:click={() => (showFilterRow = !showFilterRow)}
+                  square
+                  title={_t('dataGrid.toggleFilterRow', { defaultMessage: 'Show/hide filters' })}
+                  data-testid="DataGridCore_button_toggleFilterRow"
+                >
+                  <FontIcon icon="icon filter" />
+                </InlineButton>
+              {/if}
             </td>
             {#each visibleRealColumns as col (col.uniqueName)}
               <td
@@ -2445,15 +2476,37 @@
                   {conid}
                   {database}
                   setSort={display.sortable
-                    ? order => trackGridAction('sort', () => display.setSort(col.uniqueName, order), order)
+                    ? order =>
+                        trackGridAction(
+                          'sort',
+                          () => {
+                            freezeColumnWidths();
+                            display.setSort(col.uniqueName, order);
+                          },
+                          order
+                        )
                     : null}
                   addToSort={display.sortable
-                    ? order => trackGridAction('add_sort', () => display.addToSort(col.uniqueName, order), order)
+                    ? order =>
+                        trackGridAction(
+                          'add_sort',
+                          () => {
+                            freezeColumnWidths();
+                            display.addToSort(col.uniqueName, order);
+                          },
+                          order
+                        )
                     : null}
                   order={display.sortable ? display.getSortOrder(col.uniqueName) : null}
                   orderIndex={display.sortable ? display.getSortOrderIndex(col.uniqueName) : -1}
                   isSortDefined={display.sortable ? display.isSortDefined() : false}
-                  clearSort={display.sortable ? () => trackGridAction('clear_sort', () => display.clearSort()) : null}
+                  clearSort={display.sortable
+                    ? () =>
+                        trackGridAction('clear_sort', () => {
+                          freezeColumnWidths();
+                          display.clearSort();
+                        })
+                    : null}
                   on:resizeSplitter={e => {
                     // @ts-ignore
                     display.resizeColumn(col.uniqueName, col.width, e.detail);
@@ -2476,8 +2529,9 @@
                 style={`width:${trailingHorizontalScrollPadding}px; min-width:${trailingHorizontalScrollPadding}px; max-width:${trailingHorizontalScrollPadding}px`}
               ></td>
             {/if}
+            <td class="header-cell filler-cell" data-row="header"></td>
           </tr>
-          {#if display.filterable}
+          {#if filterRowVisible}
             <tr>
               <td
                 class="header-cell"
@@ -2542,6 +2596,7 @@
                   style={`width:${trailingHorizontalScrollPadding}px; min-width:${trailingHorizontalScrollPadding}px; max-width:${trailingHorizontalScrollPadding}px`}
                 ></td>
               {/if}
+              <td class="filler-cell"></td>
             </tr>
           {/if}
         </thead>
@@ -2578,25 +2633,40 @@
     </div>
 
     {#if !isDynamicStructure && isLoadedAll && grider?.rowCount == 0}
-      <div class="no-rows-info ml-2">
-        <div class="mb-3">
-          <ErrorInfo alignTop message={_t('datagrid.noRows', { defaultMessage: 'No rows loaded' })} icon="img info" />
+      <div class="no-rows-info" style={`top:${(filterRowVisible ? 2 : 1) * rowHeight + 48}px`}>
+        <div class="no-rows-icon">
+          <FontIcon icon={display.filterCount > 0 ? 'mdi mdi-filter-remove-outline' : 'mdi mdi-table-off'} />
         </div>
-        {#if display.filterCount > 0}
-          <FormStyledButton
-            value={_t('datagrid.resetFilter', { defaultMessage: 'Reset filter' })}
-            on:click={clearFilter}
-          />
-        {/if}
-        {#if grider.editable}
-          <FormStyledButton value={_t('datagrid.addRow', { defaultMessage: 'Add row' })} on:click={insertNewRow} />
-        {/if}
-        {#if onOpenQuery}
-          <FormStyledButton
-            value={_t('datagrid.openQuery', { defaultMessage: 'Open Query' })}
-            on:click={() => onOpenQuery()}
-          />
-        {/if}
+        <div class="no-rows-title">
+          {display.filterCount > 0
+            ? _t('datagrid.noRowsFiltered', { defaultMessage: 'No rows match the filter' })
+            : _t('datagrid.noRows', { defaultMessage: 'No rows loaded' })}
+        </div>
+        <div class="no-rows-actions">
+          {#if display.filterCount > 0}
+            <FormStyledButton
+              skipWidth
+              value={_t('datagrid.resetFilter', { defaultMessage: 'Reset filter' })}
+              on:click={clearFilter}
+            />
+          {/if}
+          {#if grider.editable}
+            <FormStyledButton
+              skipWidth
+              outline={display.filterCount > 0}
+              value={_t('datagrid.addRow', { defaultMessage: 'Add row' })}
+              on:click={insertNewRow}
+            />
+          {/if}
+          {#if onOpenQuery}
+            <FormStyledButton
+              skipWidth
+              outline
+              value={_t('datagrid.openQuery', { defaultMessage: 'Open Query' })}
+              on:click={() => onOpenQuery()}
+            />
+          {/if}
+        </div>
       </div>
     {/if}
 
@@ -2618,7 +2688,7 @@
       minimum={0}
       maximum={grider.rowCount - visibleRowCountUpperBound + 2}
       viewportRatio={visibleRowCountUpperBound / grider.rowCount}
-      top={(display?.filterable ? 2 : 1) * rowHeight}
+      top={(filterRowVisible ? 2 : 1) * rowHeight}
       on:scroll={e => {
         verticalSmoothPending = 0;
         if (!horizontalSmoothPending && smoothRafId) {
@@ -2678,7 +2748,7 @@
     {/if}
 
     {#if isLoading}
-      <LoadingInfo wrapper message="Loading data" />
+      <LoadingInfo wrapper message={_t('datagrid.loadingData', { defaultMessage: 'Loading data' })} />
     {/if}
 
     {#if isFetchingAll}
@@ -2704,6 +2774,42 @@
       />
     {/if}
   </div>
+  {#if showFooter}
+    <div class="grid-footer" data-testid="DataGridCore_footer">
+      <div class="grid-footer-info">
+        {#if allRowCount != null}
+          <span>{allRowCount.toLocaleString()} {_t('datagrid.rows', { defaultMessage: 'Rows' }).toLowerCase()}</span>
+        {:else if grider}
+          <span
+            >{grider.rowCount.toLocaleString()}{isLoadedAll ? '' : '+'}
+            {_t('datagrid.rows', { defaultMessage: 'Rows' }).toLowerCase()}</span
+          >
+        {/if}
+        {#if selectedCellsInfo}
+          <span class="grid-footer-muted">
+            · {_t('datagrid.footer.selected', { defaultMessage: 'selected' })}: {selectedCellsInfo.rowCount}
+          </span>
+        {/if}
+        {#if loadedTime}
+          <span class="grid-footer-muted">
+            · {_t('datagrid.footer.loadedAt', {
+              defaultMessage: 'loaded at {time}',
+              values: { time: new Date(loadedTime).toLocaleTimeString() },
+            })}
+          </span>
+        {/if}
+      </div>
+      {#if canRefresh()}
+        <InlineButton
+          on:click={refresh}
+          title={_t('common.refresh', { defaultMessage: 'Refresh' })}
+          data-testid="DataGridCore_footerRefresh"
+        >
+          <FontIcon icon="icon reload" />
+        </InlineButton>
+      {/if}
+    </div>
+  {/if}
 {/if}
 
 <style>
@@ -2716,6 +2822,36 @@
     user-select: none;
     overflow: hidden;
     background: var(--theme-datagrid-background);
+  }
+  .container.withFooter {
+    bottom: 30px;
+  }
+  :global(.minimal-mode) .header-cell[data-row='header'] {
+    border-bottom: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  }
+  .grid-footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    font-size: 12px;
+    color: var(--theme-datagrid-foreground);
+    background: var(--theme-datagrid-headercell-background);
+    border-top: var(--theme-datagrid-border-horizontal);
+  }
+  .grid-footer-info {
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .grid-footer-muted {
+    color: var(--theme-generic-font-grayed);
   }
   .tableScrollContainer {
     position: absolute;
@@ -2733,6 +2869,15 @@
   .table {
     border-collapse: collapse;
     outline: none;
+  }
+  :global(.minimal-mode) .table {
+    width: 100%;
+    table-layout: fixed;
+  }
+  .filler-cell {
+    padding: 0;
+    border-left: none;
+    border-right: none;
   }
   .header-cell {
     border-top: var(--theme-datagrid-border-horizontal);
@@ -2773,7 +2918,8 @@
     position: absolute;
     background-color: var(--theme-datagrid-corner-label-background);
     border: var(--theme-datagrid-corner-label-border);
-    padding: 3px;
+    border-radius: 8px;
+    padding: 6px 10px;
     right: 40px;
     bottom: 20px;
     opacity: 0.8;
@@ -2795,14 +2941,37 @@
 
   .selection-menu {
     position: absolute;
+    border-radius: 8px;
+    padding: 4px;
     background-color: var(--theme-datagrid-corner-label-background);
     right: 40px;
     bottom: 20px;
   }
 
   .no-rows-info {
-    position: relative;
+    position: absolute;
+    left: 0;
+    right: 0;
     z-index: 6;
-    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .no-rows-icon {
+    font-size: 36px;
+    color: var(--theme-generic-font-grayed);
+    opacity: 0.6;
+  }
+  .no-rows-title {
+    color: var(--theme-generic-font-grayed);
+    font-size: 14px;
+  }
+  .no-rows-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    pointer-events: auto;
   }
 </style>

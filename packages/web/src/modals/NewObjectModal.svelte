@@ -176,7 +176,7 @@
 <ModalBase simplefix {...$$restProps}>
   <div class="create-header">{_t('common.createNew', { defaultMessage: 'Create new' })}</div>
   <div class="wrapper">
-    {#each NEW_ITEMS as item}
+    {#each NEW_ITEMS.filter(x => !x.isProFeature || isProApp()) as item}
       {@const enabled = item.command
         ? $commandsCustomized[item.command]?.enabled
         : item.testEnabled
@@ -211,18 +211,17 @@
 <style>
   .wrapper {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-    padding: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    padding: 8px 20px 20px;
     max-width: 820px;
     margin: 0 auto;
   }
 
   .create-header {
-    font-size: 150%;
-    text-transform: uppercase;
-    color: var(--theme-generic-font-grayed);
-    text-align: center;
-    margin: 12px 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--theme-generic-font);
+    padding: 18px 20px 6px;
   }
 </style>

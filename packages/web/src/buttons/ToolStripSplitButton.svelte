@@ -47,8 +47,8 @@
   .main {
     background: var(--theme-toolstrip-button-background);
     border: var(--theme-toolstrip-button-border);
-    padding: 3px 6px 3px 8px;
-    border-radius: 4px 0px 0px 4px;
+    padding: 6px 8px 6px 12px;
+    border-radius: 6px 0px 0px 6px;
     border-right: none;
     display: flex;
     align-items: center;
@@ -78,8 +78,8 @@
   }
   .split-icon {
     background: var(--theme-toolstrip-button-background);
-    padding: 3px 6px;
-    border-radius: 0px 4px 4px 0px;
+    padding: 6px 8px;
+    border-radius: 0px 6px 6px 0px;
     border: var(--theme-toolstrip-button-border);
     border-left: var(--theme-toolstrip-button-split-separator-border);
     transition: all 0.15s ease;
@@ -99,5 +99,26 @@
     align-self: center;
     cursor: pointer;
     display: flex;
+  }
+  /* minimal mode: both halves are transparent and light up together, so the split button reads as one */
+  :global(.minimal-mode) .inner:not(:hover) .main,
+  :global(.minimal-mode) .inner:not(:hover) .split-icon,
+  :global(.minimal-mode) .inner.disabled .main,
+  :global(.minimal-mode) .inner.disabled .split-icon {
+    background: transparent;
+    border-color: transparent;
+  }
+  :global(.minimal-mode) .inner:hover:not(.disabled) .main,
+  :global(.minimal-mode) .inner:hover:not(.disabled) .split-icon {
+    background: var(--theme-toolstrip-button-background-hover);
+    border-top: var(--theme-toolstrip-button-border-hover);
+    border-bottom: var(--theme-toolstrip-button-border-hover);
+    box-shadow: none;
+  }
+  :global(.minimal-mode) .inner:hover:not(.disabled) .main {
+    border-left: var(--theme-toolstrip-button-border-hover);
+  }
+  :global(.minimal-mode) .inner:hover:not(.disabled) .split-icon {
+    border-right: var(--theme-toolstrip-button-border-hover);
   }
 </style>

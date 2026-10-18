@@ -7,6 +7,13 @@
   import InlineButton from '../buttons/InlineButton.svelte';
   import FontIcon from '../icons/FontIcon.svelte';
   import resizeObserver from '../utility/resizeObserver';
+  import { minimalMode } from '../stores';
+
+  // extra vertical space per row in minimal mode (Beekeeper-like row height)
+  const MINIMAL_MODE_EXTRA_HEIGHT = 6;
+
+  let measuredHeight = 0;
+  $: if (measuredHeight) $dataGridRowHeight = measuredHeight + 1 + ($minimalMode ? MINIMAL_MODE_EXTRA_HEIGHT : 0);
 
   $: console.log('dataGridRowHeight', $dataGridRowHeight);
 </script>
@@ -19,7 +26,7 @@
           use:resizeObserver={true}
           on:resize={e => {
             // @ts-ignore
-            $dataGridRowHeight = e.detail.height + 1;
+            measuredHeight = e.detail.height;
           }}
         >
           title

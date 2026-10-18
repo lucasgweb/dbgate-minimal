@@ -146,7 +146,7 @@
   import VerticalSplitter from '../elements/VerticalSplitter.svelte';
   import SqlEditor from '../query/SqlEditor.svelte';
   import useEditorData from '../query/useEditorData';
-  import { currentEditorWrapEnabled, extensions } from '../stores';
+  import { currentDropDownMenu, currentEditorWrapEnabled, extensions, minimalMode } from '../stores';
   import applyScriptTemplate from '../utility/applyScriptTemplate';
   import { changeTab, markTabUnsaved, sleep } from '../utility/common';
   import { getDatabaseInfo, useConnectionInfo, useDatabaseInfo, useSettings } from '../utility/metadataLoaders';
@@ -760,13 +760,93 @@
     (initialArgs?.scriptTemplate == 'CALL OBJECT' ? ':' : '');
 
   $: localStorage.setItem(`tabdata_isAiAssistantVisible_${tabid}`, isAiAssistantVisible ? 'true' : 'false');
+
+  function getIsolationLevelMenu() {
+    return [
+      {
+        label: $connection?.defaultIsolationLevel
+          ? _t('query.defaultIsolationLevelNamed', {
+              defaultMessage: 'Default ({level})',
+              values: { level: $connection.defaultIsolationLevel },
+            })
+          : _t('query.defaultIsolationLevel', { defaultMessage: 'Default' }),
+        switchStore: isolationLevelStore,
+        switchStoreGetter: () => get(isolationLevelStore),
+        switchOption: 'level',
+        switchOptionIsDefault: true,
+        closeOnSwitchClick: true,
+        onClick: async () => {
+          isolationLevelStore.set({ level: null });
+          if (sessionId && $connection?.defaultIsolationLevel) {
+            await apiCall('sessions/set-isolation-level', {
+              sesid: sessionId,
+              level: $connection.defaultIsolationLevel,
+            });
+          }
+        },
+      },
+      { divider: true },
+      ...driver.isolationLevels.map(level => ({
+        label: level,
+        switchStore: isolationLevelStore,
+        switchStoreGetter: () => get(isolationLevelStore),
+        switchOption: 'level',
+        switchOptionValue: level,
+        closeOnSwitchClick: true,
+        onClick: async () => {
+          if (sessionId) {
+            await apiCall('sessions/set-isolation-level', { sesid: sessionId, level });
+          }
+        },
+      })),
+    ];
+  }
+
+  function getMoreOptionsMenu() {
+    return [
+      !driver?.singleConnectionOnly && {
+        text: queryRowsLimit
+          ? _t('query.limitRows', { defaultMessage: 'Limit {queryRowsLimit} rows', values: { queryRowsLimit } })
+          : _t('query.unlimitedRows', { defaultMessage: 'Unlimited rows' }),
+        onClick: () =>
+          showModal(RowsLimitModal, {
+            value: queryRowsLimit,
+            onConfirm: value => {
+              queryRowsLimit = value;
+            },
+          }),
+      },
+      {
+        text: _t('query.parameterStyle', { defaultMessage: 'Query parameter style' }),
+        submenu: QUERY_PARAMETER_STYLES.map(param => ({
+          text: param.text,
+          onClick: () => {
+            queryParameterStyle = param.value;
+            localStorage.setItem(`tabdata_queryParamStyle_${tabid}`, queryParameterStyle);
+          },
+        })),
+      },
+      driver?.isolationLevels &&
+        !busy && {
+          text: _t('query.isolationLevel', { defaultMessage: 'Isolation level' }),
+          submenu: getIsolationLevelMenu(),
+        },
+    ].filter(Boolean);
+  }
+
+  function handleMoreOptions(e) {
+    const rect = e.detail.target.getBoundingClientRect();
+    currentDropDownMenu.set({ left: rect.left, top: rect.bottom, items: getMoreOptionsMenu() });
+  }
 </script>
 
-<ToolStripContainer bind:this={domToolStrip} hideToolStrip={hideEditor}>
+<ToolStripContainer bind:this={domToolStrip} hideToolStrip={hideEditor || $minimalMode}>
   <HorizontalSplitter isSplitter={isAiAssistantVisible} initialSizeRight={300}>
     <svelte:fragment slot="1">
       <VerticalSplitter isSplitter={visibleResultTabs} initialValue={splitterInitialValue} hideFirst={hideEditor}>
         <svelte:fragment slot="1">
+          <div class="editor-area">
+          <div class="editor-host">
           {#if driver?.databaseEngineTypes?.includes('sql')}
             <SqlEditor
               engine={$connection && $connection.engine}
@@ -818,6 +898,43 @@
               bind:this={domEditor}
             />
           {/if}
+          </div>
+          {#if $minimalMode}
+            <div class="minimal-bar">
+              <div class="minimal-bar-side">
+                <ToolStripCommandButton command="query.kill" hideDisabled />
+                <ToolStripCommandButton command="query.beginTransaction" hideDisabled />
+                <ToolStripCommandButton command="query.autocommitOnSwitch" hideDisabled />
+                <ToolStripCommandButton command="query.autocommitOffSwitch" hideDisabled />
+                <ToolStripCommandButton command="query.commitTransaction" hideDisabled />
+                <ToolStripCommandButton command="query.rollbackTransaction" hideDisabled />
+              </div>
+              <div class="minimal-bar-side">
+                {#if resultCount == 1}
+                  <ToolStripExportButton
+                    command="jslTableGrid.export"
+                    {quickExportHandlerRef}
+                    label={_t('export.result', { defaultMessage: 'Export result' })}
+                  />
+                {/if}
+                <ToolStripCommandButton command="query.formatCode" />
+                <ToolStripSaveButton idPrefix="query" />
+                <ToolStripButton
+                  icon="icon dots-vertical"
+                  title={_t('query.moreOptions', { defaultMessage: 'More options' })}
+                  on:click={handleMoreOptions}
+                  data-testid="QueryTab_moreOptionsButton"
+                />
+                <div class="run-button">
+                  <ToolStripCommandSplitButton
+                    commands={['query.execute', 'query.executeCurrent']}
+                    data-testid="QueryTab_executeButtonMinimal"
+                  />
+                </div>
+              </div>
+            </div>
+          {/if}
+          </div>
         </svelte:fragment>
         <svelte:fragment slot="2">
           <ResultTabs
@@ -998,44 +1115,7 @@
     {/if}
     {#if driver?.isolationLevels}
       <ToolStripDropDownButton
-        menu={() => [
-          {
-            label: $connection?.defaultIsolationLevel
-              ? _t('query.defaultIsolationLevelNamed', {
-                  defaultMessage: 'Default ({level})',
-                  values: { level: $connection.defaultIsolationLevel },
-                })
-              : _t('query.defaultIsolationLevel', { defaultMessage: 'Default' }),
-            switchStore: isolationLevelStore,
-            switchStoreGetter: () => get(isolationLevelStore),
-            switchOption: 'level',
-            switchOptionIsDefault: true,
-            closeOnSwitchClick: true,
-            onClick: async () => {
-              isolationLevelStore.set({ level: null });
-              if (sessionId && $connection?.defaultIsolationLevel) {
-                await apiCall('sessions/set-isolation-level', {
-                  sesid: sessionId,
-                  level: $connection.defaultIsolationLevel,
-                });
-              }
-            },
-          },
-          { divider: true },
-          ...driver.isolationLevels.map(level => ({
-            label: level,
-            switchStore: isolationLevelStore,
-            switchStoreGetter: () => get(isolationLevelStore),
-            switchOption: 'level',
-            switchOptionValue: level,
-            closeOnSwitchClick: true,
-            onClick: async () => {
-              if (sessionId) {
-                await apiCall('sessions/set-isolation-level', { sesid: sessionId, level });
-              }
-            },
-          })),
-        ]}
+        menu={getIsolationLevelMenu}
         label={_t('query.isolationLevel', { defaultMessage: 'Isolation level' })}
         icon="icon isolation-level"
         disabled={busy}
@@ -1050,6 +1130,55 @@
 {/if}
 
 <style>
+  .editor-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .editor-host {
+    flex: 1;
+    position: relative;
+  }
+
+  .minimal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 4px 8px;
+    min-height: 44px;
+    background: var(--theme-content-background);
+    border-top: var(--theme-toolstrip-border);
+  }
+
+  .minimal-bar-side {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .run-button :global(.main),
+  .run-button :global(.split-icon) {
+    background: var(--theme-formbutton-background) !important;
+    border: var(--theme-formbutton-border) !important;
+    color: var(--theme-formbutton-foreground);
+  }
+
+  .run-button :global(.main:hover),
+  .run-button :global(.split-icon:hover) {
+    background: var(--theme-formbutton-background-hover) !important;
+  }
+
+  .run-button :global(.icon),
+  .run-button :global(.split-icon) {
+    color: var(--theme-formbutton-foreground);
+  }
+
   .ai-assistant-panel {
     flex: 1;
     display: flex;

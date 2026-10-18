@@ -44,6 +44,11 @@
     left: 0;
     z-index: 3;
   }
+  :global(.minimal-mode) td {
+    color: var(--theme-generic-font-grayed);
+    text-align: center;
+    padding: 2px 6px;
+  }
   .extraIcon {
     position: absolute;
     right: 0px;

@@ -106,7 +106,8 @@
 
 {#if realSchemaList.length > 0}
   <div class="wrapper" class:negativeMarginTop>
-    <div class="mr-1">{_t('common.schema', { defaultMessage: 'Schema' })}:</div>
+    <div class="schema-field">
+    <span class="schema-label">{_t('common.schema', { defaultMessage: 'Schema' })}</span>
     <SelectField
       isNative
       options={connection?.useSeparateSchemas
@@ -135,6 +136,7 @@
       }}
       selectClass="schema-select"
     />
+    </div>
 
     <div class="buttons">
       {#if selectedSchema != null}
@@ -166,10 +168,34 @@
 <style>
   .wrapper {
     display: flex;
-    border-bottom: var(--theme-card-border);
-    margin-bottom: 5px;
     align-items: center;
-    padding-left: 5px;
+    gap: 4px;
+    margin: 0 8px 6px 8px;
+  }
+
+  .schema-field {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding-left: 10px;
+    border: var(--theme-searchbox-border);
+    border-radius: 6px;
+    background-color: var(--theme-searchbox-background);
+    transition: box-shadow 0.15s ease;
+  }
+
+  .schema-field:focus-within {
+    box-shadow: var(--theme-input-focus-ring);
+  }
+
+  .schema-label {
+    flex-shrink: 0;
+    margin-right: 6px;
+    font-size: 12px;
+    line-height: 28px;
+    color: var(--theme-generic-font-grayed);
   }
 
   .negativeMarginTop {
@@ -179,9 +205,22 @@
   .buttons {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     margin-left: auto;
     flex-shrink: 0;
+  }
+
+  .buttons :global(.outer) {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .buttons :global(.outer:hover:not(.disabled)) {
+    background-color: var(--theme-sidebar-background-hover);
   }
 
   .schema-select {
@@ -193,9 +232,20 @@
   .wrapper :global(select) {
     flex: 1 1 0%;
     min-width: 0;
+    height: 28px;
     padding: 0;
-    background-color: var(--theme-searchbox-background);
-    border: var(--theme-searchbox-border);
+    display: flex;
+    align-items: center;
+    line-height: 28px;
+    font-size: 13px;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .wrapper :global(select:hover),
+  .wrapper :global(select:focus) {
+    border: none;
     box-shadow: none;
   }
 </style>

@@ -59,7 +59,6 @@
   }
 
   .driver-settings-button :global(.outer) {
-    width: 24px;
-    height: 34px;
+    width: 36px;
   }
 </style>

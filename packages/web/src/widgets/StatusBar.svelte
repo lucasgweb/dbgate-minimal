@@ -247,8 +247,8 @@
   }
 
   .colorbox {
-    padding: 0px 3px;
-    border-radius: 2px;
+    padding: 0px 5px;
+    border-radius: 4px;
     color: var(--theme-statusbar-button-foreground);
     background: var(--theme-statusbar-button-background);
   }
