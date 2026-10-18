@@ -1,3 +1,14 @@
+> **Este é um fork do [DbGate](https://github.com/dbgate/dbgate)** (GPL-3.0), com alterações de interface.
+> Não é o produto oficial nem tem relação com a Sprinx Systems; o código continua sob a licença GPL-3.0 (veja [LICENSE](LICENSE)).
+>
+> Principais mudanças deste fork (branch `ui-minimalista`):
+> - Modo minimalista (`Ctrl+Shift+M`, ligado por padrão): barra do editor embaixo, toolbar enxuta, rodapé da grade, barra de filtro coluna/operador/valor
+> - Tema escuro no estilo Beekeeper Studio (cor de destaque azul), componentes arredondados, diálogos e formulários centralizados, tooltips próprios
+> - Editor SQL com tema próprio, zoom (`Ctrl` + roda/`+`/`-`/`0`) e fonte maior
+> - Grade: zebra, seleção só com borda, ordenação pelo cabeçalho, sem "piscar" ao recarregar
+> - Tabelas abrem em abas próprias e mostram os dados ao clicar; tela inicial com atalhos
+> - Remoção das chamadas para o DbGate Premium; traduções em português
+
 [![NPM version](https://img.shields.io/npm/v/dbgate-serve.svg)](https://www.npmjs.com/package/dbgate-serve)
 ![GitHub All Releases](https://img.shields.io/github/downloads/dbgate/dbgate/total) 
 [![dbgate](https://snapcraft.io/dbgate/badge.svg)](https://snapcraft.io/dbgate)

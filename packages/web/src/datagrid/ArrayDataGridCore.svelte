@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _t } from '../translations';
   import { createGridCache, createGridConfig, FreeTableGridDisplay } from 'dbgate-datalib';
   import { evaluateCondition } from 'dbgate-sqltree';
   import { writable } from 'svelte/store';
@@ -108,7 +109,7 @@
     createQuickExportMenu(
       quickExportHandler,
       {
-        text: 'Export advanced...',
+        text: _t('datagrid.exportAdvanced', { defaultMessage: 'Export advanced...' }),
         onClick: () => exportGrid(),
       },
       { tag: 'export' }

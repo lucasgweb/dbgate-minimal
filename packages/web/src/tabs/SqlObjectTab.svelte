@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import { getActiveComponent } from '../utility/createActivator';
   import registerCommand from '../commands/registerCommand';
-  import { __t } from '../translations';
+  import { _t, __t } from '../translations';
   const getCurrentEditor = () => getActiveComponent('SqlObjectTab');
 
   registerCommand({
@@ -121,7 +121,7 @@
               defaultActionId: 'openStructure',
             },
           });
-        }}>Structure</ToolStripButton
+        }}>{_t('datagrid.structure', { defaultMessage: 'Structure' })}</ToolStripButton
       >
       <ToolStripButton
         icon="icon table"
@@ -149,7 +149,7 @@
               defaultActionId: 'openTable',
             },
           });
-        }}>Data</ToolStripButton
+        }}>{_t('sqlObject.data', { defaultMessage: 'Data' })}</ToolStripButton
       >
     {/if}
 

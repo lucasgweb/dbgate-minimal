@@ -1059,7 +1059,7 @@
         }))}
       label={QUERY_PARAMETER_STYLES.find(x => x.value == queryParameterStyle)?.text}
       icon="icon at"
-      title="Query parameter style"
+      title={_t('query.parameterStyle', { defaultMessage: 'Query parameter style' })}
     />
     <ToolStripCommandButton
       command="query.switchAiAssistant"

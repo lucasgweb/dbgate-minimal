@@ -557,7 +557,7 @@ await dbgateApi.executeQuery(${JSON.stringify(
         },
       // isSqlOrDoc &&
       //   isSqlOrDoc &&
-      //   hasPermission(`dbops/model/view`) && { onClick: handleOpenJsonModel, text: 'Open model as JSON' },
+      //   hasPermission(`dbops/model/view`) && { onClick: handleOpenJsonModel, text: _t('database.openModelAsJson', { defaultMessage: 'Open model as JSON' }) },
       isSqlOrDoc &&
         isProApp() &&
         hasPermission(`dbops/model/view`) && {

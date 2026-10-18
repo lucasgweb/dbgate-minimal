@@ -171,7 +171,7 @@
             );
           },
           {
-            text: 'Export',
+            text: _t('common.exportMenu', { defaultMessage: 'Export' }),
             onClick: () => {
               openImportExportTab({
                 sourceStorageType: 'archive',

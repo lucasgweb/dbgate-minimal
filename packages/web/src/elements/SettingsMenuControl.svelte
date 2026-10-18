@@ -157,7 +157,8 @@
     top: 0;
     bottom: 0;
     overflow-y: auto;
-    padding: 20px;
+    /* centers settings forms in a max 860px column; the scrollbar stays at the right edge */
+    padding: 20px max(20px, calc((100% - 860px) / 2));
   }
 
   .container:not(.itemVisible) {

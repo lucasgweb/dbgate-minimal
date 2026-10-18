@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _t } from '../translations';
   import _ from 'lodash';
   import InlineButton from '../buttons/InlineButton.svelte';
   import SearchInput from '../elements/SearchInput.svelte';
@@ -57,7 +58,7 @@
     }}
   />
   <CloseSearchButton bind:filter />
-  <InlineButton on:click={handleRefreshDatabases} title="Refresh database list">
+  <InlineButton on:click={handleRefreshDatabases} title={_t('database.refreshList', { defaultMessage: 'Refresh database list' })}>
     <FontIcon icon="icon refresh" />
   </InlineButton>
 </SearchBoxWrapper>

@@ -39,8 +39,10 @@
 <style>
   input {
     border: var(--theme-formbutton-border);
-    padding: 7px 14px;
-    margin: 2px;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 0 18px;
+    margin: 4px;
     color: var(--theme-formbutton-foreground);
     border-radius: 6px;
     cursor: pointer;
@@ -79,6 +81,6 @@
   input.outline:hover:not(.disabled) {
     color: var(--theme-outlinebutton-hover-foreground);
     border: var(--theme-outlinebutton-hover-border);
-    margin: 1px;
+    margin: 3px;
   }
 </style>

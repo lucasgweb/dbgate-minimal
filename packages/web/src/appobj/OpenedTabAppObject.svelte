@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+  import { _t } from '../translations';
   import { filterName } from 'dbgate-tools';
 
   export const extractKey = data => data.tabid;
@@ -28,7 +29,7 @@
   };
 
   function createMenu() {
-    return [{ text: 'Close', onClick: handleClose }];
+    return [{ text: _t('openedTab.close', { defaultMessage: 'Close' }), onClick: handleClose }];
   }
 
   const onClick = () => {

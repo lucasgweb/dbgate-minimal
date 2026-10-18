@@ -170,6 +170,8 @@ body {
   font-size: 14px;
   box-sizing: border-box;
   border-radius: 6px;
+  /* same height as inputs, also when nothing is selected */
+  height: 40px;
 }
 
 /* input with an attached bordered button (password eye, dropdown, driver settings) renders as one group */
@@ -254,6 +256,9 @@ select:not([multiple]) {
   select:not([multiple]) {
     display: inline-flex;
     align-items: center;
+    /* a customizable select with an empty value has no text line, so it would collapse to its padding */
+    min-height: 2.2em;
+    box-sizing: border-box;
   }
   select:not([multiple])::picker-icon {
     display: none;

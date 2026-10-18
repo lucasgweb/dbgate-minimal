@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _t } from '../translations';
   import { findForeignKeyForColumn } from 'dbgate-tools';
 
   import ColumnLabel from '../elements/ColumnLabel.svelte';
@@ -56,11 +57,11 @@
 
     return [
       settings?.allowColumnOperations && [
-        { text: 'Sort ascending', onClick: () => setSortOrder(1) },
-        { text: 'Sort descending', onClick: () => setSortOrder(-1) },
-        { text: 'Unsort', onClick: () => setSortOrder(0) },
+        { text: _t('columnHeader.sortAscending', { defaultMessage: 'Sort ascending' }), onClick: () => setSortOrder(1) },
+        { text: _t('columnHeader.sortDescending', { defaultMessage: 'Sort descending' }), onClick: () => setSortOrder(-1) },
+        { text: _t('designer.unsort', { defaultMessage: 'Unsort' }), onClick: () => setSortOrder(0) },
       ],
-      foreignKey && { text: 'Add reference', onClick: addReference },
+      foreignKey && { text: _t('designer.addReference', { defaultMessage: 'Add reference' }), onClick: addReference },
     ];
   }
 

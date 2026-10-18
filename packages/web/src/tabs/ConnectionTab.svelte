@@ -359,6 +359,7 @@
       isInline
       {inlineTabs}
       containerMaxWidth="800px"
+      centered
       flex1={false}
       contentTestId="ConnectionTab_tabControlContent"
       tabs={[
@@ -390,32 +391,32 @@
     />
 
     {#if driver}
-      <div class="flex">
+      <div class="flex form-actions">
         <div class="buttons">
           {#if onlyTestButton}
             {#if isTesting}
               <FormButton
-                value="Cancel test"
+                value={_t('connection.cancelTest', { defaultMessage: 'Cancel test' })}
                 on:click={handleCancelTest}
                 data-testid="ConnectionTab_buttonCancelTest"
               />
             {:else}
               <FormButton
-                value="Test connection"
+                value={_t('connection.testConnection', { defaultMessage: 'Test connection' })}
                 on:click={() => handleTest(false)}
                 data-testid="ConnectionTab_buttonDisconnect"
               />
             {/if}
           {:else if isConnected}
-            <FormButton value="Disconnect" on:click={handleDisconnect} data-testid="ConnectionTab_buttonDisconnect" />
+            <FormButton value={_t('connection.disconnect', { defaultMessage: 'Disconnect' })} on:click={handleDisconnect} data-testid="ConnectionTab_buttonDisconnect" />
           {:else}
             {#if $values._id || !saveOnCloud}
-              <FormButton value="Connect" on:click={handleConnect} data-testid="ConnectionTab_buttonConnect" />
+              <FormButton value={_t('connection.connect', { defaultMessage: 'Connect' })} on:click={handleConnect} data-testid="ConnectionTab_buttonConnect" />
             {/if}
             {#if isTesting}
-              <FormButton value="Cancel test" on:click={handleCancelTest} />
+              <FormButton value={_t('connection.cancelTest', { defaultMessage: 'Cancel test' })} on:click={handleCancelTest} />
             {:else}
-              <FormButton value="Test" on:click={() => handleTest(false)} data-testid="ConnectionTab_buttonTest" />
+              <FormButton value={_t('connection.test', { defaultMessage: 'Test' })} on:click={() => handleTest(false)} data-testid="ConnectionTab_buttonTest" />
             {/if}
             <FormButton
               value={_t('common.save', { defaultMessage: 'Save' })}
@@ -465,6 +466,14 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    padding-top: 16px;
+  }
+
+  .form-actions {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 
   .buttons {

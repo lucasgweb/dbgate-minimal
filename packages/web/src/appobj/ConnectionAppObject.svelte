@@ -471,7 +471,7 @@
         hasPermission(`dbops/sql-dump/import`) &&
         !data.isReadOnly && {
           onClick: handleRestoreDatabase,
-          text: 'Restore database backup',
+          text: _t('connection.restoreBackup', { defaultMessage: 'Restore database backup' }),
           usageAnalytics: objectTreeUsage('restore_database', 'connection', data.engine),
         },
     ];

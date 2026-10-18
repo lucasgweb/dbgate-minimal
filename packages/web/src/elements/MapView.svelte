@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _t } from '../translations';
   import _ from 'lodash';
   import { onMount, tick } from 'svelte';
   import 'leaflet/dist/leaflet.css';
@@ -90,7 +91,7 @@
   function createMenu() {
     return [
       {
-        text: 'Open on new tab',
+        text: _t('mapView.openOnNewTab', { defaultMessage: 'Open on new tab' }),
         onClick: () => {
           openNewTab(
             {
@@ -103,7 +104,7 @@
         },
       },
       {
-        text: 'Export to HTML file',
+        text: _t('mapView.exportToHtml', { defaultMessage: 'Export to HTML file' }),
         onClick: () => {
           saveFileToDisk(async filePath => {
             return await apiCall('files/export-map', {

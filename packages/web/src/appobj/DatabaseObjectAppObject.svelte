@@ -1133,7 +1133,7 @@
       res.push(data.objectComment);
     }
     if (data.tableRowCount != null) {
-      res.push(`${formatRowCount(data.tableRowCount)} rows`);
+      res.push(`${formatRowCount(data.tableRowCount)} ${_t('dbObject.rowsSuffix', { defaultMessage: 'rows' })}`);
     }
     if (data.sizeBytes) {
       res.push(formatFileSize(data.sizeBytes));

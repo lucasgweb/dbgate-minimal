@@ -447,6 +447,7 @@
   import createReducer from '../utility/createReducer';
   import keycodes from '../utility/keycodes';
   import { copyRowsFormat, currentArchive, minimalMode } from '../stores';
+  import DataGridFilterBar from './DataGridFilterBar.svelte';
   import {
     copyRowsFormatDefs,
     copyRowsToClipboard,
@@ -565,6 +566,7 @@
   const domFilterControlsRef = createRef({});
   let showFilterRow = false;
   $: showFooter = $minimalMode && !tabControlHiddenTab;
+  $: showFilterBar = $minimalMode && !tabControlHiddenTab && !!display?.filterable && !isDynamicStructure;
   $: filterRowVisible = display?.filterable && (!$minimalMode || showFilterRow || display?.filterCount > 0);
 
   let isGridFocused = false;
@@ -2235,9 +2237,9 @@
           onClick: () => ($copyRowsFormat = format),
         })),
 
-        // { text: 'Copy as text', onClick: () => copyToClipboardCore('text') },
-        // { text: 'Copy as CSV', onClick: () => copyToClipboardCore('csv') },
-        // { text: 'Copy as JSON', onClick: () => copyToClipboardCore('json') },
+        // { text: _t('datagrid.copyAsText', { defaultMessage: 'Copy as text' }), onClick: () => copyToClipboardCore('text') },
+        // { text: _t('datagrid.copyAsCsv', { defaultMessage: 'Copy as CSV' }), onClick: () => copyToClipboardCore('csv') },
+        // { text: _t('datagrid.copyAsJson', { defaultMessage: 'Copy as JSON' }), onClick: () => copyToClipboardCore('json') },
       ],
     },
     { placeTag: 'switch' },
@@ -2399,9 +2401,13 @@
     {/each}
   </div>
 {:else}
+  {#if showFilterBar}
+    <DataGridFilterBar {display} {columns} />
+  {/if}
   <div
     class="container"
     class:withFooter={showFooter}
+    class:withFilterBar={showFilterBar}
     class:data-grid-focused={isGridFocused}
     bind:clientWidth={containerWidth}
     bind:clientHeight={containerHeight}
@@ -2825,6 +2831,9 @@
   }
   .container.withFooter {
     bottom: 30px;
+  }
+  .container.withFilterBar {
+    top: 40px;
   }
   :global(.minimal-mode) .header-cell[data-row='header'] {
     border-bottom: 1px solid color-mix(in srgb, currentColor 14%, transparent);

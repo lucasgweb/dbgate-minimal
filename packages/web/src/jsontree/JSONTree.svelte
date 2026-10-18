@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _t } from '../translations';
   import JSONNode from './JSONNode.svelte';
   import { setContext } from 'svelte';
   import contextMenu, { getContextMenu } from '../utility/contextMenu';
@@ -47,7 +48,7 @@
     const res = [];
 
     res.push({
-      text: 'Copy JSON',
+      text: _t('jsonTree.copyJson', { defaultMessage: 'Copy JSON' }),
       onClick: () => {
         copyTextToClipboard(JSON.stringify(value, null, 2));
       },
@@ -55,7 +56,7 @@
 
     if (value && _.isArray(value)) {
       res.push({
-        text: 'Open as table',
+        text: _t('jsonTree.openAsTable', { defaultMessage: 'Open as table' }),
         onClick: () => {
           openJsonLinesData(value);
         },

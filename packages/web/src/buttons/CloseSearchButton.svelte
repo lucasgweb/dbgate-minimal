@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _t } from '../translations';
   import FontIcon from '../icons/FontIcon.svelte';
 
   import InlineButton from './InlineButton.svelte';
@@ -18,7 +19,7 @@
         filter = '';
       }
     }}
-    title="Clear filter"
+    title={_t('common.clearFilter', { defaultMessage: 'Clear filter' })}
     disabled={!filter}
   >
     <FontIcon icon="icon close" />

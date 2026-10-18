@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { _t } from '../translations';
   import { evalFilterBehaviour } from 'dbgate-tools';
   import DataFilterControl from '../datagrid/DataFilterControl.svelte';
   import InlineButton from '../buttons/InlineButton.svelte';
@@ -55,7 +56,7 @@
             [newColumn]: '',
           });
         }}
-        title="Add filter column"
+        title={_t('filter.addColumn', { defaultMessage: 'Add filter column' })}
         square
       >
         <FontIcon icon="icon plus-thick" />
@@ -65,7 +66,7 @@
         on:click={() => {
           onSetCompoudFilter(_.omit(compoudFilter, column));
         }}
-        title="Remove filter column"
+        title={_t('filter.removeColumn', { defaultMessage: 'Remove filter column' })}
         square
       >
         <FontIcon icon="icon minus-thick" />

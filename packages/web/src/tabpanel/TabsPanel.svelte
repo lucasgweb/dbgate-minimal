@@ -698,7 +698,7 @@
                   class="pin-button"
                   data-testid="TabsPanel_pinTabButton"
                   on:click={e => pinTab(tab.tabid)}
-                  title="This tab is in preview mode, it will be replaced eg. when clicking table. Click to switch to normal mode. You could also double-click tab header."
+                  title={_t('tabs.previewModeInfo', { defaultMessage: 'This tab is in preview mode, it will be replaced eg. when clicking table. Click to switch to normal mode. You could also double-click tab header.' })}
                 >
                   <FontIcon icon="icon pin-outline" />
                 </span>
@@ -708,7 +708,7 @@
                 {tab.title}
               </span>
               {#if $lockedDatabaseMode && tab.props?.conid && tab.props?.conid != $currentDatabase?.connection?._id}
-                <FontIcon icon="img warn" padLeft title="This tab is bound to different server than actual DB" />
+                <FontIcon icon="img warn" padLeft title={_t('tabs.differentServer', { defaultMessage: 'This tab is bound to different server than actual DB' })} />
               {/if}
               <TabCloseButton unsaved={tab.unsaved} on:click={e => closeTab(tab.tabid)} />
             </div>
@@ -722,7 +722,7 @@
       <div
         class="icon-button"
         on:click={() => splitTab(multiTabIndex)}
-        title="Split window"
+        title={_t('tabs.splitWindow', { defaultMessage: 'Split window' })}
         data-testid="TabsPanel_buttonSplit"
       >
         <FontIcon icon="icon split" />
@@ -732,7 +732,7 @@
     <div
       class="icon-button"
       on:click={() => showModal(NewObjectModal, { multiTabIndex })}
-      title="New query"
+      title={_t('tabs.newQuery', { defaultMessage: 'New query' })}
       data-testid="TabsPanel_buttonNewObject"
     >
       <FontIcon icon="icon add" />

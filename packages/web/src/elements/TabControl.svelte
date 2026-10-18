@@ -17,6 +17,8 @@
   export let menu = null;
   export let isInline = false;
   export let containerMaxWidth = undefined;
+  // centers the tab header and content within containerMaxWidth (used by forms)
+  export let centered = false;
   export let containerMaxHeight = undefined;
   export let flex1 = true;
   export let flexColContainer = false;
@@ -35,7 +37,7 @@
 </script>
 
 <div class="main" class:maxHeight100 class:flex1>
-  <div class="tabs" class:inlineTabs>
+  <div class="tabs" class:inlineTabs class:centered style:max-width={centered ? containerMaxWidth : undefined}>
     {#each _.compact(tabs) as tab, index}
       <div
         class="tab-item"
@@ -72,6 +74,7 @@
         class:maxHeight100
         class:isInline
         class:tabVisible={(tab.identifier ?? index) == value}
+        class:centered
         style:max-width={containerMaxWidth}
       >
         <svelte:component
@@ -161,6 +164,14 @@
   } */
   .tab-item.selected {
     background-color: var(--theme-tabs-control-selected-background);
+  }
+
+  .tabs.centered,
+  .container.centered {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
   }
 
   .tab-actions {

@@ -110,7 +110,7 @@
       data.fileType.endsWith('.sql') && { text: _t('common.openSql', { defaultMessage: 'Open SQL' }), onClick: handleOpenSqlFile },
       data.fileType.endsWith('.json') && { text: _t('common.openJson', { defaultMessage: 'Open JSON' }), onClick: handleOpenJsonFile },
 
-      // data.fileType.endsWith('.yaml') && { text: 'Open YAML', onClick: handleOpenYamlFile },
+      // data.fileType.endsWith('.yaml') && { text: _t('appFile.openYaml', { defaultMessage: 'Open YAML' }), onClick: handleOpenYamlFile },
     ];
   }
 </script>

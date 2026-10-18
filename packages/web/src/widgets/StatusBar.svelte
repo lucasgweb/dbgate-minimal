@@ -1,4 +1,20 @@
 <script lang="ts">
+  import { _t, getSelectedLanguage } from '../translations';
+
+  // relative time in the UI language ("há 5 minutos"), instead of moment's English fromNow()
+  function formatTimeAgo(time) {
+    const seconds = Math.round((new Date(time).getTime() - Date.now()) / 1000);
+    const abs = Math.abs(seconds);
+    let language = 'en';
+    try {
+      language = getSelectedLanguage() || 'en';
+    } catch {}
+    const rtf = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+    if (abs < 45) return _t('statusBar.justNow', { defaultMessage: 'just now' });
+    if (abs < 3600) return rtf.format(Math.round(seconds / 60), 'minute');
+    if (abs < 86400) return rtf.format(Math.round(seconds / 3600), 'hour');
+    return rtf.format(Math.round(seconds / 86400), 'day');
+  }
   import _ from 'lodash';
   import moment from 'moment';
   import { showModal } from '../modals/modalTools';
@@ -80,12 +96,12 @@
       {#if dbid && databaseName != '_api_database_'}
         <div
           class="item clickable"
-          title="Database color. Overrides connection color"
+          title={_t('statusBar.databaseColor', { defaultMessage: 'Database color. Overrides connection color' })}
           on:click={() => {
             showModal(ChooseConnectionColorModal, {
               ...dbid,
               header: 'Choose database color',
-              text: 'This color override connection color for specific database.',
+              text: _t('statusBar.databaseColorInfo', { defaultMessage: 'This color override connection color for specific database.' }),
             });
           }}
         >
@@ -103,12 +119,12 @@
       {#if dbid}
         <div
           class="item clickable"
-          title="Connection color. Can be overriden by database color"
+          title={_t('statusBar.connectionColor', { defaultMessage: 'Connection color. Can be overriden by database color' })}
           on:click={() => {
             showModal(ChooseConnectionColorModal, {
               conid: dbid.conid,
               header: 'Choose connection color',
-              text: 'This color serves as default color for all databases in this connection.',
+              text: _t('statusBar.connectionColorInfo', { defaultMessage: 'This color serves as default color for all databases in this connection.' }),
             });
           }}
         >
@@ -127,21 +143,21 @@
     {#if connection && $status}
       <div class="item clickable" on:click={() => visibleCommandPalette.set(findCommand('database.changeState'))}>
         {#if $status.name == 'pending'}
-          <FontIcon icon="icon loading" padRight /> Loading
+          <FontIcon icon="icon loading" padRight /> {_t('statusBar.loading', { defaultMessage: 'Loading' })}
         {:else if $status.name == 'checkStructure'}
-          <FontIcon icon="icon loading" padRight /> Checking model
+          <FontIcon icon="icon loading" padRight /> {_t('statusBar.checkingModel', { defaultMessage: 'Checking model' })}
         {:else if $status.name == 'loadStructure'}
-          <FontIcon icon="icon loading" padRight /> Loading model
+          <FontIcon icon="icon loading" padRight /> {_t('statusBar.loadingModel', { defaultMessage: 'Loading model' })}
         {:else if $status.name == 'ok'}
-          <FontIcon icon="img ok-statusbar" padRight /> Connected
+          <FontIcon icon="img ok-statusbar" padRight /> {_t('statusBar.connected', { defaultMessage: 'Connected' })}
         {:else if $status.name == 'error'}
-          <FontIcon icon="img error-statusbar" padRight /> Error
+          <FontIcon icon="img error-statusbar" padRight /> {_t('statusBar.error', { defaultMessage: 'Error' })}
         {/if}
       </div>
     {/if}
     {#if !connection}
       <div class="item">
-        <FontIcon icon="icon disconnected" padRight /> Not connected
+        <FontIcon icon="icon disconnected" padRight /> {_t('statusBar.notConnected', { defaultMessage: 'Not connected' })}
       </div>
     {/if}
     {#if $serverVersion}
@@ -155,21 +171,22 @@
     {#if $status?.analysedTime}
       <div
         class="item flex clickable"
-        title={`Last ${databaseName} model refresh: ${moment($status?.analysedTime).format(
-          'HH:mm:ss'
-        )}\nClick for refresh DB model`}
+        title={_t('statusBar.modelRefreshInfo', {
+          defaultMessage: 'Last {databaseName} model refresh: {time}\nClick to refresh DB model',
+          values: { databaseName, time: moment($status?.analysedTime).format('HH:mm:ss') },
+        })}
         on:click={handleSyncModel}
       >
         <FontIcon icon="icon history" padRight />
         <div class="version ml-1">
-          {moment($status?.analysedTime).fromNow() + (timerValue ? '' : '')}
+          {formatTimeAgo($status?.analysedTime) + (timerValue ? '' : '')}
         </div>
       </div>
     {/if}
     {#if isProApp() && $currentArchive && $currentArchive != 'default'}
       <div
         class="item flex clickable"
-        title="Current archive"
+        title={_t('statusBar.currentArchive', { defaultMessage: 'Current archive' })}
         on:click={() => {
           $selectedWidget = 'archive';
         }}

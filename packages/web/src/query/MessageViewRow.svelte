@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+  import { _t } from '../translations';
   function formatDuration(duration) {
     if (duration == 0) return '0';
     if (duration < 1000) {
@@ -53,7 +54,7 @@
     {row.message}
     {#if row.severity == 'error' && onExplainError}
       <InlineButton
-        title="Explain error"
+        title={_t('messageView.explainError', { defaultMessage: 'Explain error' })}
         inlineBlock
         data-testid={`MessageViewRow-explainErrorButton-${index}`}
         on:click={e => {
@@ -63,7 +64,7 @@
     {/if}
     {#if row.jslid}
       <InlineButton
-        title="Show data"
+        title={_t('messageView.showData', { defaultMessage: 'Show data' })}
         inlineBlock
         data-testid={`MessageViewRow-showDataButton-${index}`}
         on:click={e => {

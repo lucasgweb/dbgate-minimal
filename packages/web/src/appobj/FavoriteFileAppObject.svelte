@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+  import { _t } from '../translations';
   import AppObjectCore from './AppObjectCore.svelte';
   import { getFavoriteKind, trackFavorite } from '../utility/favoriteUsage';
 
@@ -94,10 +95,10 @@
 
   function createMenu() {
     return [
-      { text: 'Delete', onClick: handleDelete },
-      { text: 'Edit', onClick: editFavorite },
-      { text: 'Edit JSON definition', onClick: editFavoriteJson },
-      !electron && data.urlPath && { text: 'Copy link', onClick: copyLink },
+      { text: _t('favorite.delete', { defaultMessage: 'Delete' }), onClick: handleDelete },
+      { text: _t('favorite.edit', { defaultMessage: 'Edit' }), onClick: editFavorite },
+      { text: _t('favorite.editJson', { defaultMessage: 'Edit JSON definition' }), onClick: editFavoriteJson },
+      !electron && data.urlPath && { text: _t('favorite.copyLink', { defaultMessage: 'Copy link' }), onClick: copyLink },
     ];
   }
 </script>

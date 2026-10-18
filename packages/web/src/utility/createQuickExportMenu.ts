@@ -45,7 +45,7 @@ export default function createQuickExportMenu(
   }
 
   return {
-    text: 'Export',
+    text: _t('common.exportMenu', { defaultMessage: 'Export' }),
     submenu: createQuickExportMenuItems(handler, advancedExportMenuItem),
     ...additionalFields,
   };

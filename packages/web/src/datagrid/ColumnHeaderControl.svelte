@@ -92,12 +92,12 @@
 
   function getMenu() {
     return [
-      setSort && { onClick: () => setSort('ASC'), text: 'Sort ascending' },
-      setSort && { onClick: () => setSort('DESC'), text: 'Sort descending' },
-      isSortDefined && addToSort && !order && { onClick: () => addToSort('ASC'), text: 'Add to sort - ascending' },
-      isSortDefined && addToSort && !order && { onClick: () => addToSort('DESC'), text: 'Add to sort - descending' },
-      order && clearSort && { onClick: () => clearSort(), text: 'Clear sort criteria' },
-      { onClick: () => copyTextToClipboard(column.columnName), text: 'Copy column name' },
+      setSort && { onClick: () => setSort('ASC'), text: _t('columnHeader.sortAscending', { defaultMessage: 'Sort ascending' }) },
+      setSort && { onClick: () => setSort('DESC'), text: _t('columnHeader.sortDescending', { defaultMessage: 'Sort descending' }) },
+      isSortDefined && addToSort && !order && { onClick: () => addToSort('ASC'), text: _t('columnHeader.addToSortAscending', { defaultMessage: 'Add to sort - ascending' }) },
+      isSortDefined && addToSort && !order && { onClick: () => addToSort('DESC'), text: _t('columnHeader.addToSortDescending', { defaultMessage: 'Add to sort - descending' }) },
+      order && clearSort && { onClick: () => clearSort(), text: _t('columnHeader.clearSort', { defaultMessage: 'Clear sort criteria' }) },
+      { onClick: () => copyTextToClipboard(column.columnName), text: _t('columnHeader.copyColumnName', { defaultMessage: 'Copy column name' }) },
 
       column.foreignKey && [{ divider: true }, { onClick: openReferencedTable, text: column.foreignKey.refTableName }],
 
@@ -105,7 +105,7 @@
         setGrouping &&
         !driver?.dialect?.disableGroupingForDataType?.(column.dataType) && [
           { divider: true },
-          { onClick: () => setGrouping('GROUP'), text: 'Group by' },
+          { onClick: () => setGrouping('GROUP'), text: _t('columnHeader.groupBy', { defaultMessage: 'Group by' }) },
           { onClick: () => setGrouping('MAX'), text: 'MAX' },
           { onClick: () => setGrouping('MIN'), text: 'MIN' },
           { onClick: () => setGrouping('SUM'), text: 'SUM' },
@@ -117,19 +117,19 @@
       isProApp() &&
         isTypeDateTime(column.dataType) && [
           { divider: true },
-          { onClick: () => setGrouping('GROUP:YEAR'), text: 'Group by YEAR' },
-          { onClick: () => setGrouping('GROUP:MONTH'), text: 'Group by MONTH' },
-          { onClick: () => setGrouping('GROUP:DAY'), text: 'Group by DAY' },
+          { onClick: () => setGrouping('GROUP:YEAR'), text: _t('columnHeader.groupByYear', { defaultMessage: 'Group by YEAR' }) },
+          { onClick: () => setGrouping('GROUP:MONTH'), text: _t('columnHeader.groupByMonth', { defaultMessage: 'Group by MONTH' }) },
+          { onClick: () => setGrouping('GROUP:DAY'), text: _t('columnHeader.groupByDay', { defaultMessage: 'Group by DAY' }) },
         ],
 
       { divider: true },
 
       isProApp() &&
-        allowDefineVirtualReferences && { onClick: handleDefineVirtualForeignKey, text: 'Define virtual foreign key' },
+        allowDefineVirtualReferences && { onClick: handleDefineVirtualForeignKey, text: _t('columnHeader.defineVirtualForeignKey', { defaultMessage: 'Define virtual foreign key' }) },
       column.foreignKey &&
         isProApp() && {
           onClick: handleCustomizeDescriptions,
-          text: 'Customize description',
+          text: _t('columnHeader.customizeDescription', { defaultMessage: 'Customize description' }),
         },
     ];
   }

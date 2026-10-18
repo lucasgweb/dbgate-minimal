@@ -19,7 +19,7 @@
     category: __t('command.database', { defaultMessage: 'Database' }),
     toolbarName: __t('command.database.databaseSearch', { defaultMessage: 'Database search' }),
     name: __t('command.database.search', { defaultMessage: 'Search' }),
-    keyText: isElectronAvailable() ? 'CtrlOrCommand+P' : 'F3',
+    keyText: 'CtrlOrCommand+P | F3',
     onClick: () => visibleCommandPalette.set('database'),
     testEnabled: () => getVisibleCommandPalette() != 'database',
   });

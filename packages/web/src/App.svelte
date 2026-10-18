@@ -3,6 +3,7 @@
 
   import CommandListener from './commands/CommandListener.svelte';
   import DataGridRowHeightMeter from './datagrid/DataGridRowHeightMeter.svelte';
+  import GlobalTooltip from './utility/GlobalTooltip.svelte';
   import LoadingInfo from './elements/LoadingInfo.svelte';
 
   import PluginsProvider from './plugins/PluginsProvider.svelte';
@@ -137,6 +138,7 @@
 
 {#if loadedApi}
   <DataGridRowHeightMeter />
+  <GlobalTooltip />
   <CommandListener />
   <PluginsProvider />
   <AppTitleProvider />

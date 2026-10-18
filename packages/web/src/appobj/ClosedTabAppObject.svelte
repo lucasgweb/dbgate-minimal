@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+  import { _t } from '../translations';
   export const extractKey = data => data.tabid;
 
   export const createMatcher =
@@ -42,8 +43,8 @@
 
   function createMenu() {
     return [
-      { text: 'Delete', onClick: handleDelete },
-      { text: 'Delete older', onClick: handleDeleteOlder },
+      { text: _t('closedTab.delete', { defaultMessage: 'Delete' }), onClick: handleDelete },
+      { text: _t('closedTab.deleteOlder', { defaultMessage: 'Delete older' }), onClick: handleDeleteOlder },
     ];
   }
 </script>

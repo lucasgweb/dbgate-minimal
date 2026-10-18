@@ -870,7 +870,7 @@ registerCommand({
     if (!config) return [];
     return [
       {
-        text: 'Logout',
+        text: _t('common.logout', { defaultMessage: 'Logout' }),
         onClick: () => {
           doLogout();
         },

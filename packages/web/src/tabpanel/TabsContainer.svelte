@@ -1,6 +1,7 @@
 <script lang="ts">
   import TabRegister from './TabRegister.svelte';
   import TabsPanel from './TabsPanel.svelte';
+  import EmptyTabsPlaceholder from './EmptyTabsPlaceholder.svelte';
   import _ from 'lodash';
   import { currentDatabase, lockedDatabaseMode, openedTabs, type TabDefinition } from '../stores';
   import { shouldShowTab } from './TabsPanel.svelte';
@@ -35,6 +36,9 @@
 </div>
 <div class="content">
   <TabRegister {multiTabIndex} {shownTab} />
+  {#if !shownTab || shownTab.closedTime != null}
+    <EmptyTabsPlaceholder />
+  {/if}
 </div>
 
 <style>
