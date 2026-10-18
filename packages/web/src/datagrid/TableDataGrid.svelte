@@ -203,6 +203,7 @@
             cache={$childCache}
             setCache={childCache.update}
             masterLoadedTime={myLoadedTime}
+            footerComponent={null}
             isDetailView
             multipleGridsOnTab
           />

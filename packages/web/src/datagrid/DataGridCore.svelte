@@ -539,6 +539,9 @@
   export const activator = createActivator('DataGridCore', false);
 
   export let dataEditorTypesBehaviourOverride = null;
+  // extra actions rendered at the right side of the footer (minimal mode), e.g. table actions
+  export let footerComponent = null;
+  export let footerProps = {};
 
   let rowPixelOffset = 0;
   let columnPixelOffset = 0;
@@ -2412,6 +2415,7 @@
   <div
     class="container"
     class:withFooter={showFooter}
+    class:withFooterActions={showFooter && !!footerComponent}
     style:top={showFilterBar ? `${filterBarHeight}px` : null}
     class:data-grid-focused={isGridFocused}
     bind:clientWidth={containerWidth}
@@ -2789,7 +2793,7 @@
     {/if}
   </div>
   {#if showFooter}
-    <div class="grid-footer" data-testid="DataGridCore_footer">
+    <div class="grid-footer" class:withActions={!!footerComponent} data-testid="DataGridCore_footer">
       <div class="grid-footer-info">
         {#if allRowCount != null}
           <span>{allRowCount.toLocaleString()} {_t('datagrid.rows', { defaultMessage: 'Rows' }).toLowerCase()}</span>
@@ -2813,7 +2817,9 @@
           </span>
         {/if}
       </div>
-      {#if canRefresh()}
+      {#if footerComponent}
+        <svelte:component this={footerComponent} {...footerProps} />
+      {:else if canRefresh()}
         <InlineButton
           on:click={refresh}
           title={_t('common.refresh', { defaultMessage: 'Refresh' })}
@@ -2839,6 +2845,9 @@
   }
   .container.withFooter {
     bottom: 30px;
+  }
+  .container.withFooterActions {
+    bottom: 36px;
   }
   .filter-bar-host {
     position: absolute;
@@ -2874,6 +2883,10 @@
     color: var(--theme-datagrid-foreground);
     background: var(--theme-datagrid-headercell-background);
     border-top: var(--theme-datagrid-border-horizontal);
+  }
+  .grid-footer.withActions {
+    height: 36px;
+    padding-right: 4px;
   }
   .grid-footer-info {
     display: flex;

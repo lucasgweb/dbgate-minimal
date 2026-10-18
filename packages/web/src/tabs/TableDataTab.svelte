@@ -126,6 +126,7 @@
   import useEditorData from '../query/useEditorData';
   import { markTabSaved, markTabUnsaved } from '../utility/common';
   import ToolStripButton from '../buttons/ToolStripButton.svelte';
+  import TableDataFooterActions from './TableDataFooterActions.svelte';
   import { getNumberIcon } from '../icons/FontIcon.svelte';
   import { _t } from '../translations';
   import { trackUsage } from '../utility/usageAnalytics';
@@ -311,6 +312,23 @@
 
   $: changedCount = changeSetChangedCount($changeSetStore?.value);
 
+  // minimal mode: table actions live in the grid footer, the toolbar is shown only in form view
+  $: footerActionsProps = {
+    refreshLabel: autoRefreshStarted
+      ? _t('tableData.refreshEvery', {
+          defaultMessage: 'Refresh (every {autoRefreshInterval}s)',
+          values: { autoRefreshInterval },
+        })
+      : null,
+    autoRefreshMenu: createAutoRefreshMenu(autoRefreshStarted),
+    hasRowSelection,
+    changedCount,
+    quickExportHandlerRef,
+    openStructure,
+    openSql,
+    handleMoreOptions,
+  };
+
   let hasRowSelection = false;
   function handlePublishedCellsChanged(cells) {
     hasRowSelection = cells.some(x => x.isSelectedFullRow) || _.uniq(cells.map(x => x.row)).length > 1;
@@ -397,9 +415,11 @@
   }
 </script>
 
-<ToolStripContainer>
+<ToolStripContainer hideToolStrip={$minimalMode && !$config?.isFormView}>
   <TableDataGrid
     {...$$props}
+    footerComponent={$minimalMode ? TableDataFooterActions : null}
+    footerProps={footerActionsProps}
     onPublishedCellsChanged={handlePublishedCellsChanged}
     config={$config}
     setConfig={config.update}

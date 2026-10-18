@@ -721,11 +721,19 @@
       <div class="inline-add">
         <div
           class="inline-add-button"
-          on:click={() => showModal(NewObjectModal, { multiTabIndex })}
+          on:click={() => newQuery({ multiTabIndex })}
           title={_t('tabs.newQuery', { defaultMessage: 'New query' })}
-          data-testid="TabsPanel_buttonNewObjectInline"
+          data-testid="TabsPanel_buttonNewQueryInline"
         >
           <FontIcon icon="icon add" />
+        </div>
+        <div
+          class="inline-add-button inline-more-button"
+          on:click={() => showModal(NewObjectModal, { multiTabIndex })}
+          title={_t('tabs.newObject', { defaultMessage: 'New...' })}
+          data-testid="TabsPanel_buttonNewObjectInline"
+        >
+          <FontIcon icon="icon chevron-down" />
         </div>
       </div>
     {/if}
@@ -806,12 +814,17 @@
     height: 32px;
     border-radius: 6px;
     font-size: 22px;
-    color: var(--theme-icon-blue);
+    color: color-mix(in srgb, var(--theme-generic-font) 65%, var(--theme-generic-font-grayed));
     cursor: pointer;
     transition: background-color 0.15s ease;
   }
+  .inline-more-button {
+    width: 22px;
+    font-size: 18px;
+  }
   .inline-add-button:hover {
     background-color: var(--theme-inlinebutton-circle-hover-background);
+    color: var(--theme-generic-font);
   }
   .tabs {
     height: var(--dim-tabs-panel-height);

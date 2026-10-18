@@ -1760,6 +1760,7 @@
   "tableStructure.create": "Criar tabela",
   "tabs.differentServer": "Esta aba está ligada a um servidor diferente do banco atual",
   "tabs.map": "Mapa",
+  "tabs.newObject": "Novo...",
   "tabs.newQuery": "Nova consulta",
   "tabs.previewModeInfo": "Esta aba está em modo de pré-visualização e será substituída ao abrir outra tabela. Clique para fixar a aba, ou dê duplo clique no título.",
   "tabs.splitWindow": "Dividir janela",

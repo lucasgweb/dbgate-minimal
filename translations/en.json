@@ -1760,6 +1760,7 @@
   "tableStructure.create": "Create table",
   "tabs.differentServer": "This tab is bound to different server than actual DB",
   "tabs.map": "Map",
+  "tabs.newObject": "New...",
   "tabs.newQuery": "New query",
   "tabs.previewModeInfo": "This tab is in preview mode, it will be replaced eg. when clicking table. Click to switch to normal mode. You could also double-click tab header.",
   "tabs.splitWindow": "Split window",
