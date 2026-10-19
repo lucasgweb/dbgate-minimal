@@ -342,13 +342,20 @@
     hideContent={differentFocusedDb}
     data-testid="SqlObjectList_container"
   >
-    {#if (isLoadingStructure && $objects) || !$objects}
+    {#if !$objects}
       <LoadingInfo
         message={$status?.feedback?.analysingMessage
           ? _tval($status.feedback.analysingMessage.replace(/^DBGM-\d+\s*/, ''))
           : _t('sqlObject.loadingStructure', { defaultMessage: 'Loading database structure' })}
       />
     {:else}
+      {#if isLoadingStructure}
+        <!-- structure is being re-checked in the background: keep the loaded list visible -->
+        <div class="refreshing" data-testid="SqlObjectList_refreshing">
+          <FontIcon icon="icon loading" />
+          {_t('sqlObject.checkingStructure', { defaultMessage: 'Checking structure…' })}
+        </div>
+      {/if}
       <AppObjectListHandler
         bind:this={domListHandler}
         list={flatFilteredList.map(x => ({ ...x, conid, database }))}
@@ -410,3 +417,14 @@
     {/if}
   </WidgetsInnerContainer>
 {/if}
+
+<style>
+  .refreshing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px 4px;
+    font-size: 11px;
+    color: var(--theme-generic-font-grayed);
+  }
+</style>

@@ -141,6 +141,14 @@
     background: var(--theme-datagrid-focused-cell-background);
     box-shadow: inset 0 0 0 1px var(--theme-datagrid-selected-point-marker);
   }
+  /* the edit button floats over the right edge of the input instead of shrinking it */
+  :global(.minimal-mode) input.showEditorButton {
+    margin-right: 0;
+    padding-right: 26px;
+  }
+  :global(.minimal-mode td.editor) :global(.showFormButtonMarker) {
+    opacity: 1;
+  }
   :global(.minimal-mode) input::selection {
     background: color-mix(in srgb, var(--theme-datagrid-selected-point-marker) 35%, transparent);
     color: inherit;

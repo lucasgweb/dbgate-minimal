@@ -1670,6 +1670,7 @@
   "sqlModal.deleteReferencesCascade": "Excluir referências CASCADE",
   "sqlModal.execute": "Executar",
   "sqlModal.recreateWarning": "Esta operação não é suportada diretamente pelo motor SQL. O DbGate pode emulá-la, mas verifique o script SQL gerado.",
+  "sqlObject.checkingStructure": "Verificando estrutura…",
   "sqlObject.collectionName": "Nome da coleção",
   "sqlObject.columnComment": "Comentário da coluna",
   "sqlObject.columnDataType": "Tipo de dados da coluna",
