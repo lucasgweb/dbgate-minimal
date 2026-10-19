@@ -564,6 +564,17 @@
   />
 {/if}
 
+{#if driver?.showConnectionField('isReadOnly', $values, showConnectionFieldArgs) || driver?.databaseEngineTypes?.includes('sql')}
+  <FormCheckboxField
+    label={_t('connection.isProduction', {
+      defaultMessage: 'Production environment (red tabs, confirmation before changing data)',
+    })}
+    name="isProduction"
+    disabled={isFormReadOnly}
+    data-testid="ConnectionDriverFields_isProduction"
+  />
+{/if}
+
 {#if showMcpEnabled}
   <FormCheckboxField
     label={_t('connection.mcpEnabled', { defaultMessage: 'Available in MCP server' })}

@@ -155,6 +155,10 @@
   import ResultTabs from '../query/ResultTabs.svelte';
   import invalidateCommands from '../commands/invalidateCommands';
   import { showModal } from '../modals/modalTools';
+  import ConfirmDangerousSqlModal from '../modals/ConfirmDangerousSqlModal.svelte';
+  import { analyseDangerousSql } from '../utility/dangerousSql';
+  import { isProductionDatabase } from '../utility/productionTools';
+  import { getConnectionLabel } from 'dbgate-tools';
   import InsertJoinModal from '../modals/InsertJoinModal.svelte';
   import useTimerLabel from '../utility/useTimerLabel';
   import createActivator from '../utility/createActivator';
@@ -428,6 +432,26 @@
       showSnackbarError('Skipped executing empty query');
       return;
     }
+
+    // UPDATE/DELETE without WHERE, or any change on a production connection, must be confirmed
+    const { unsafe, modifying } = analyseDangerousSql(sql, driver?.getQuerySplitterOptions('script'));
+    const isProduction = isProductionDatabase($connection, database);
+    if (unsafe.length > 0 || (isProduction && modifying.length > 0)) {
+      showModal(ConfirmDangerousSqlModal, {
+        unsafe,
+        modifying,
+        isProduction,
+        connectionLabel: $connection ? getConnectionLabel($connection) : '',
+        database,
+        onConfirm: () => executeConfirmed(sql, startLine, source),
+      });
+      return;
+    }
+
+    await executeConfirmed(sql, startLine, source);
+  }
+
+  async function executeConfirmed(sql, startLine = 0, source = 'all') {
 
     trackUsage({ feature: 'query', action: 'execute', tab: 'query', engine: driver?.engine, param: source });
     executeStartLine = startLine;

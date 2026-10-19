@@ -35,12 +35,14 @@
   import { findEngineDriver, getConnectionLabel } from 'dbgate-tools';
   import {
     useConfig,
+    useConnectionInfo,
     useConnectionList,
     useDatabaseServerVersion,
     useDatabaseStatus,
     useRestStatus,
   } from '../utility/metadataLoaders';
   import { findCommand } from '../commands/runCommand';
+  import { isProductionDatabase } from '../utility/productionTools';
   import { useConnectionColor } from '../utility/useConnectionColor';
   import { apiCall } from '../utility/api';
   import { statusBarTabInfo } from '../utility/statusBarStore';
@@ -56,6 +58,8 @@
   $: status = isRestConnection ? restStatus : databaseStatus;
   $: serverVersion = useDatabaseServerVersion(dbid || {});
   $: config = useConfig();
+  $: currentConnectionInfo = useConnectionInfo({ conid: connection?._id });
+  $: isProduction = isProductionDatabase($currentConnectionInfo, databaseName);
 
   $: contextItems = $statusBarTabInfo[$activeTabId] as any[];
   $: connectionLabel = getConnectionLabel(connection, { allowExplicitDatabase: false });
@@ -84,6 +88,14 @@
 
 <div class="main" style={$connectionBackground}>
   <div class="container">
+    {#if isProduction}
+      <div class="item" data-testid="StatusBar_production">
+        <span class="production-label">
+          <FontIcon icon="mdi mdi-shield-alert-outline" padRight />
+          {_t('statusBar.production', { defaultMessage: 'PRODUCTION' })}
+        </span>
+      </div>
+    {/if}
     {#if databaseName && databaseName != '_api_database_'}
       <div class="item">
         {#if connection?.isReadOnly}
@@ -241,6 +253,19 @@
   .container {
     display: flex;
     align-items: stretch;
+  }
+  /* production connection: a small red label, the rest of the bar stays as is */
+  .production-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 16px;
+    color: var(--tw-color-red-400);
+    background: color-mix(in srgb, var(--tw-color-red-500) 16%, transparent);
   }
   .item {
     padding: 0px 10px;

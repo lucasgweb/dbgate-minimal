@@ -111,6 +111,7 @@
   import { scriptToSql } from 'dbgate-sqltree';
   import { currentDropDownMenu, extensions, lastUsedDefaultActions, minimalMode } from '../stores';
   import ConfirmSqlModal from '../modals/ConfirmSqlModal.svelte';
+  import { isProductionDatabase } from '../utility/productionTools';
   import createActivator from '../utility/createActivator';
   import { registerMenu } from '../utility/contextMenu';
   import { showSnackbarSuccess } from '../utility/snackbar';
@@ -243,7 +244,12 @@
         script: scriptToSql(driver, commands),
       }));
       // console.log('deleteCascadesScripts', deleteCascadesScripts);
-      if (getBoolSettingsValue('skipConfirm.tableDataSave', false) && !deleteCascadesScripts?.length) {
+      // production connections always confirm saving
+      if (
+        getBoolSettingsValue('skipConfirm.tableDataSave', false) &&
+        !deleteCascadesScripts?.length &&
+        !isProductionDatabase($connection, database)
+      ) {
         handleConfirmSql(sql);
       } else {
         showModal(ConfirmSqlModal, {
@@ -251,6 +257,8 @@
           onConfirm: confirmedSql => handleConfirmSql(confirmedSql),
           engine: driver.engine,
           deleteCascadesScripts,
+          conid,
+          database,
           skipConfirmSettingKey: deleteCascadesScripts?.length ? null : 'skipConfirm.tableDataSave',
         });
       }

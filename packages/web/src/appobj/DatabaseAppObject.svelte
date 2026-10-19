@@ -532,6 +532,22 @@ await dbgateApi.executeQuery(${JSON.stringify(
           text: _t('database.dropDatabase', { defaultMessage: 'Drop database' }),
         },
       { divider: true },
+      // a single database can be marked as production when the whole connection is not
+      !connection.isProduction &&
+        !connection.singleDatabase && {
+          text: connection.databases?.find(x => x.name == name)?.isProduction
+            ? _t('database.unmarkProduction', { defaultMessage: 'Unmark database as production' })
+            : _t('database.markProduction', { defaultMessage: 'Mark database as production' }),
+          onClick: async () => {
+            // the connection passed to the menu can be outdated, read the current flag
+            const current = await getConnectionInfo({ conid: connection._id });
+            apiCall('connections/update-database', {
+              conid: connection._id,
+              database: name,
+              values: { isProduction: !current?.databases?.find(x => x.name == name)?.isProduction },
+            });
+          },
+        },
       driver?.databaseEngineTypes?.includes('sql') && {
         onClick: handleCopyName,
         usageAnalytics: objectTreeUsage('copy_name', 'database', connection?.engine),
@@ -705,7 +721,7 @@ await dbgateApi.executeQuery(${JSON.stringify(
     getConnectionLabel,
   } from 'dbgate-tools';
   import InputTextModal from '../modals/InputTextModal.svelte';
-  import { getDatabaseInfo, useAllApps, useDatabaseInfoPeek } from '../utility/metadataLoaders';
+  import { getConnectionInfo, getDatabaseInfo, useAllApps, useDatabaseInfoPeek } from '../utility/metadataLoaders';
   import { openJsonDocument } from '../tabs/JsonTab.svelte';
   import { apiCall } from '../utility/api';
   import ErrorMessageModal from '../modals/ErrorMessageModal.svelte';

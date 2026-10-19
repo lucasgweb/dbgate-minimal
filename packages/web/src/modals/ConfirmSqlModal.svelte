@@ -55,6 +55,9 @@
   import ModalBase from './ModalBase.svelte';
   import { closeCurrentModal } from './modalTools';
   import { _t } from '../translations';
+  import { useConnectionInfo } from '../utility/metadataLoaders';
+  import { getConnectionLabel } from 'dbgate-tools';
+  import { isProductionDatabase } from '../utility/productionTools';
 
   export let sql;
   export let onConfirm;
@@ -63,6 +66,12 @@
   export let deleteCascadesScripts;
   export let skipConfirmSettingKey = null;
   export let runAgainCheckbox = false;
+  // connection of the script, production connections get a warning and cannot skip this dialog
+  export let conid = null;
+  export let database = null;
+
+  $: connectionInfo = useConnectionInfo({ conid });
+  $: isProduction = isProductionDatabase($connectionInfo, database);
 
   let dontAskAgain;
 
@@ -91,6 +100,16 @@
 <FormProviderCore {values}>
   <ModalBase {...$$restProps}>
     <div slot="header">{_t('common.saveChanges', { defaultMessage: 'Save changes' })}</div>
+
+    {#if isProduction}
+      <div class="production-warning" data-testid="ConfirmSqlModal_productionWarning">
+        <FontIcon icon="mdi mdi-shield-alert-outline" />
+        {_t('sqlModal.productionWarning', {
+          defaultMessage: '{connection} is a production connection. Check the script carefully.',
+          values: { connection: getConnectionLabel($connectionInfo) },
+        })}
+      </div>
+    {/if}
 
     {#if statementSummary.length > 0}
       <div class="summary">
@@ -173,7 +192,7 @@
       </div>
     {/if}
 
-    {#if skipConfirmSettingKey}
+    {#if skipConfirmSettingKey && !isProduction}
       <div class="mt-2">
         <TemplatedCheckboxField
           label={_t('common.dontAskAgain', { defaultMessage: "Don't ask again" })}
@@ -209,6 +228,7 @@
           on:click={closeCurrentModal}
           data-testid="ConfirmSqlModal_closeButton"
         />
+        <div class="execute-button" class:production={isProduction}>
         <FormSubmit
           value={_t('sqlModal.execute', { defaultMessage: 'Execute' })}
           disabled={isRecreated && !$values.allowRecreate}
@@ -218,12 +238,35 @@
           }}
           data-testid="ConfirmSqlModal_okButton"
         />
+        </div>
       </div>
     </div>
   </ModalBase>
 </FormProviderCore>
 
 <style>
+  .production-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--tw-color-red-500) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--tw-color-red-500) 55%, transparent);
+  }
+
+  .production-warning :global(.mdi) {
+    font-size: 18px;
+    color: var(--tw-color-red-400);
+  }
+
+  .execute-button.production :global(input:not(.disabled)) {
+    background: var(--tw-color-red-600) !important;
+    border-color: var(--tw-color-red-600) !important;
+    color: white !important;
+  }
+
   .summary {
     display: flex;
     flex-wrap: wrap;

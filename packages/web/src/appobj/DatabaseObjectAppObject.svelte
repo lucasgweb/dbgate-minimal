@@ -589,6 +589,8 @@
           saveScriptToDatabase({ conid, database }, sql);
         },
         engine: driver.engine,
+        conid,
+        database,
       });
     } else if (menu.isEnableEvent) {
       const { conid, database, pureName } = data;
@@ -604,6 +606,8 @@
           saveScriptToDatabase({ conid, database }, sql);
         },
         engine: driver.engine,
+        conid,
+        database,
       });
     } else if (menu.isTruncate) {
       const { conid, database } = data;
@@ -619,6 +623,8 @@
           saveScriptToDatabase({ conid, database }, sql);
         },
         engine: driver.engine,
+        conid,
+        database,
       });
     } else if (menu.isRename) {
       const { conid, database } = data;
@@ -708,6 +714,8 @@
           saveScriptToDatabase({ conid, database }, dmp.s);
         },
         engine: driver.engine,
+        conid,
+        database,
       });
     } else if (menu.isTableRestore) {
       const backupMatch = data.objectTypeField === 'tables' ? data.pureName.match(TABLE_BACKUP_REGEX) : null;

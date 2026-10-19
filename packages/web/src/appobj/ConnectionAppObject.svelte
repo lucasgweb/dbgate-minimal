@@ -371,6 +371,12 @@
             onClick: handleOpenConnectionTab,
             usageAnalytics: objectTreeUsage('edit', 'connection', data.engine),
           },
+          {
+            text: data.isProduction
+              ? _t('connection.unmarkProduction', { defaultMessage: 'Unmark as production' })
+              : _t('connection.markProduction', { defaultMessage: 'Mark as production' }),
+            onClick: () => apiCall('connections/update', { _id: data._id, values: { isProduction: !data.isProduction } }),
+          },
           !$openedConnections.includes(data._id) && {
             text: _t('connection.delete', { defaultMessage: 'Delete' }),
             onClick: handleDelete,
