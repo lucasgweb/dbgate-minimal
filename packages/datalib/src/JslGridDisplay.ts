@@ -8,6 +8,7 @@ import {
   createEditableQueryResultMappings,
   getEditableQueryResultChangeSetField,
   getEditableQueryResultChangeSetRowDefinitions,
+  getQueryResultSourceColumnInfo,
   isEditableQueryResultColumn,
   QueryResultColumnBaseMapping,
   QueryResultTableMapping,
@@ -57,13 +58,17 @@ export class JslGridDisplay extends GridDisplay {
         structure.columns
           .map(col => {
             const columnBaseMapping = this.queryResultColumnBaseMappings[col.columnName];
+            const sourceInfo = dbinfo ? getQueryResultSourceColumnInfo(col, dbinfo) : null;
             return {
               columnName: col.columnName,
               headerText: col.columnName,
               uniqueName: col.columnName,
               uniquePath: [col.columnName],
-              notNull: col.notNull,
-              autoIncrement: col.autoIncrement,
+              notNull: col.notNull ?? sourceInfo?.notNull,
+              autoIncrement: col.autoIncrement || sourceInfo?.autoIncrement,
+              dataType: col.dataType ?? sourceInfo?.dataType,
+              isPrimaryKey: col.isPrimaryKey || sourceInfo?.isPrimaryKey,
+              foreignKey: sourceInfo?.foreignKey,
               pureName: queryResultEditing ? (columnBaseMapping ? columnBaseMapping.pureName : col.tableName) : null,
               schemaName: queryResultEditing ? (columnBaseMapping ? columnBaseMapping.schemaName : col.tableSchema) : null,
               sourceColumnName: columnBaseMapping ? columnBaseMapping.sourceColumnName : col.sourceColumnName,

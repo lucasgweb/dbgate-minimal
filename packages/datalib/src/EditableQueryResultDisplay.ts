@@ -48,6 +48,23 @@ function findColumnName(table: TableInfo, columnName: string) {
   return matchingColumns.length == 1 ? matchingColumns[0].columnName : columnName;
 }
 
+// metadata of the table column a query result column comes from (for column icons, data type, FK links)
+export function getQueryResultSourceColumnInfo(column: QueryResultColumn, dbinfo: DatabaseInfo) {
+  if (!column?.tableName || !column?.sourceColumnName) return null;
+  const table = findTable(dbinfo, column.tableSchema, column.tableName);
+  if (!table) return null;
+  const sourceColumnName = findColumnName(table, column.sourceColumnName);
+  const tableColumn = table.columns?.find(x => x.columnName == sourceColumnName);
+  if (!tableColumn) return null;
+  return {
+    dataType: tableColumn.dataType,
+    notNull: tableColumn.notNull,
+    autoIncrement: tableColumn.autoIncrement,
+    isPrimaryKey: !!table.primaryKey?.columns?.some(x => x.columnName == sourceColumnName),
+    foreignKey: table.foreignKeys?.find(fk => fk.columns.length == 1 && fk.columns[0].columnName == sourceColumnName),
+  };
+}
+
 export function createEditableQueryResultMappings(columns: QueryResultColumn[], dbinfo: DatabaseInfo) {
   const editableColumns = new Set<string>();
   const tableMappings: { [key: string]: QueryResultTableMapping } = {};
@@ -70,10 +87,16 @@ export function createEditableQueryResultMappings(columns: QueryResultColumn[], 
     const primaryKeyColumns =
       table?.primaryKey?.columns?.map(column => column.columnName) ||
       normalizedColumns.filter(column => column.isPrimaryKey).map(column => column.sourceColumnName);
+    // when the primary key is not selected, any unique constraint fully present in the result identifies the row
+    // (unique indexes are not used - analysers don't report partial or expression parts of them reliably)
+    const candidateKeys = [
+      primaryKeyColumns,
+      ...(table?.uniques || []).map(unique => unique.columns.map(column => column.columnName)),
+    ];
     const keyColumns =
-      primaryKeyColumns.length > 0 && primaryKeyColumns.every(columnName => sourceToDisplay.has(columnName))
-        ? primaryKeyColumns
-        : [];
+      candidateKeys.find(
+        columnNames => columnNames.length > 0 && columnNames.every(columnName => sourceToDisplay.has(columnName))
+      ) || [];
     if (keyColumns.length == 0) continue;
 
     const mapping = {

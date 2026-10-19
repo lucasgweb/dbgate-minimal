@@ -10,7 +10,7 @@
   import DataGrid from './DataGrid.svelte';
   import JslDataGridCore from './JslDataGridCore.svelte';
   import { useSettings } from '../utility/metadataLoaders';
-  import { isProApp } from '../utility/proTools';
+  import { isQueryResultEditingEnabled } from '../utility/proTools';
 
   export let jslid;
   export let supportsReload = false;
@@ -60,21 +60,24 @@
   }
 
   $: effect = useEffect(() => onJslId(jslid));
+  function handleReloadRows() {
+    display?.reload();
+  }
+
   function onJslId(jslidVal) {
-    if (jslidVal && listenInitializeFile) {
-      apiOn(`session-initialize-file-${jslidVal}`, handleInitializeFile);
-      return () => {
-        apiOff(`session-initialize-file-${jslidVal}`, handleInitializeFile);
-      };
-    } else {
-      return () => {};
-    }
+    if (!jslidVal) return () => {};
+    apiOn(`jsldata-reload-${jslidVal}`, handleReloadRows);
+    if (listenInitializeFile) apiOn(`session-initialize-file-${jslidVal}`, handleInitializeFile);
+    return () => {
+      apiOff(`jsldata-reload-${jslidVal}`, handleReloadRows);
+      if (listenInitializeFile) apiOff(`session-initialize-file-${jslidVal}`, handleInitializeFile);
+    };
   }
   $: $effect;
 
   $: infoWithPairingId = generateTablePairingId($info);
   $: infoUsed = (allowChangeChangeSetStructure && changeSetState?.value?.structure) || infoWithPairingId;
-  $: effectiveQueryResultEditing = queryResultEditing && isProApp();
+  $: effectiveQueryResultEditing = queryResultEditing && isQueryResultEditingEnabled();
 
   // $: console.log('infoUsed', infoUsed);
 

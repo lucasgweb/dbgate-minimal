@@ -2348,7 +2348,10 @@
 </script>
 
 {#if !display || (!isDynamicStructure && (!columns || columns.length == 0))}
-  {#if !$databaseStatus?.name || $databaseStatus?.name == 'pending' || $databaseStatus?.name == 'checkStructure' || $databaseStatus?.name == 'loadStructure'}
+  {#if jslid}
+    <!-- query result columns arrive shortly after the result file is created -->
+    <LoadingInfo wrapper message={_t('datagrid.loadingData', { defaultMessage: 'Loading data' })} />
+  {:else if !$databaseStatus?.name || $databaseStatus?.name == 'pending' || $databaseStatus?.name == 'checkStructure' || $databaseStatus?.name == 'loadStructure'}
     <LoadingInfo wrapper message={_t('datagrid.structure.waiting', { defaultMessage: 'Waiting for structure' })} />
   {:else}
     <ErrorInfo

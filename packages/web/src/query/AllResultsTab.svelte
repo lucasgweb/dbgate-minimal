@@ -4,6 +4,8 @@
   export let resultInfos = [];
   export let driver = null;
   export let dbinfo = null;
+  export let conid = null;
+  export let database = null;
   export let changeSetStates = {};
   export let changeSetDispatchers = {};
   export let queryResultEditing = false;
@@ -23,6 +25,8 @@
         multipleGridsOnTab={resultInfos.length >= 2}
         {driver}
         {dbinfo}
+        {conid}
+        {database}
         {queryResultEditing}
         changeSetState={queryResultEditing ? changeSetStates[info.jslid] : null}
         dispatchChangeSet={queryResultEditing ? changeSetDispatchers[info.jslid] : null}

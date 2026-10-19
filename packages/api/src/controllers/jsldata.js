@@ -196,6 +196,47 @@ module.exports = {
     return true;
   },
 
+  applyRowUpdates_meta: true,
+  async applyRowUpdates({ jslid, updates }) {
+    if (!updates?.length) return { updatedCount: 0 };
+
+    const readHandle = await openJslFileForRead(jslid);
+    let text;
+    try {
+      text = await readHandle.readFile('utf-8');
+    } finally {
+      await readHandle.close();
+    }
+
+    let updatedCount = 0;
+    const lines = text.split('\n').map(line => {
+      if (!line.trim()) return line;
+      const row = JSON.parse(line);
+      if (row.__isStreamHeader) return line;
+      let changed = false;
+      for (const { match, set } of updates) {
+        if (_.isEmpty(match) || !_.every(match, (value, key) => _.isEqual(row[key], value))) continue;
+        Object.assign(row, set);
+        changed = true;
+      }
+      if (!changed) return line;
+      updatedCount++;
+      return JSON.stringify(row);
+    });
+
+    if (updatedCount > 0) {
+      await datastoreCache.close(jslid);
+      const writeHandle = await openJslFileForWrite(jslid);
+      try {
+        await writeHandle.writeFile(lines.join('\n'));
+      } finally {
+        await writeHandle.close();
+      }
+      socket.emit(`jsldata-reload-${jslid}`);
+    }
+    return { updatedCount };
+  },
+
   extractTimelineChart_meta: true,
   async extractTimelineChart({ jslid, timestampFunction, aggregateFunction, measures }) {
     const timestamp = requirePluginFunction(timestampFunction);

@@ -10,7 +10,7 @@
   import useEffect from '../utility/useEffect';
   import AllResultsTab from './AllResultsTab.svelte';
   import JslChart from '../charts/JslChart.svelte';
-  import { isProApp } from '../utility/proTools';
+  import { isProApp, isQueryResultEditingEnabled } from '../utility/proTools';
   import { __t, _t } from '../translations';
   import createUndoReducer from '../utility/createUndoReducer';
   import ToolStripButton from '../buttons/ToolStripButton.svelte';
@@ -20,6 +20,7 @@
     changeSetToSql,
     createChangeSet,
     createQueryResultSaveChangeSet,
+    createQueryResultRowUpdates,
   } from 'dbgate-datalib';
   import { scriptToSql } from 'dbgate-sqltree';
 
@@ -53,14 +54,15 @@
   let lastResetExecuteNumber = null;
   let changedResultJslids = [];
 
-  $: queryResultEditingEnabled = isProApp();
+  $: queryResultEditingEnabled = isQueryResultEditingEnabled();
   $: resultCount = resultInfos.length;
   $: changedResultJslids = resultInfos
     .map(info => info.jslid)
     .filter(jslid => changeSetContainsChanges(changeSetStates[jslid]?.value));
-  $: onQueryResultChanges?.(
-    _.sum(Object.values(changeSetStates).map((state: any) => (state?.value ? changeSetChangedCount(state.value) : 0)))
+  $: resultChangesCount = _.sum(
+    Object.values(changeSetStates).map((state: any) => (state?.value ? changeSetChangedCount(state.value) : 0))
   );
+  $: onQueryResultChanges?.(resultChangesCount);
 
   const handleResultSet = async props => {
     const { jslid, resultIndex } = props;
@@ -112,6 +114,8 @@
               resultInfos,
               driver,
               dbinfo,
+              conid,
+              database,
               changeSetStates,
               changeSetDispatchers,
               queryResultEditing: queryResultEditingEnabled,
@@ -128,6 +132,8 @@
             jslid: info.jslid,
             driver,
             dbinfo,
+            conid,
+            database,
             queryResultEditing: queryResultEditingEnabled,
             changeSetState: queryResultEditingEnabled ? changeSetStates[info.jslid] : null,
             dispatchChangeSet: queryResultEditingEnabled ? changeSetDispatchers[info.jslid] : null,
@@ -273,6 +279,9 @@
       : await apiCall('sessions/save-query-result-data', { sesid: sessionId, changeSet, sql, autoCommit });
     if (res?.errorMessage) return res;
     for (const jslid of targetJslids) {
+      // write saved values into the result, so it is not needed to execute the query again
+      const updates = createQueryResultRowUpdates(changeSetStates[jslid]?.value, queryResultInfos[jslid]);
+      if (updates.length > 0) await apiCall('jsldata/apply-row-updates', { jslid, updates });
       changeSetDispatchers[jslid]?.({ type: 'reset', value: createChangeSet() });
     }
     return { state: 'ok', savedCount: targetJslids.length };
@@ -328,12 +337,15 @@
   <svelte:fragment slot="tab-actions">
     {#if queryResultEditingEnabled && changedResultJslids.length > 0}
       <ToolStripButton
-        icon="icon save"
+        icon="icon check"
         title={_t('command.query.saveResult', { defaultMessage: 'Save result changes' })}
         data-testid="ResultTabs_saveResult"
         on:click={() => onSaveQueryResult?.()}
       >
-        {_t('common.save', { defaultMessage: 'Save' })}
+        {_t('tableData.saveChanges', {
+          defaultMessage: 'Save {count} changes',
+          values: { count: resultChangesCount },
+        })}
       </ToolStripButton>
       <ToolStripButton
         icon="icon undo"
