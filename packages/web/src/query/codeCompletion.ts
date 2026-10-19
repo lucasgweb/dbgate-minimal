@@ -118,7 +118,7 @@ const FUNCTIONS: string[][] = [
   ['DATE_FORMAT', "DATE_FORMAT(${1}, '${2:%Y-%m-%d}')", 'mysql'],
 ];
 
-function getDatabaseFamily(engine: string) {
+export function getDatabaseFamily(engine: string) {
   const name = (engine || '').split('@')[0];
   if (/^(postgres|cockroach|redshift)/.test(name)) return 'postgres';
   if (/^(mysql|mariadb)/.test(name)) return 'mysql';

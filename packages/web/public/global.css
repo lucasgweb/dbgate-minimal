@@ -428,3 +428,51 @@ input[type='checkbox']:disabled {
 input[type='checkbox']:disabled::before {
   background-color: var(--theme-checkbox-background-disabled-before);
 }
+
+/* problems found by the SQL checker while typing (wavy underline) */
+.ace-sql-lint-error,
+.ace-sql-lint-warning {
+  position: absolute;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: 6px 3px;
+}
+
+.ace-sql-lint-error {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 2.5 L1.5 0.5 L3 2.5 L4.5 0.5 L6 2.5' fill='none' stroke='%23e51400' stroke-width='0.9'/%3E%3C/svg%3E");
+}
+
+.ace-sql-lint-warning {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3'%3E%3Cpath d='M0 2.5 L1.5 0.5 L3 2.5 L4.5 0.5 L6 2.5' fill='none' stroke='%23d59700' stroke-width='0.9'/%3E%3C/svg%3E");
+}
+
+.ace_gutter-cell.ace-gutter-lint-error {
+  color: #e51400 !important;
+  font-weight: bold;
+}
+
+.ace_gutter-cell.ace-gutter-lint-warning {
+  color: #d59700 !important;
+  font-weight: bold;
+}
+
+.ace-sql-lint-tooltip > div {
+  padding-left: 18px;
+  position: relative;
+}
+
+.ace-sql-lint-tooltip > div::before {
+  position: absolute;
+  left: 0;
+  font-family: 'Material Design Icons';
+}
+
+.ace-sql-lint-tooltip-error::before {
+  content: '\F0159';
+  color: #e51400;
+}
+
+.ace-sql-lint-tooltip-warning::before {
+  content: '\F0026';
+  color: #d59700;
+}

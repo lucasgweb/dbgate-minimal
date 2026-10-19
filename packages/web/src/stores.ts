@@ -227,6 +227,10 @@ export const currentEditorKeybindigMode = getElectron()
 export const currentEditorWrapEnabled = getElectron()
   ? writableSettingsValue(false, 'currentEditorWrapEnabled')
   : writableWithStorage(false, 'currentEditorWrapEnabled');
+// real-time checking of SQL errors in the query editor
+export const sqlLintingEnabled = getElectron()
+  ? writableSettingsValue(true, 'sqlLintingEnabled')
+  : writableWithStorage(true, 'sqlLintingEnabled');
 export const currentEditorFontSize = getElectron()
   ? writableSettingsValue(null, 'currentEditorFontSize')
   : writableWithStorage(null, 'currentEditorFontSize');

@@ -188,6 +188,12 @@
 
   let queryParserWorker;
 
+  // problems found by the SQL checker while typing
+  let lintMessages = [];
+  let lintMarkers = [];
+  let lintGutterRows = [];
+  let lintTooltip = null;
+
   const DEFAULT_FONT_SIZE = 14;
   const MIN_FONT_SIZE = 8;
   const MAX_FONT_SIZE = 36;
@@ -250,6 +256,67 @@
     return {
       text: editor.getValue(),
     };
+  }
+
+  export function setLintMessages(messages) {
+    lintMessages = messages || [];
+    renderLintMessages();
+  }
+
+  function renderLintMessages() {
+    if (!editor) return;
+    const session = editor.getSession();
+    for (const marker of lintMarkers) session.removeMarker(marker);
+    for (const row of lintGutterRows) {
+      session.removeGutterDecoration(row, 'ace-gutter-lint-error');
+      session.removeGutterDecoration(row, 'ace-gutter-lint-warning');
+    }
+    lintMarkers = [];
+    lintGutterRows = [];
+
+    const Range = ace.require('ace/range').Range;
+    const doc = session.getDocument();
+    const rowSeverity = {};
+    for (const msg of lintMessages) {
+      const start = doc.indexToPosition(msg.start, 0);
+      const end = doc.indexToPosition(Math.max(msg.end, msg.start + 1), 0);
+      lintMarkers.push(
+        session.addMarker(
+          new Range(start.row, start.column, end.row, end.column),
+          msg.severity == 'error' ? 'ace-sql-lint-error' : 'ace-sql-lint-warning',
+          'text',
+          true
+        )
+      );
+      if (rowSeverity[start.row] != 'error') rowSeverity[start.row] = msg.severity;
+    }
+    for (const row of Object.keys(rowSeverity)) {
+      session.addGutterDecoration(Number(row), `ace-gutter-lint-${rowSeverity[row]}`);
+      lintGutterRows.push(Number(row));
+    }
+  }
+
+  function showLintTooltip(e, editor) {
+    const pos = e.getDocumentPosition();
+    const offset = editor.getSession().getDocument().positionToIndex(pos, 0);
+    const found = lintMessages.filter(msg => offset >= msg.start && offset <= Math.max(msg.end, msg.start + 1));
+    if (found.length == 0) {
+      lintTooltip.hide();
+      return;
+    }
+    const doc = editor.getSession().getDocument();
+    const Range = ace.require('ace/range').Range;
+    const start = doc.indexToPosition(Math.min(...found.map(x => x.start)), 0);
+    const end = doc.indexToPosition(Math.max(...found.map(x => Math.max(x.end, x.start + 1))), 0);
+    const node = document.createElement('div');
+    node.className = 'ace-sql-lint-tooltip';
+    for (const msg of found) {
+      const line = document.createElement('div');
+      line.className = `ace-sql-lint-tooltip-${msg.severity}`;
+      line.textContent = msg.message;
+      node.appendChild(line);
+    }
+    lintTooltip.showForRange(editor, new Range(start.row, start.column, end.row, end.column), node, e);
   }
 
   export function getCodeCompletionCommandText() {
@@ -534,6 +601,11 @@
     editor.renderer.setScrollMargin(2, 0);
     changedQueryParts();
 
+    const { HoverTooltip } = ace.require('ace/tooltip');
+    lintTooltip = new HoverTooltip();
+    lintTooltip.setDataProvider(showLintTooltip);
+    lintTooltip.addToEditor(editor);
+
     // editor.session.addGutterDecoration(0, 'ace-gutter-sql-run');
 
     // editor.session.setAnnotations([
@@ -610,6 +682,10 @@
     if (editor) {
       editor.container.removeEventListener('contextmenu', handleContextMenu);
       editor.keyBinding.removeKeyboardHandler(handleKeyDown);
+      if (lintTooltip) {
+        lintTooltip.removeFromEditor(editor);
+        lintTooltip.destroy();
+      }
       editor.destroy();
       editor.container.remove();
     }

@@ -12,7 +12,8 @@
   import useEffect from '../utility/useEffect';
   import { getContext } from 'svelte';
   import { mountCodeCompletion } from './codeCompletion';
-  import { currentEditorWrapEnabled, getCurrentSettings } from '../stores';
+  import { mountSqlLinting } from './sqlLinting';
+  import { currentEditorWrapEnabled, getCurrentSettings, sqlLintingEnabled } from '../stores';
   export let engine = null;
   export let conid = null;
   export let database = null;
@@ -53,6 +54,22 @@
     return () => {};
   });
   $: $effect;
+
+  $: lintingEffect = useEffect(() => {
+    const editor = domEditor?.getEditor();
+    if ($tabVisible && $sqlLintingEnabled && !readOnly && editor) {
+      return mountSqlLinting({
+        conid,
+        database,
+        engine,
+        editor,
+        getSettings: () => getCurrentSettings(),
+        onMessages: messages => domEditor?.setLintMessages(messages),
+      });
+    }
+    return () => {};
+  });
+  $: $lintingEffect;
 </script>
 
 <AceEditor

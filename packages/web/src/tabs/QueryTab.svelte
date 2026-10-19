@@ -155,7 +155,7 @@
   import VerticalSplitter from '../elements/VerticalSplitter.svelte';
   import SqlEditor from '../query/SqlEditor.svelte';
   import useEditorData from '../query/useEditorData';
-  import { currentDropDownMenu, currentEditorWrapEnabled, extensions, minimalMode } from '../stores';
+  import { currentDropDownMenu, currentEditorWrapEnabled, extensions, minimalMode, sqlLintingEnabled } from '../stores';
   import applyScriptTemplate from '../utility/applyScriptTemplate';
   import { changeTab, markTabUnsaved, sleep } from '../utility/common';
   import { getDatabaseInfo, useConnectionInfo, useDatabaseInfo, useSettings } from '../utility/metadataLoaders';
@@ -1077,6 +1077,18 @@
     <ToolStripCommandButton command="query.kill" data-testid="QueryTab_killButton" />
     <ToolStripSaveButton idPrefix="query" />
     <ToolStripCommandButton command="query.formatCode" />
+    <ToolStripButton
+      icon={$sqlLintingEnabled ? 'icon checkbox-marked' : 'icon checkbox-blank'}
+      title={_t('query.sqlLintingTitle', {
+        defaultMessage: 'Show SQL errors while typing (syntax, unknown tables and columns)',
+      })}
+      data-testid="QueryTab_sqlLintingButton"
+      on:click={() => {
+        $sqlLintingEnabled = !$sqlLintingEnabled;
+      }}
+    >
+      {_t('query.sqlLinting', { defaultMessage: 'Check errors' })}</ToolStripButton
+    >
     {#if !driver?.singleConnectionOnly}
       <ToolStripButton
         icon="icon limit"
