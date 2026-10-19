@@ -369,6 +369,9 @@ const drivers = driverBases.map(driverBase => ({
           ...(targetVersion ? { targetVersion } : {}),
           noPrivileges: !!options.noPrivileges,
           noOwner: !!options.noOwner,
+          // objects that can't be reproduced safely (e.g. depending on managed-cloud extensions) are left out
+          // with a warning instead of failing the whole backup
+          unsupportedObjectPolicy: 'warn',
           ...(skippedTables.length > 0
             ? {
                 selection: {
@@ -398,6 +401,19 @@ const drivers = driverBases.map(driverBase => ({
       });
     } catch (error) {
       output.destroy();
+      // preflight/planning failures carry the found problems in a report, the message itself is generic
+      const reportProblems = [...(error?.report?.issues || []), ...(error?.report?.diagnostics || [])].filter(
+        problem => problem.severity == 'error'
+      );
+      for (const problem of reportProblems) {
+        const objectIdentity = _.isString(problem.objectIdentity)
+          ? problem.objectIdentity
+          : problem.objectIdentity && JSON.stringify(problem.objectIdentity);
+        runner.info({
+          message: [problem.code, objectIdentity, problem.message].filter(Boolean).join(': '),
+          severity: 'error',
+        });
+      }
       // the dumper keeps the failing table and the database error in the diagnostic; show them instead of a generic text
       const diagnostic = error?.diagnostic;
       const cause = diagnostic?.cause ?? error?.cause;
