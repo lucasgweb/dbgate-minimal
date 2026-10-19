@@ -83,6 +83,35 @@ function finishLoadingModel() {
   }
 }
 
+// Sends the names of tables, views and routines (fast query) before the full structure is analysed,
+// so that the object list appears quickly. Items have no columns and no contentHash, so an incremental
+// analysis started from this structure reloads all of them.
+async function sendObjectNamesFirst(driver) {
+  if (analysedStructure || !driver.analyserClass) return;
+  try {
+    const analyser = new driver.analyserClass(dbhan, driver, serverVersion);
+    const snapshot = await analyser._getFastSnapshot();
+    if (!snapshot || analysedStructure) return;
+    const toObjects = (items, extra = {}) =>
+      (items || []).map(x => ({ ..._.omit(x, ['contentHash']), engine: driver.engine, ...extra }));
+    const partial = {
+      tables: toObjects(snapshot.tables, { columns: [], foreignKeys: [], dependencies: [], indexes: [], uniques: [] }),
+      views: toObjects(snapshot.views, { columns: [] }),
+      matviews: toObjects(snapshot.matviews, { columns: [] }),
+      procedures: toObjects(snapshot.procedures),
+      functions: toObjects(snapshot.functions),
+      collections: [],
+      triggers: [],
+      schedulerEvents: [],
+      engine: driver.engine,
+      isPartialStructure: true,
+    };
+    process.send({ msgtype: 'structure', structure: partial });
+  } catch (err) {
+    logger.debug(extractErrorLogData(err, getLogInfo()), 'DBGM-00319 Fast object list not available');
+  }
+}
+
 async function handleFullRefresh() {
   if (storedConnection.useSeparateSchemas && !isCompositeDbName(dbhan?.database)) {
     resolveAnalysedPromises();
@@ -93,6 +122,7 @@ async function handleFullRefresh() {
   loadingModel = true;
   const driver = requireEngineDriver(storedConnection);
   setStatusName('loadStructure');
+  await sendObjectNamesFirst(driver);
   analysedStructure = await checkedAsyncCall(driver.analyseFull(dbhan, serverVersion));
   analysedTime = new Date().getTime();
   process.send({ msgtype: 'structure', structure: analysedStructure });

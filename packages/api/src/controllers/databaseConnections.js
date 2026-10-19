@@ -25,7 +25,7 @@ const { handleProcessCommunication } = require('../utility/processComm');
 const config = require('./config');
 const fs = require('fs-extra');
 const exportDbModel = require('../utility/exportDbModel');
-const { archivedir, resolveArchiveFolder, uploadsdir } = require('../utility/directories');
+const { archivedir, resolveArchiveFolder, uploadsdir, datadir } = require('../utility/directories');
 const path = require('path');
 const importDbModel = require('../utility/importDbModel');
 const requireEngineDriver = require('../utility/requireEngineDriver');
@@ -48,6 +48,29 @@ const {
 const { MissingCredentialsError } = require('../utility/exceptions');
 const pipeForkLogs = require('../utility/pipeForkLogs');
 const crypto = require('crypto');
+
+// Last analysed structure of each database is kept on disk, so that a database opened again
+// (also after restarting the app) shows its objects at once; it is then checked incrementally.
+function getStructureCacheFile(conid, database) {
+  const hash = crypto.createHash('sha256').update(`${conid}::${database}`).digest('hex').slice(0, 32);
+  return path.join(datadir(), 'structure-cache', `${hash}.json`);
+}
+
+async function readCachedStructure(conid, database) {
+  try {
+    const structure = JSON.parse(await fs.readFile(getStructureCacheFile(conid, database), 'utf-8'));
+    return structure?.tables ? structure : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function writeCachedStructure(conid, database, structure) {
+  const file = getStructureCacheFile(conid, database);
+  fs.ensureDir(path.dirname(file))
+    .then(() => fs.writeFile(file, JSON.stringify(structure)))
+    .catch(err => logger.warn(extractErrorLogData(err), 'DBGM-00320 Error saving structure cache'));
+}
 const loadModelTransform = require('../utility/loadModelTransform');
 const exportDbModelSql = require('../utility/exportDbModelSql');
 const axios = require('axios');
@@ -122,6 +145,7 @@ module.exports = {
     const existing = this.opened.find(x => x.conid == conid && x.database == database);
     if (!existing) return;
     existing.structure = structure;
+    if (structure && !structure.isPartialStructure) writeCachedStructure(conid, database, structure);
     socket.emitChanged('database-structure-changed', { conid, database });
   },
   handle_structureTime(conid, database, { analysedTime }) {
@@ -264,13 +288,17 @@ module.exports = {
     );
     pipeForkLogs(subprocess);
     const lastClosed = this.closed[`${conid}/${database}`];
-    const initialStatusName =
-      !lastClosed && !(connection.useSeparateSchemas && !isCompositeDbName(database)) ? 'loadStructure' : 'pending';
+    const cachedStructure = lastClosed ? null : await readCachedStructure(conid, database);
+    const initialStatusName = cachedStructure
+      ? 'checkStructure'
+      : !lastClosed && !(connection.useSeparateSchemas && !isCompositeDbName(database))
+      ? 'loadStructure'
+      : 'pending';
     const newOpened = {
       conid,
       database,
       subprocess,
-      structure: lastClosed ? lastClosed.structure : DatabaseAnalyser.createEmptyStructure(),
+      structure: lastClosed ? lastClosed.structure : cachedStructure || DatabaseAnalyser.createEmptyStructure(),
       serverVersion: lastClosed ? lastClosed.serverVersion : null,
       connection,
       status: { name: initialStatusName },
@@ -303,7 +331,7 @@ module.exports = {
     const connectMessage = serializeJsTypesForJsonStringify({
       msgtype: 'connect',
       connection: { ...connection, database },
-      structure: lastClosed ? lastClosed.structure : null,
+      structure: lastClosed ? lastClosed.structure : cachedStructure,
       globalSettings,
     });
     subprocess.send(connectMessage);

@@ -343,7 +343,8 @@ export function useDatabaseInfoPeek(args) {
 
 export async function getDbCore(args, objectTypeField = undefined) {
   const db = await getDatabaseInfo(args);
-  if (!db) return null;
+  // a partial structure contains only object names, details are not loaded yet
+  if (!db || db.isPartialStructure) return null;
   return db[objectTypeField || args.objectTypeField].find(
     x => x.pureName == args.pureName && x.schemaName == args.schemaName
   );
@@ -353,7 +354,7 @@ export function useDbCore(args, objectTypeField = undefined) {
   const dbStore = useDatabaseInfo(args);
   if (!dbStore) return null;
   return derived(dbStore, db => {
-    if (!db) return null;
+    if (!db || db.isPartialStructure) return null;
     if (_.isArray(objectTypeField)) {
       for (const field of objectTypeField) {
         const res = db[field || args.objectTypeField].find(

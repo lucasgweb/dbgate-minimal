@@ -56,7 +56,8 @@
   $: dbinfo = useDatabaseInfo({ conid, database });
   $: serverVersion = useDatabaseServerVersion({ conid, database });
   $: apps = useAllApps();
-  $: extendedDbInfo = extendDatabaseInfoFromApps($dbinfo, $apps);
+  // while only object names are loaded (partial structure), the table is not known yet
+  $: extendedDbInfo = $dbinfo?.isPartialStructure ? null : extendDatabaseInfoFromApps($dbinfo, $apps);
   $: connections = useConnectionList();
   const settingsValue = useSettings();
 

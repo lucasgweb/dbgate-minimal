@@ -182,6 +182,8 @@
   let queryParts = [];
   let currentPart = null;
   let currentPartLines = [];
+  // background marker of the query part that Ctrl+Enter runs
+  let currentPartMarker = null;
   // let currentPartMarker = null;
 
   let queryParserWorker;
@@ -485,9 +487,12 @@
             editor.getSession().addGutterDecoration(row, 'ace-gutter-current-part');
           }
         }
-        // currentPartMarker = editor
-        //   .getSession()
-        //   .addMarker(new ace.Range(start.line, start.column, end.line, end.column), 'ace_active-line', 'text');
+        if (start && end) {
+          const Range = ace.require('ace/range').Range;
+          currentPartMarker = editor
+            .getSession()
+            .addMarker(new Range(start.line, 0, end.line, Infinity), 'ace-current-part-marker', 'fullLine');
+        }
       }
       updateAnnotations();
     }
@@ -498,6 +503,10 @@
       editor.getSession().removeGutterDecoration(row, 'ace-gutter-current-part');
     }
     currentPartLines = [];
+    if (currentPartMarker != null) {
+      editor.getSession().removeMarker(currentPartMarker);
+      currentPartMarker = null;
+    }
   }
 
   onMount(() => {

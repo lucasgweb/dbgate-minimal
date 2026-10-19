@@ -193,6 +193,8 @@ export interface DatabaseInfoObjects {
 
 export interface DatabaseInfo extends DatabaseInfoObjects {
   engine?: string;
+  // only object names are loaded, the full structure is being analysed
+  isPartialStructure?: boolean;
 }
 
 export interface ColumnReferenceTiny {

@@ -68,6 +68,15 @@
     defaultTeamFolder: true,
   });
   registerCommand({
+    id: 'query.explain',
+    category: __t('command.query', { defaultMessage: 'Query' }),
+    name: __t('command.query.explain', { defaultMessage: 'Execution plan' }),
+    keyText: 'F7',
+    icon: 'mdi mdi-file-tree-outline',
+    testEnabled: () => getCurrentEditor()?.isSqlEditor() && getCurrentEditor()?.hasConnection(),
+    onClick: () => getCurrentEditor().explain(),
+  });
+  registerCommand({
     id: 'query.executeCurrent',
     usageAnalytics: false,
     category: __t('command.query', { defaultMessage: 'Query' }),
@@ -166,6 +175,7 @@
   import AceEditor from '../query/AceEditor.svelte';
   import StatusBarTabItem from '../widgets/StatusBarTabItem.svelte';
   import { showSnackbarError, showSnackbarSuccess } from '../utility/snackbar';
+  import openNewTab from '../utility/openNewTab';
   import { apiCall, apiOff, apiOn } from '../utility/api';
   import { pingSession } from '../utility/sessionPinger';
   import ToolStripCommandButton from '../buttons/ToolStripCommandButton.svelte';
@@ -526,6 +536,22 @@
     });
   }
 
+  /** opens the execution plan of the selected text or of the query under the cursor */
+  export function explain() {
+    const selectedText = domEditor.getEditor().getSelectedText();
+    const text = selectedText || domEditor.getCurrentCommandText()?.text;
+    if (!text?.trim()) {
+      showSnackbarError(_t('explain.noQuery', { defaultMessage: 'Place the cursor on a query to explain' }));
+      return;
+    }
+    openNewTab({
+      title: _t('explain.tabTitle', { defaultMessage: 'Plan' }),
+      icon: 'mdi mdi-file-tree-outline color-icon-blue',
+      tabComponent: 'ExplainPlanTab',
+      props: { conid, database, sql: text.trim() },
+    });
+  }
+
   export async function executeCurrent() {
     const cmd = domEditor.getCurrentCommandText();
     await executeCore(cmd.text, cmd.line, 'current');
@@ -751,6 +777,7 @@
       { divider: true },
       { command: 'query.toggleComment' },
       { command: 'query.formatCode' },
+      { command: 'query.explain' },
       { command: 'query.insertSqlJoin' },
       { divider: true },
       { command: 'query.save' },
@@ -941,6 +968,7 @@
                     label={_t('export.result', { defaultMessage: 'Export result' })}
                   />
                 {/if}
+                <ToolStripCommandButton command="query.explain" />
                 <ToolStripCommandButton command="query.formatCode" />
                 <ToolStripSaveButton idPrefix="query" />
                 <ToolStripButton

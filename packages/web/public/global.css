@@ -361,6 +361,13 @@ textarea[disabled] {
 .ace_gutter-cell.ace-gutter-current-part {
   font-weight: bold;
   color: var(--theme-generic-font-hover);
+  box-shadow: inset -2px 0 0 var(--tw-color-sky-500);
+}
+
+/* query part under the cursor (run by Ctrl+Enter) when the editor contains several queries */
+.ace-current-part-marker {
+  position: absolute;
+  background: color-mix(in srgb, var(--tw-color-sky-500) 7%, transparent);
 }
 
 input[type='checkbox'] {
