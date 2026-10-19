@@ -36,6 +36,8 @@
   export let onChangeFilteredList = undefined;
   export let initialRenderCount = null;
   export let renderBatchSize = 200;
+  // shows a spinner after the first group title
+  export let loadingGroups = false;
 
   let expandLimited = false;
   let renderedCount = null;
@@ -162,9 +164,10 @@
 </script>
 
 {#if groupFunc}
-  {#each sortGroups ? _.sortBy(_.keys(groups)) : _.keys(groups) as group}
+  {#each sortGroups ? _.sortBy(_.keys(groups)) : _.keys(groups) as group, groupIndex}
     <AppObjectGroup
       {group}
+      loading={loadingGroups && groupIndex == 0}
       {module}
       items={groups[group]}
       {expandIconFunc}

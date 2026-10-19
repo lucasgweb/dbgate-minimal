@@ -23,6 +23,8 @@
   export let groupContextMenu = null;
   export let collapsedGroupNames;
   export let filter = undefined;
+  // spinner after the group title, e.g. while the database structure is re-checked
+  export let loading = false;
 
   $: isExpanded = !$collapsedGroupNames.includes(group);
 
@@ -68,6 +70,9 @@
 
   {mapGroupTitle ? mapGroupTitle(group) : group}
   {items && `(${countText})`}
+  {#if loading}
+    <span class="loading-icon"><FontIcon icon="icon loading" /></span>
+  {/if}
 </div>
 
 {#if isExpanded}
@@ -99,6 +104,11 @@
 {/if}
 
 <style>
+  .loading-icon {
+    margin-left: 6px;
+    color: var(--theme-generic-font-grayed);
+  }
+
   .group {
     user-select: none;
     padding: 5px;

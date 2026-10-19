@@ -33,7 +33,6 @@
   import LoadingInfo from '../elements/LoadingInfo.svelte';
   import { getDatabasStatusMenu, getObjectTypeFieldLabel } from '../utility/common';
   import DropDownButton from '../buttons/DropDownButton.svelte';
-  import FontIcon from '../icons/FontIcon.svelte';
   import CloseSearchButton from '../buttons/CloseSearchButton.svelte';
   import { extractDbNameFromComposite, findEngineDriver } from 'dbgate-tools';
   import {
@@ -342,20 +341,13 @@
     hideContent={differentFocusedDb}
     data-testid="SqlObjectList_container"
   >
-    {#if !$objects}
+    {#if !$objects || (isLoadingStructure && objectList.length == 0)}
       <LoadingInfo
         message={$status?.feedback?.analysingMessage
           ? _tval($status.feedback.analysingMessage.replace(/^DBGM-\d+\s*/, ''))
           : _t('sqlObject.loadingStructure', { defaultMessage: 'Loading database structure' })}
       />
     {:else}
-      {#if isLoadingStructure}
-        <!-- structure is being re-checked in the background: keep the loaded list visible -->
-        <div class="refreshing" data-testid="SqlObjectList_refreshing">
-          <FontIcon icon="icon loading" />
-          {_t('sqlObject.checkingStructure', { defaultMessage: 'Checking structure…' })}
-        </div>
-      {/if}
       <AppObjectListHandler
         bind:this={domListHandler}
         list={flatFilteredList.map(x => ({ ...x, conid, database }))}
@@ -380,6 +372,7 @@
             .filter(x => x.schemaName == null || ($appliedCurrentSchema ? x.schemaName == $appliedCurrentSchema : true))
             .map(x => ({ ...x, conid, database }))}
           initialRenderCount={200}
+          loadingGroups={isLoadingStructure}
           renderBatchSize={200}
           module={databaseObjectAppObject}
           groupFunc={getAppObjectGroup}
@@ -419,12 +412,4 @@
 {/if}
 
 <style>
-  .refreshing {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 2px 10px 4px;
-    font-size: 11px;
-    color: var(--theme-generic-font-grayed);
-  }
 </style>
