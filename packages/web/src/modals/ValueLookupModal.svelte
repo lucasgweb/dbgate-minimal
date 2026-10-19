@@ -127,7 +127,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header"
       >{_t('dataGrid.chooseValue', { defaultMessage: 'Choose value from {field}', values: { field } })}</svelte:fragment
     >

@@ -13,6 +13,8 @@
   export let modalId;
   export let fixedHeight = false;
   export let disableClose = false;
+  // medium - forms, large - dialogs with SQL, tables or editors
+  export let size = 'medium';
 
   function handleCloseModal() {
     if (disableClose) return;
@@ -49,6 +51,7 @@
     class:simple
     class:simplefix
     class:fixedHeight
+    class:large={size == 'large'}
     use:clickOutside
     on:clickOutside={handleClickOutside}
     data-testid="ModalBase_window"
@@ -108,7 +111,11 @@
     box-shadow: var(--theme-modal-shadow);
     margin: auto;
     max-height: 70vh;
-    width: 50%;
+    width: min(560px, calc(100vw - 32px));
+  }
+
+  .window.large:not(.fullScreen):not(.simple):not(.simplefix) {
+    width: min(900px, calc(100vw - 32px));
   }
 
   .window:not(.fullScreen):not(.simple):not(.simplefix).fixedHeight {
@@ -127,14 +134,14 @@
     border-radius: 12px;
     box-shadow: var(--theme-modal-shadow);
     margin: auto;
-    width: 30%;
+    width: min(420px, calc(100vw - 32px));
   }
 
   .window.simplefix {
     border-radius: 12px;
     box-shadow: var(--theme-modal-shadow);
     margin: auto;
-    max-width: 750px;
+    max-width: min(750px, calc(100vw - 32px));
   }
 
   .close {
@@ -150,8 +157,7 @@
   .header {
     font-size: 12pt;
     font-weight: 600;
-    padding: 10px;
-    padding-left: 18px;
+    padding: 10px 12px 10px 20px;
     display: flex;
     justify-content: space-between;
     background-color: var(--theme-modal-header-background);
@@ -175,7 +181,21 @@
   }
 
   .content:not(.noPadding):not(.fullScreen) {
-    padding: 15px;
+    padding: 20px;
+  }
+
+  /* form fields are aligned with the header and footer, not indented by their own margin */
+  .content:not(.noPadding):not(.fullScreen) > :global(.largeFormMarker) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .content:not(.noPadding):not(.fullScreen) > :global(.largeFormMarker:first-child) {
+    margin-top: 0;
+  }
+
+  .content:not(.noPadding):not(.fullScreen) > :global(.largeFormMarker:last-child) {
+    margin-bottom: 0;
   }
 
   .content.fullScreen {
@@ -187,10 +207,28 @@
     bottom: 100px;
   }
 
+  /* buttons on the right, the first one (main action) is the rightmost; buttons have 4px margin */
   .footer:not(.fullScreen) {
     border-bottom: var(--theme-modal-border);
-    padding: 15px;
+    padding: 12px 16px;
     background: var(--theme-modal-footer-background);
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .footer:not(.fullScreen) > :global(div:not([class])) {
+    flex: 1;
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* footers with their own layout */
+  .footer:not(.fullScreen) > :global(div[class]) {
+    flex: 1;
   }
 
   .footer.fullScreen {
@@ -201,11 +239,5 @@
     bottom: 0px;
     border-top: var(--theme-modal-border);
     background: var(--theme-modal-footer-background);
-  }
-
-  @media (max-width: 1280px) {
-    .window:not(.fullScreen):not(.simple):not(.simplefix) {
-      width: 75%;
-    }
   }
 </style>

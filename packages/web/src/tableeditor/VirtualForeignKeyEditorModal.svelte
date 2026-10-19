@@ -70,7 +70,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header">{_t('virtualForeignKey.virtualForeignKey', { defaultMessage: 'Virtual foreign key' })}</svelte:fragment>
 
     <div class="largeFormMarker">

@@ -98,7 +98,7 @@
 </script>
 
 <FormProviderCore {values}>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <div slot="header">{_t('common.saveChanges', { defaultMessage: 'Save changes' })}</div>
 
     {#if isProduction}

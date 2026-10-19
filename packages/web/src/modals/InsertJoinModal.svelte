@@ -105,7 +105,7 @@
   };
 </script>
 
-<ModalBase {...$$restProps}>
+<ModalBase size="large" {...$$restProps}>
   <svelte:fragment slot="header">{_t('insertJoin.insertJoin', { defaultMessage: 'Insert join' })}</svelte:fragment>
 
   <div class="flex mb-3">

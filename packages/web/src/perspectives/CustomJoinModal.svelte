@@ -147,7 +147,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header">{_t('customJoin.defineCustomJoin', { defaultMessage: 'Define custom join' })}</svelte:fragment>
 
     <div class="largeFormMarker">

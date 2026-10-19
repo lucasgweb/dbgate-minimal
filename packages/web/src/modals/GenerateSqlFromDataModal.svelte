@@ -77,7 +77,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header">{_t('generateSqlFromData.generateSqlFromData', { defaultMessage: 'Generate SQL from data' })}</svelte:fragment>
 
     <div class="flex mb-3">

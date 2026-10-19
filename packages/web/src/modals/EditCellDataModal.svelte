@@ -90,7 +90,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <div slot="header">{_t('dataGrid.editCellValue', { defaultMessage: 'Edit cell value' })}</div>
 
     <div class="editor-tools">

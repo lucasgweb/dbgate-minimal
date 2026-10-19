@@ -3,7 +3,7 @@
   import _ from 'lodash';
   import Link from '../elements/Link.svelte';
 
-  import { plusExpandIcon } from '../icons/expandIcons';
+  import { chevronExpandIcon } from '../icons/expandIcons';
 
   import FontIcon from '../icons/FontIcon.svelte';
   import contextMenu from '../utility/contextMenu';
@@ -13,7 +13,7 @@
   export let group;
   export let groupFunc;
   export let items;
-  export let groupIconFunc = plusExpandIcon;
+  export let groupIconFunc = chevronExpandIcon;
   export let mapGroupTitle = undefined;
   export let module;
   export let checkedObjectsStore = null;
@@ -25,6 +25,8 @@
   export let filter = undefined;
   // spinner after the group title, e.g. while the database structure is re-checked
   export let loading = false;
+  // icon shown before the group title, e.g. a folder
+  export let groupIcon = null;
 
   $: isExpanded = !$collapsedGroupNames.includes(group);
 
@@ -67,9 +69,12 @@
   <span class="expand-icon">
     <FontIcon icon={groupIconFunc(isExpanded)} />
   </span>
+  {#if groupIcon}
+    <span class="group-icon"><FontIcon icon={groupIcon} /></span>
+  {/if}
 
-  {mapGroupTitle ? mapGroupTitle(group) : group}
-  {items && `(${countText})`}
+  <span class="title">{mapGroupTitle ? mapGroupTitle(group) : group}</span>
+  {#if items}<span class="count">{countText}</span>{/if}
   {#if loading}
     <span class="loading-icon"><FontIcon icon="icon loading" /></span>
   {/if}
@@ -84,7 +89,7 @@
     </div>
   {/if}
 
-  <div on:drop={handleDrop} data-testid={`app-object-group-items-${_.kebabCase(group)}`}>
+  <div class="items" on:drop={handleDrop} data-testid={`app-object-group-items-${_.kebabCase(group)}`}>
     {#each items as item}
       <AppObjectListItem
         isHidden={!item.isMatched}
@@ -112,9 +117,23 @@
   .group {
     user-select: none;
     padding: 5px;
+    margin: 0 4px;
+    border-radius: 6px;
     cursor: pointer;
     white-space: nowrap;
-    font-weight: bold;
+    color: var(--theme-sidebar-foreground);
+  }
+
+  .group-icon {
+    margin-right: 5px;
+    color: var(--theme-sidebar-foreground-grayed);
+  }
+
+  .count {
+    margin-left: 6px;
+    font-size: 0.85em;
+    font-weight: normal;
+    color: var(--theme-sidebar-foreground-grayed);
   }
 
   .group:hover {
@@ -122,5 +141,10 @@
   }
   .expand-icon {
     margin-right: 3px;
+  }
+
+  /* items are indented under the group title */
+  .items {
+    padding-left: 12px;
   }
 </style>

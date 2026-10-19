@@ -30,7 +30,7 @@
   import CloseSearchButton from '../buttons/CloseSearchButton.svelte';
   import { apiCall, volatileConnectionMapStore } from '../utility/api';
   import LargeButton from '../buttons/LargeButton.svelte';
-  import { plusExpandIcon, chevronExpandIcon } from '../icons/expandIcons';
+  import { chevronExpandIcon } from '../icons/expandIcons';
   import { safeJsonParse } from 'dbgate-tools';
   import { showModal } from '../modals/modalTools';
   import InputTextModal from '../modals/InputTextModal.svelte';
@@ -342,17 +342,16 @@
         expandedConnections.update(old => (value ? [...old, data._id] : old.filter(x => x != data._id)));
       }}
       groupIconFunc={chevronExpandIcon}
+      groupIcon="mdi mdi-folder-outline"
       groupFunc={data => extractConnectionParent(data, $openedConnections, $openedSingleDatabaseConnections)}
-      expandIconFunc={plusExpandIcon}
+      expandIconFunc={chevronExpandIcon}
       onDropOnGroup={handleDropOnGroup}
       emptyGroupNames={$emptyConnectionGroupNames}
       sortGroups
       groupContextMenu={createGroupContextMenu}
       collapsedGroupNames={collapsedConnectionGroupNames}
     />
-    {#if (connectionsWithParent?.length > 0 && connectionsWithoutParent?.length > 0) || ($emptyConnectionGroupNames.length > 0 && connectionsWithoutParent?.length > 0)}
-      <div class="br" />
-    {/if}
+    <!-- connections without a folder follow the folders at the same level -->
     <AppObjectList
       list={connectionsWithoutParent}
       module={connectionAppObject}
@@ -382,10 +381,3 @@
   {/if}
 </WidgetsInnerContainer>
 
-<style>
-  .br {
-    background: var(--theme-searchbox-background);
-    height: 1px;
-    margin: 5px 10px;
-  }
-</style>

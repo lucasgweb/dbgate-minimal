@@ -969,6 +969,18 @@
                   />
                 {/if}
                 <ToolStripCommandButton command="query.explain" />
+                <ToolStripButton
+                  icon={$sqlLintingEnabled ? 'icon checkbox-marked' : 'icon checkbox-blank'}
+                  title={_t('query.sqlLintingTitle', {
+                    defaultMessage: 'Show SQL errors while typing (syntax, unknown tables and columns)',
+                  })}
+                  data-testid="QueryTab_sqlLintingButtonMinimal"
+                  on:click={() => {
+                    $sqlLintingEnabled = !$sqlLintingEnabled;
+                  }}
+                >
+                  {_t('query.sqlLinting', { defaultMessage: 'Check errors' })}</ToolStripButton
+                >
                 <ToolStripCommandButton command="query.formatCode" />
                 <ToolStripSaveButton idPrefix="query" />
                 <ToolStripButton

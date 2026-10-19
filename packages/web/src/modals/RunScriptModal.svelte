@@ -57,7 +57,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header">
       <div class="flex">
         {header}

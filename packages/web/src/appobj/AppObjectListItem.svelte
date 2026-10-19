@@ -8,7 +8,7 @@
 
 <script lang="ts">
   import { tick } from 'svelte';
-  import { plusExpandIcon } from '../icons/expandIcons';
+  import { chevronExpandIcon } from '../icons/expandIcons';
 
   export let isHidden;
   export let filter;
@@ -17,7 +17,7 @@
   export let subItemsComponent;
   export let expandOnClick;
   export let isExpandable = undefined;
-  export let expandIconFunc = plusExpandIcon;
+  export let expandIconFunc = chevronExpandIcon;
   export let checkedObjectsStore = null;
   export let disableContextMenu = false;
   export let isExpandedBySearch = false;

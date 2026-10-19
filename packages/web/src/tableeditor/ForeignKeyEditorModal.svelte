@@ -59,7 +59,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header"
       >{constraintInfo
         ? _t('foreignKeyEditor.editForeignKey', { defaultMessage: 'Edit foreign key' })

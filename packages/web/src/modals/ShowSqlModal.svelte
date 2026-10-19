@@ -13,7 +13,7 @@
   export let engine = null;
 </script>
 
-<ModalBase {...$$restProps}>
+<ModalBase size="large" {...$$restProps}>
   <div slot="header">{_t('script.sqlScript', { defaultMessage: 'SQL Script' })}</div>
 
   <div class="editor">

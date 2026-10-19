@@ -91,7 +91,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <div slot="header">{header}</div>
 
     {#if resetValue.length == 0}

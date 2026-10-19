@@ -29,7 +29,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <div slot="header">{_t('editJsonModal.header', { defaultMessage: 'Edit JSON value' })}</div>
     {#if showPasteInfo}
       <div class="m-2">

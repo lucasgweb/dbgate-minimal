@@ -41,7 +41,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header"
       >{constraintInfo ? _t('tableEdit.editConstraintLabel', { defaultMessage: 'Edit {constraintLabel}', values: { constraintLabel } }) : _t('tableEdit.addConstraintLabel', { defaultMessage: 'Add {constraintLabel}', values: { constraintLabel } })}</svelte:fragment
     >

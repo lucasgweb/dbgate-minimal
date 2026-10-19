@@ -235,11 +235,13 @@
   }
   .ext-info {
     font-weight: normal;
-    margin-left: 5px;
+    font-size: 0.85em;
+    margin-left: 6px;
     color: var(--theme-sidebar-foreground-grayed);
   }
   .expand-icon {
     margin-right: 3px;
+    color: var(--theme-sidebar-foreground-grayed);
   }
 
   .pin,

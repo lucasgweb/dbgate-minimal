@@ -126,7 +126,7 @@
 </script>
 
 <FormProvider>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header"
       >{_t('dictionaryLookupModal.header', {
         defaultMessage: 'Lookup from {pureName}',

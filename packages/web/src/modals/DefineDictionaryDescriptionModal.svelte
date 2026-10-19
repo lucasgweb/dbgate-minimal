@@ -52,7 +52,7 @@
 </script>
 
 <FormProviderCore {values}>
-  <ModalBase {...$$restProps}>
+  <ModalBase size="large" {...$$restProps}>
     <svelte:fragment slot="header">{_t('defineDictionaryDescriptionModal.header', { defaultMessage: 'Define description' })}</svelte:fragment>
 
     <FormSelectField
