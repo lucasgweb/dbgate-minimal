@@ -86,6 +86,10 @@
     // },
   ];
 
+  // DbGate Cloud (account login and cloud panels) is hidden in this fork
+  const HIDDEN_WIDGETS = ['cloud-private', 'cloud-public'];
+  $: if (HIDDEN_WIDGETS.includes($selectedWidget)) $selectedWidget = 'database';
+
   function handleChangeWidget(name) {
     if ($visibleSelectedWidget == name) {
       $visibleWidgetSideBar = false;
@@ -146,7 +150,7 @@
   {#each widgets
     .filter(x => x && hasPermission(`widgets/${x.name}`))
     // .filter(x => !x.isPremiumOnly || isProApp())
-    .filter(x => x.name != 'cloud-private' || $cloudSigninTokenHolder) as item}
+    .filter(x => !HIDDEN_WIDGETS.includes(x.name)) as item}
     <div
       class="wrapper"
       class:selected={item.name == $visibleSelectedWidget}
@@ -179,7 +183,7 @@
     <FontIcon icon={$lockedDatabaseMode ? 'icon locked-database-mode' : 'icon unlocked-database-mode'} />
   </div> -->
 
-  {#if getCurrentConfig().allowPrivateCloud}
+  {#if false && getCurrentConfig().allowPrivateCloud}
     {#if $cloudSigninTokenHolder}
       <div
         class="wrapper"
