@@ -2231,15 +2231,21 @@
     { command: 'dataGrid.fetchAll', hideDisabled: true },
     { placeTag: 'copy' },
     {
-      text: _t('datagrid.copyAdvanced', { defaultMessage: 'Copy advanced' }),
+      text: _t('datagrid.copyAs', { defaultMessage: 'Copy as' }),
+      submenu: [
+        _.keys(copyRowsFormatDefs)
+          .filter(format => format != 'mongoInsert' || display?.driver?.databaseEngineTypes?.includes('document'))
+          .map(format => ({
+            text: _tval(copyRowsFormatDefs[format].name),
+            onClick: () => copyToClipboardCore(format),
+          })),
+      ],
+    },
+    {
+      text: _t('datagrid.defaultCopyFormat', { defaultMessage: 'Ctrl+C format' }),
       submenu: [
         _.keys(copyRowsFormatDefs).map(format => ({
-          text: _tval(copyRowsFormatDefs[format].label),
-          onClick: () => copyToClipboardCore(format),
-        })),
-        { divider: true },
-        _.keys(copyRowsFormatDefs).map(format => ({
-          text: _t('datagrid.setFormat', { defaultMessage: 'Set format: ' }) + _tval(copyRowsFormatDefs[format].name),
+          text: `${$copyRowsFormat == format ? '✓ ' : ''}${_tval(copyRowsFormatDefs[format].name)}`,
           onClick: () => ($copyRowsFormat = format),
         })),
 

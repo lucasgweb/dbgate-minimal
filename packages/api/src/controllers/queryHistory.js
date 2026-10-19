@@ -6,7 +6,7 @@ const { filterName } = require('dbgate-tools');
 const socket = require('../utility/socket');
 const readFileReverse = require('../utility/readFileReverse');
 
-function readCore(reader, skip, limit, filter) {
+function readCore(reader, skip, limit, filter, conid, database) {
   return new Promise((resolve, reject) => {
     const res = [];
     let readed = 0;
@@ -14,7 +14,8 @@ function readCore(reader, skip, limit, filter) {
       if (!line && !line.trim()) return;
       try {
         const json = JSON.parse(line);
-        if (filterName(filter, json.sql, json.database)) {
+        const matchesDatabase = !conid || (json.conid == conid && json.database == database);
+        if (matchesDatabase && filterName(filter, json.sql, json.database)) {
           if (!skip || readed >= skip) {
             res.push(json);
           }
@@ -34,21 +35,21 @@ function readCore(reader, skip, limit, filter) {
   });
 }
 
-async function readJsonl({ skip, limit, filter }) {
+async function readJsonl({ skip, limit, filter, conid, database }) {
   const fileName = path.join(datadir(), 'query-history.jsonl');
   // @ts-ignore
   if (!(await fs.exists(fileName))) return [];
   const reader = readFileReverse(fileName);
-  return readCore(reader, skip, limit, filter);
+  return readCore(reader, skip, limit, filter, conid, database);
 }
 
 module.exports = {
   read_meta: true,
-  async read({ skip, limit, filter }, req) {
+  async read({ skip, limit, filter, conid, database }, req) {
     const storage = require('./storage');
     const storageResult = await storage.readQueryHistory({ skip, limit, filter }, req);
     if (storageResult) return storageResult;
-    return readJsonl({ skip, limit, filter });
+    return readJsonl({ skip, limit, filter, conid, database });
   },
 
   write_meta: true,

@@ -1,7 +1,8 @@
 <script lang="ts">
   import { findEngineDriver } from 'dbgate-tools';
-  import { currentDatabase, extensions, pinnedDatabases, pinnedTables, selectedWidget } from '../stores';
-  import { useConnectionInfo } from '../utility/metadataLoaders';
+  import { currentDatabase, extensions, pinnedDatabases, pinnedTables, savedQueryDatabases, selectedWidget } from '../stores';
+  import { useConnectionInfo, useFiles } from '../utility/metadataLoaders';
+  import SavedQueriesList from './SavedQueriesList.svelte';
 
   import PinnedObjectsList from './PinnedObjectsList.svelte';
   import ErrorInfo from '../elements/ErrorInfo.svelte';
@@ -24,6 +25,13 @@
   $: driver = findEngineDriver($connection, $extensions);
   $: singleDatabase = $currentDatabase?.connection?.singleDatabase;
   $: database = $currentDatabase?.name;
+
+  const sqlFiles = useFiles({ folder: 'sql', parseFrontMatter: true });
+  $: savedQueries = (($sqlFiles || []) as any[]).filter(file => {
+    const remembered = $savedQueryDatabases[file.file];
+    if (remembered) return remembered.conid == conid && remembered.database == database;
+    return file.connectionId == conid && file.databaseName == database;
+  });
 
   $: correctCloudStatus =
     !conid ||
@@ -55,6 +63,16 @@
   positiveCondition={correctCloudStatus}
 >
   <SqlObjectList {conid} {database} bind:this={domSqlObjectList} />
+</WidgetColumnBarItem>
+
+<WidgetColumnBarItem
+  title={_t('widget.savedQueries', { defaultMessage: 'Saved queries' })}
+  name="savedQueries"
+  height="20%"
+  skip={!(conid && database && savedQueries.length > 0)}
+  positiveCondition={correctCloudStatus}
+>
+  <SavedQueriesList files={savedQueries} />
 </WidgetColumnBarItem>
 
 <WidgetColumnBarItem

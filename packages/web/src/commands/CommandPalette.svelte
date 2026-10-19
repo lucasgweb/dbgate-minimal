@@ -24,7 +24,33 @@
     testEnabled: () => getVisibleCommandPalette() != 'database',
   });
 
-  function extractDbItems(db, dbConnectionInfo, connectionList, $extensions, currentThemeType) {
+  function extractObjectItems(db, dbConnectionInfo, description = null) {
+    const allObjects = _.flatten(
+      ['tables', 'collections', 'views', 'matviews', 'procedures', 'functions'].map(objectTypeField =>
+        ((db || {})[objectTypeField] || []).map(obj => ({ objectTypeField, obj }))
+      )
+    );
+    const pureNameCounts = _.countBy(allObjects, ({ obj }) => obj.pureName);
+    return _.flatten(
+      ['tables', 'collections', 'views', 'matviews', 'procedures', 'functions'].map(objectTypeField =>
+        _.sortBy(
+          ((db || {})[objectTypeField] || []).map(obj => ({
+            text: pureNameCounts[obj.pureName] > 1 ? fullNameToLabel(obj) : obj.pureName,
+            description,
+            onClick: () => handleDatabaseObjectClick({ objectTypeField, ...dbConnectionInfo, ...obj }),
+            icon: databaseObjectIcons[objectTypeField],
+          })),
+          ['text']
+        )
+      )
+    );
+  }
+
+  // objects of the current database first, then of the other databases opened in tabs, then databases to switch to
+  function extractDbItems(db, dbConnectionInfo, connectionList, $extensions, currentThemeType, otherDatabases = []) {
+    const otherObjectList = _.flatten(
+      otherDatabases.map(({ conid, database, info, label }) => extractObjectItems(info, { conid, database }, label))
+    );
     const allObjects = _.flatten(
       ['tables', 'collections', 'views', 'matviews', 'procedures', 'functions'].map(objectTypeField =>
         ((db || {})[objectTypeField] || []).map(obj => ({ objectTypeField, obj }))
@@ -56,13 +82,14 @@
 
       for (const db of databases) {
         databaseList.push({
-          text: `${db.name} on ${getConnectionLabel(connection)}`,
+          text: db.name,
+          description: getConnectionLabel(connection),
           icon: connectionIcon,
           onClick: () => switchCurrentDatabase({ connection, name: db.name }),
         });
       }
     }
-    return [..._.sortBy(databaseList, 'text'), ...objectList];
+    return [...objectList, ...otherObjectList, ..._.sortBy(databaseList, 'text')];
 
     // return db?.tables?.map(table => ({
     //   text: table.pureName,
@@ -87,11 +114,12 @@
     getVisibleCommandPalette,
     visibleCommandPalette,
     extensions,
+    openedTabs,
   } from '../stores';
   import clickOutside from '../utility/clickOutside';
   import { isElectronAvailable } from '../utility/getElectron';
   import keycodes from '../utility/keycodes';
-  import { useConnectionList, useDatabaseInfo } from '../utility/metadataLoaders';
+  import { getDatabaseInfo, useConnectionList, useDatabaseInfo } from '../utility/metadataLoaders';
   import { getLocalStorage } from '../utility/storageCache';
   import registerCommand from './registerCommand';
   import { formatKeyText, switchCurrentDatabase } from '../utility/common';
@@ -125,11 +153,47 @@
   $: databaseInfo = useDatabaseInfo({ conid, database });
   $: connectionList = useConnectionList();
 
+  // structures of the other databases opened in tabs, searched together with the current one
+  let otherDatabases = [];
+  async function loadOtherDatabases(tabs, connections, currentConid, currentDatabaseName) {
+    const keys = _.uniqBy(
+      (tabs || [])
+        .filter(tab => tab.closedTime == null && tab.props?.conid && tab.props?.database)
+        .map(tab => ({ conid: tab.props.conid, database: tab.props.database }))
+        .filter(x => x.conid != currentConid || x.database != currentDatabaseName),
+      x => `${x.conid}::${x.database}`
+    );
+    const loaded = await Promise.all(
+      keys.map(async key => {
+        try {
+          const info = await getDatabaseInfo(key);
+          const connection = (connections || []).find(x => x._id == key.conid);
+          const label =
+            key.conid == currentConid || !connection
+              ? key.database
+              : `${key.database} · ${getConnectionLabel(connection)}`;
+          return info ? { ...key, info, label } : null;
+        } catch (err) {
+          return null;
+        }
+      })
+    );
+    otherDatabases = loaded.filter(Boolean);
+  }
+  $: if ($visibleCommandPalette == 'database') loadOtherDatabases($openedTabs, $connectionList, conid, database);
+
   $: filteredItems = fuzzy
     .filter(
       filter,
       ($visibleCommandPalette == 'database'
-        ? extractDbItems($databaseInfo, { conid, database }, $connectionList, $extensions, $currentThemeType)
+        ? extractDbItems(
+            $databaseInfo,
+            { conid, database },
+            $connectionList,
+            $extensions,
+            $currentThemeType,
+            otherDatabases
+          )
         : parentCommand
           ? parentCommand.getSubCommands()
           : sortedComands
@@ -240,6 +304,9 @@
               {/if}
               <!-- one line on purpose: whitespace between the segments would show up between the characters -->
               {#each command.textSegments as seg}{#if seg.highlighted}<b>{seg.text}</b>{:else}{seg.text}{/if}{/each}
+              {#if command.description}
+                <span class="description">{command.description}</span>
+              {/if}
             </div>
             {#if command.keyText}
               <div class="shortcut">{formatKeyText(command.keyText)}</div>
@@ -347,6 +414,12 @@
   .command.selected {
     background: var(--theme-table-selected-background);
     color: var(--theme-generic-font);
+  }
+
+  .description {
+    margin-left: 8px;
+    font-size: 12px;
+    color: var(--theme-generic-font-grayed);
   }
 
   .shortcut {

@@ -143,6 +143,32 @@ const clipboardUpdatesFormatter = () => (columns, rows, options) => {
   return dmp.s;
 };
 
+const clipboardMarkdownFormatter = () => (columns, rows, options) => {
+  const escape = value => String(value ?? '').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
+  const lines = [`| ${columns.map(escape).join(' | ')} |`, `| ${columns.map(() => '---').join(' | ')} |`];
+  for (const row of rows) {
+    if (!row) continue;
+    lines.push(`| ${columns.map(col => escape(extractRowCopiedValue(row, col, options?.editorTypes))).join(' | ')} |`);
+  }
+  return lines.join('\r\n');
+};
+
+// selected values as a list usable in WHERE x IN (...)
+const clipboardInListFormatter = () => (columns, rows) => {
+  const values = [];
+  for (const row of rows) {
+    if (!row) continue;
+    for (const col of columns) {
+      const value = row[col];
+      if (value === undefined) continue;
+      if (value === null) values.push('NULL');
+      else if (_.isNumber(value) || _.isBoolean(value)) values.push(String(value));
+      else values.push(`'${String(_.isPlainObject(value) || _.isArray(value) ? JSON.stringify(value) : value).replace(/'/g, "''")}'`);
+    }
+  }
+  return _.uniq(values).join(', ');
+};
+
 const clipboardMongoInsertFormatter = () => (columns, rows, options) => {
   const { pureName } = options;
   return rows.map(row => `db.${pureName}.insert(${JSON.stringify(_.omitBy(_.pick(row, columns), _.isUndefined), undefined, 2)});`).join('\n');
@@ -195,6 +221,16 @@ export const copyRowsFormatDefs = {
     label: __t('clipboard.copyYAML', { defaultMessage : 'Copy as YAML'}),
     name: 'YAML',
     formatter: clipboardYamlFormatter(),
+  },
+  markdown: {
+    label: __t('clipboard.copyMarkdown', { defaultMessage: 'Copy as Markdown table' }),
+    name: __t('clipboard.markdown', { defaultMessage: 'Markdown table' }),
+    formatter: clipboardMarkdownFormatter(),
+  },
+  inList: {
+    label: __t('clipboard.copyInList', { defaultMessage: 'Copy as list for IN (...)' }),
+    name: __t('clipboard.inList', { defaultMessage: 'List for IN (...)' }),
+    formatter: clipboardInListFormatter(),
   },
   inserts: {
     label: __t('clipboard.copySQLInsert', { defaultMessage : 'Copy as SQL INSERTs'}),

@@ -1,6 +1,6 @@
 import { derived, get } from 'svelte/store';
 import { showModal } from '../modals/modalTools';
-import { openedTabs } from '../stores';
+import { openedTabs, savedQueryDatabases } from '../stores';
 import { changeTab, markTabSaved } from './common';
 import SaveFileModal from '../modals/SaveFileModal.svelte';
 import registerCommand from '../commands/registerCommand';
@@ -15,8 +15,15 @@ export default async function saveTabFile(editor, saveMode, folder, format, file
   const tabs = get(openedTabs);
   const tabid = editor.activator.tabid;
   const data = editor.getData();
-  const { savedFile, savedFilePath, savedFolder, savedCloudFolderId, savedCloudContentId, savedTeamFileId } =
-    tabs.find(x => x.tabid == tabid).props || {};
+  const tabProps = tabs.find(x => x.tabid == tabid).props || {};
+  const { savedFile, savedFilePath, savedFolder, savedCloudFolderId, savedCloudContentId, savedTeamFileId } = tabProps;
+
+  // remember the database of a locally saved query, for the "Saved queries" list of that database
+  const rememberQueryDatabase = (file, fileFolder) => {
+    if (file && fileFolder == 'sql' && tabProps.conid && tabProps.database) {
+      savedQueryDatabases.update(x => ({ ...x, [file]: { conid: tabProps.conid, database: tabProps.database } }));
+    }
+  };
 
   const handleSave = async () => {
     if (savedTeamFileId) {
@@ -37,6 +44,7 @@ export default async function saveTabFile(editor, saveMode, folder, format, file
     } else {
       if (savedFile) {
         await apiCall('files/save', { folder: savedFolder || folder, file: savedFile, data, format });
+        rememberQueryDatabase(savedFile, savedFolder || folder);
       }
       if (savedFilePath) {
         await apiCall('files/save-as', { filePath: savedFilePath, data, format });
@@ -46,6 +54,9 @@ export default async function saveTabFile(editor, saveMode, folder, format, file
   };
 
   const onSave = (title, newProps) => {
+    if (!newProps.savedCloudFolderId && !newProps.savedTeamFileId) {
+      rememberQueryDatabase(newProps.savedFile, newProps.savedFolder);
+    }
     changeTab(tabid, tab => ({
       ...tab,
       title,

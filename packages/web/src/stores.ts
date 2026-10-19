@@ -160,6 +160,12 @@ export const selectedWidget = writableWithStorage(
 export const lockedDatabaseMode = writableWithStorage<boolean>(false, 'lockedDatabaseMode');
 export const minimalMode = writableWithStorage<boolean>(true, 'minimalMode');
 
+// database of saved SQL files ({ [file]: { conid, database } }), shown in "Saved queries" of that database
+export const savedQueryDatabases = writableWithStorage<{ [file: string]: { conid: string; database: string } }>(
+  {},
+  'savedQueryDatabases'
+);
+
 // SQL syntax colors of the default dark editor theme, e.g. { keyword: '#569cd6', ... }; null = theme defaults
 export const sqlSyntaxColors = writableWithStorage<{ [token: string]: string }>(null, 'sqlSyntaxColors');
 const SQL_SYNTAX_TOKENS = ['keyword', 'type', 'function', 'string', 'number', 'comment'];

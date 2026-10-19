@@ -1291,6 +1291,17 @@ if (hasPermission('application-log')) {
   });
 }
 
+registerCommand({
+  id: 'app.queryHistory',
+  category: __t('command.application', { defaultMessage: 'Application' }),
+  name: __t('command.application.queryHistory', { defaultMessage: 'Query history' }),
+  keyText: 'CtrlOrCommand+Shift+H',
+  onClick: () => {
+    selectedWidget.set('history');
+    visibleWidgetSideBar.set(true);
+  },
+});
+
 if (hasPermission('widgets/plugins')) {
   registerCommand({
     id: 'app.managePlugins',
